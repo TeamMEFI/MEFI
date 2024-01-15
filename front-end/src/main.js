@@ -1,4 +1,4 @@
-import './assets/main.css'
+// main.js
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -6,9 +6,15 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-const app = createApp(App)
+// pinia 관련 local storage 활용 모듈
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
-app.use(createPinia())
+const app = createApp(App)
+const pinia = createPinia()
+
+// pinia에 바인딩
+pinia.use(piniaPluginPersistedstate)
+
 app.use(router)
 
 app.mount('#app')
