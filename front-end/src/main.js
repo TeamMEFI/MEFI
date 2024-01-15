@@ -1,20 +1,31 @@
-// main.js
+import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
+import { createVuetify } from "vuetify";
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import App from "./App.vue";
+import router from "./router";
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+const vuetify = createVuetify({
+  components,
+  directives,
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
+});
 
-import App from './App.vue'
-import router from './router'
+const app = createApp(App);
+const pinia = createPinia();
 
-// pinia 관련 local storage 활용 모듈
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-
-const app = createApp(App)
-const pinia = createPinia()
-
-// pinia에 바인딩
-pinia.use(piniaPluginPersistedstate)
-
-app.use(router)
-
-app.mount('#app')
+pinia.use(piniaPluginPersistedstate);
+app.use(router);
+app.use(pinia);
+app.use(vuetify)
+app.mount("#app");
