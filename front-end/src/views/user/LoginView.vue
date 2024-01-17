@@ -1,26 +1,29 @@
 <template>
-    <div id="login-container">
-        <v-form id="login">
-            <div id="input-form">
+    <div id="background">
+        <div id="login-container">
+            <div id="log">
+                MEFI
+            </div>
+            <v-form id="input-form">
                 <v-text-field
-                    class="id"
                     label="아이디"
-                    hide-details="auto"
                     v-model="id"
+                    hide-details="auto"
+                    type="email"
                 ></v-text-field>
                 <v-text-field
-                    class="pwd"
                     label="비밀번호"
-                    hide-details="auto"
                     type="password"
                     v-model="password"
+                    hide-details="auto"
                 ></v-text-field>
+            </v-form>
+            <v-btn id="submit" @click="login">로그인</v-btn>
+            <div id="side-function">
+                <span tytpe="button" id="password-find">비밀번호 찾기 </span>  |  
+                <span @click="goSignup" id="signup"> 회원가입</span>
             </div>
-            <div id="submit-button">
-                <v-btn @click="login">로그인</v-btn>
-                <v-btn @click="goSignup">회원 가입</v-btn>
-            </div>
-        </v-form>
+        </div>
     </div>
 </template>
 
@@ -28,7 +31,7 @@
 import router from "@/router"
 import { useUserStore } from "@/stores/user"
 import { ref } from "vue"
-import { RouterLink } from "vue-router"
+
 
 const id = ref('')
 const password = ref('')
@@ -48,18 +51,45 @@ const goSignup = function(){
 </script>
 
 <style scoped>
-#login{
-    margin: 50px auto;
-    width: 500px;
+#background{
+    color: black;
+}
+#login-container{
+    width: 700px;
+    height: 400px;
+    border: 1px solid black;
+    border-radius: 15px;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-.submit-button{
-    display: flex;
-    /* 안먹힘 이유는 뭘까 */
-    flex-direction: column;
-    justify-content: space-around;
     align-content: center;
+}
+#log{
+    text-align: center;
+    font-size:xx-large;
+    font-weight: bolder;
+    margin: 30px;
+}
+#input-form{
+    width: 500px;
+    margin: 0px auto
+}
+#submit{
+    width: 300px;
+    align-content: center;
+    margin: 0px auto;
+}
+#side-function{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+#password-find{
+    cursor: pointer;
+}
+#signup{
+    cursor: pointer;
 }
 </style>
