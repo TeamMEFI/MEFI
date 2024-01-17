@@ -1,7 +1,7 @@
 <template>
   <div>
     <header><Header></Header></header>    
-    <main class="container"><RouterView/></main>
+    <main class="container"><RouterView /></main>
     <!-- LoginView -->
     <footer><Footer></Footer></footer>
   </div>
@@ -15,6 +15,7 @@ import {useUserStore} from "./stores/user.js"
 
 const router = useRouter()
 const store = useUserStore()
+
 router.beforeEach((to,from)=>{
   if(!store.isLogin && to.name!='login' && to.name!='signup'){
     return {name:'login'}
@@ -24,10 +25,7 @@ router.beforeEach((to,from)=>{
 
 <style scoped>
 .container{
-  margin-top: 80px;
-  min-height: 600px;
-  border: 1px solid black;
-  border-radius: 10px;
-  padding: 10px;
+  width: 100%;
+  height: 100%;
 }
 </style>
