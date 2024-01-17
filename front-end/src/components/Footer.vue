@@ -10,6 +10,7 @@
 #footer-container{
     display: flex;
     justify-content: space-evenly;
+    align-items: center;
     bottom: 0px;
 }
 </style>
