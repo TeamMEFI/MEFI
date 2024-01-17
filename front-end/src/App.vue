@@ -1,15 +1,10 @@
 <template>
   <div>
-    <header><Header></Header></header>    
-    <main class="container"><RouterView/></main>
-    <!-- LoginView -->
-    <footer><Footer></Footer></footer>
+    <RouterView></RouterView>
   </div>
 </template>
 
 <script setup>
-import Header from "./components/Header.vue"
-import Footer from "./components/Footer.vue";
 import { RouterView, useRouter } from "vue-router";
 import {useUserStore} from "./stores/user.js"
 
@@ -28,6 +23,5 @@ router.beforeEach((to,from)=>{
   min-height: 600px;
   border: 1px solid black;
   border-radius: 10px;
-  padding: 10px;
 }
 </style>

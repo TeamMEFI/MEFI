@@ -1,6 +1,9 @@
 <template>
-  <div class="contianer">
-      <h1>Home</h1>
+  <div>
+    <h1>Home</h1>
+    <header></header>
+    <main><RouterView></RouterView></main>
+    <footer></footer>
   </div>
 </template>
 
@@ -8,7 +11,4 @@
 </script>
 
 <style scoped>
-.contianer{
-  margin-top: 50px;
-}
 </style>

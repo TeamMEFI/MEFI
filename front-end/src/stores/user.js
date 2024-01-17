@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 export const useUserStore = defineStore('user', () => {
 
-  const isLogin = ref(false)
+  const isLogin = ref(true)
   const router = useRouter()
 
   const signup = function(){
