@@ -1,8 +1,6 @@
 <template>
-    <div id="setting-container">
-        <header>
-            <Header id="setting-header" @close="close"></Header>
-        </header>
+    <div>
+        <Header id="setting-header" @close="close"></Header>
         <main id="setting-body">
             <OptionsVue id="body-option" @change-option="optionChange"></OptionsVue>
             <div id="body-content">

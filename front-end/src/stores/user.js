@@ -6,6 +6,12 @@ export const useUserStore = defineStore('user', () => {
 
   const isLogin = ref(false)
   const router = useRouter()
+  const userInfo = ref({
+    id:'ooo@gmail.com',
+    name:'ooo',
+    department:'department',
+    position:'position',
+  })
 
   const signup = function(){
     console.log('sign in')
@@ -28,5 +34,5 @@ export const useUserStore = defineStore('user', () => {
     router.push({name:'home'})
   }
 
-  return { isLogin, signup, login, logout }
+  return { isLogin, signup, login, logout, userInfo }
 })
