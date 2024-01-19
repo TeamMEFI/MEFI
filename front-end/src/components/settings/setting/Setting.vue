@@ -6,8 +6,8 @@
         <main id="setting-body">
             <OptionsVue id="body-option" @option-change="changeOption"></OptionsVue>
             <div id="body-content">
-                <AlarmSettingVue></AlarmSettingVue>
-                <IOSettingVue></IOSettingVue>
+                <AlarmSettingVue v-show="option===1"></AlarmSettingVue>
+                <IOSettingVue v-show="option===2"></IOSettingVue>
             </div>
         </main>
     </div>
