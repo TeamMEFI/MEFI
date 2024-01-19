@@ -11,7 +11,7 @@
                         <font-awesome-icon :icon="['fas', 'gear']" style="font-size: large;"/>
                         <v-dialog v-model="setting" activator="parent" width="auto">
                             <v-card>
-                                <Setting></Setting>
+                                <Setting @close="close"></Setting>
                             </v-card>
                         </v-dialog>
                     </v-btn>
@@ -42,8 +42,11 @@ const store = useUserStore();
 const userSetting = ref(false)
 const setting = ref(false)
 
-const goLogout = function(){
+const goLogout = ()=>{
     store.logout()
+}
+const close = () => {
+    setting.value = false
 }
 </script>
 

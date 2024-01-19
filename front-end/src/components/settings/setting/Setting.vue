@@ -1,7 +1,7 @@
 <template>
     <div id="setting-container">
         <header>
-            <Header id="setting-header"></Header>
+            <Header id="setting-header" @close="close"></Header>
         </header>
         <main id="setting-body">
             <OptionsVue id="body-option" @change-option="optionChange"></OptionsVue>
@@ -24,6 +24,10 @@ const option = ref(1)
 const optionChange = (num)=>{
     option.value = num
 }
+const emit = defineEmits(['close'])
+const close = () => {
+    emit('close')
+}
 </script>
 
 <style scoped>
@@ -40,11 +44,10 @@ const optionChange = (num)=>{
     grid-template-columns: 2fr 8fr
 }
 #body-option{
-    border: 1px solid black;
-    height: 400px;
+    background-color: rgb(96, 106, 121);
+    color: white;
 }
 #body-content{
-    border: 1px solid black;
     height: 400px;
 }
 </style>

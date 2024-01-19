@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>알림 설정</h1>
+        <h2 id="alarm-title">알림 설정</h2>
         <div>
             <div id="item">
                 <div>알림 설정</div>
@@ -34,12 +34,17 @@ const toggleSound = () =>{
 </script>
 
 <style scoped>
+#alarm-title{
+    margin: 10px;
+    padding: 10px;
+}
 #item{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 10px;
-    border: 1px solid black;
+    padding: 20px;
+    margin: 20px;
+    border-bottom: 1px solid rgb(169, 169, 169);
 }
 #item-icon{
     cursor: pointer;
