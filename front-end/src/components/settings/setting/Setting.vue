@@ -1,10 +1,8 @@
 <template>
-    <div id="setting-container">
-        <header>
-            <Header id="setting-header"></Header>
-        </header>
+    <div>
+        <Header id="setting-header" @close="close"></Header>
         <main id="setting-body">
-            <OptionsVue id="body-option" @option-change="changeOption"></OptionsVue>
+            <OptionsVue id="body-option" @change-option="optionChange"></OptionsVue>
             <div id="body-content">
                 <AlarmSettingVue v-show="option===1"></AlarmSettingVue>
                 <IOSettingVue v-show="option===2"></IOSettingVue>
@@ -21,8 +19,12 @@ import IOSettingVue from "./IOSetting.vue";
 import { ref } from "vue";
 
 const option = ref(1)
-const changeOption = (num)=>{
+const optionChange = (num)=>{
     option.value = num
+}
+const emit = defineEmits(['close'])
+const close = () => {
+    emit('close')
 }
 </script>
 
@@ -40,11 +42,10 @@ const changeOption = (num)=>{
     grid-template-columns: 2fr 8fr
 }
 #body-option{
-    border: 1px solid black;
-    height: 400px;
+    background-color: rgb(96, 106, 121);
+    color: white;
 }
 #body-content{
-    border: 1px solid black;
     height: 400px;
 }
 </style>
