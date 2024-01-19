@@ -52,7 +52,7 @@ const goSignup = function(){
 
 <style scoped>
 #background{
-    color: black;
+    color: rgb(73, 84, 100);
 }
 #login-container{
     width: 700px;
