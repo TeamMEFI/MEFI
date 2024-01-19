@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <div @click="optionChange(1)">알림 설정</div>
-        <div @click="optionChange(2)">입출력 설정</div>
+    <div id="option-container">
+        <div id="option-item" @click="optionChange(1)">알림 설정</div>
+        <div id="option-item" @click="optionChange(2)">입출력 설정</div>
     </div>
 </template>
 
@@ -13,4 +13,10 @@ const optionChange = (num) => {
 </script>
 
 <style scoped>
+#option-item{
+    text-align: center;
+    margin: 10px;
+    cursor: pointer;
+    border: 1px solid black;
+}
 </style>

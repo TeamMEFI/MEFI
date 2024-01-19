@@ -4,7 +4,7 @@
             <Header id="setting-header"></Header>
         </header>
         <main id="setting-body">
-            <OptionsVue id="body-option" @option-change="changeOption"></OptionsVue>
+            <OptionsVue id="body-option" @change-option="optionChange"></OptionsVue>
             <div id="body-content">
                 <AlarmSettingVue v-show="option===1"></AlarmSettingVue>
                 <IOSettingVue v-show="option===2"></IOSettingVue>
@@ -21,7 +21,7 @@ import IOSettingVue from "./IOSetting.vue";
 import { ref } from "vue";
 
 const option = ref(1)
-const changeOption = (num)=>{
+const optionChange = (num)=>{
     option.value = num
 }
 </script>
