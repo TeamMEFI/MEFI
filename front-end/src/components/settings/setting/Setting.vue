@@ -27,15 +27,24 @@ const changeOption = (num)=>{
 </script>
 
 <style scoped>
-#setting-container{
-    width: 800px;
-    height: 680px;
-}
 #setting-header{
+    width: 600px;
     height: 30px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     padding: 10px;
+}
+#setting-body{
+    display: grid;
+    grid-template-columns: 2fr 8fr
+}
+#body-option{
+    border: 1px solid black;
+    height: 400px;
+}
+#body-content{
+    border: 1px solid black;
+    height: 400px;
 }
 </style>
