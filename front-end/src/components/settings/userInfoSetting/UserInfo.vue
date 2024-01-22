@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-form :disabled="disable">
-            <!-- {{ store.userInfo }} -->
+            <!-- 정보 조회 및 수정할 수 있는 form -->
             <v-text-field 
                 label="email"
                 :model-value="store.userInfo.id"
@@ -23,9 +23,12 @@
                 v-model="department"
             ></v-text-field>
             
+            <!-- 수정하기 : 누르면 입력창이 활성화 됨 -->
             <div v-if="disable">
                 <v-btn @click="toggleDisable" style="background-color: #E53935; color: white;">수정하기</v-btn>
             </div>
+            <!-- 저장 : 입력된 정보 저장됨 -->
+            <!-- 취소 : 유저 정보는 변경되지 않음. 입력창이 비활성화됨 -->
             <div v-else>
                 <v-btn @submit.stop="updateUserInfo" style="background-color: #E53935; color: white;">저장</v-btn>
                 <v-btn @click="toggleDisable" style="background-color: #E0E0E0;">취소</v-btn>

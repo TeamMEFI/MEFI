@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- 선택지 -->
         <div id="option-item" @click="optionChange(1)">회원 정보</div>
         <div id="option-item" @click="optionChange(2)">비밀 번호 변경</div>
         <div id="option-item" @click="optionChange(3)">회원 탈퇴</div>
