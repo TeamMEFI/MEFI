@@ -34,7 +34,7 @@ const changeOverlay = (event) => {
 .conference-view {
   display: flex;
   min-height: 100vh;
-  background-color: #555555;
+  background-color: #495464;
 }
 
 /* 1번 레이아웃 배치 스타일 */
@@ -72,12 +72,12 @@ const changeOverlay = (event) => {
 @keyframes rotate {
 	to {
 		transform: rotate(360deg);
-    transform: scale(0.2);
+    transform: scale(1.5);
 	}
 }
 
 .toRight {
-	animation: rotate 2s linear infinite;
+	animation: rotate 3s linear infinite;
 	transform-origin: 50% 50%;
 }
 </style>
