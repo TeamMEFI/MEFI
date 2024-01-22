@@ -67,7 +67,7 @@ const openUserInfo = () => {
     userSetting.value = true
 }
 const userInfoClose = () => {
-    userSetting.value = false
+    userInfo.value = false
 }
 </script>
 
