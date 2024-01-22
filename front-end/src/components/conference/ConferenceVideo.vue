@@ -2,19 +2,6 @@
   <div id="main-container">
     <!-- 내 카메라가 켜졌을 때 화상회의 열기 -->
     <div id="session" v-if="mainStreamManager">
-      <div id="session-header">
-        <h1 id="session-title"></h1>
-        <input
-          class="btn btn-large"
-          type="button"
-          @click="publishScreenShare()"
-          :value="screenShared ? 'Stop share' : 'Screen share'"
-        />
-      </div>
-      <div class="row panel panel-default">
-        <div class="panel-heading">User Screens</div>
-        <div class="panel-body" id="container-screens"></div>
-      </div>
       <!-- isSide ref 변수에 따라 class를 동적 할당하여 스타일 변경 -->
       <div id="video-container" ref="videos" :class="[isSide ? 'videos' : 'upSideVideos']">
         <UserVideo
@@ -34,17 +21,20 @@
           ]"
           :key="sub.stream.connection.connectionId"
           :stream-manager="sub"
-          @click.native="updateMainVideoStreamManager(sub)"
+          @click="updateMainVideoStreamManager(sub)"
         />
       </div>
-      <v-infinite-scroll id="chatBox" :height="100">         
+      <v-infinite-scroll id="chatBox" :height="100">
         <template v-for="chat in chats">
           <div>{{ chat }}</div>
         </template>
         <template v-slot:loading></template>
       </v-infinite-scroll>
-      <v-btn @click="sendChat('default')" class="my-2" rounded="sm" size="large">Send chat</v-btn>
+      <input v-model="chatInput" />
+      <v-btn @click="sendChat(chatInput)" class="my-2" rounded="sm" size="large">Send chat</v-btn>
       <v-btn @click="leaveSession" class="my-2" rounded="sm" size="large">Leave session</v-btn>
+      <v-btn v-if="!screenShared" @click="publishScreenShare">screen share</v-btn>
+      <div>{{ screenShared }}</div>
     </div>
     <!-- 내 카메라 아직 켜지지 않았으면 당근 출력 -->
     <div v-else class="loading">
@@ -56,7 +46,7 @@
 
 <script setup>
 import axios from 'axios'
-import { ref, onBeforeUnmount, onMounted, defineProps, onUpdated, computed } from 'vue'
+import { ref, onBeforeUnmount, onMounted, defineProps, onUpdated } from 'vue'
 import { OpenVidu } from 'openvidu-browser'
 import UserVideo from './UserVideo.vue'
 
@@ -80,16 +70,18 @@ const onSpeakSub = ref([])
 // 화면 공유 중인지 검사
 const screenShared = ref(false)
 
+const chatInput = ref('')
 const chats = ref([])
 
-const OV = ref(null)
+const OVCamera = ref(null)
 const OVScreen = ref(null)
 
-const session = ref(undefined)
+const sessionCamera = ref(undefined)
 const sessionScreen = ref(undefined)
 
 const mainStreamManager = ref(null)
 const publisher = ref(null)
+const publisherScreen = ref(null)
 const subscribers = ref([])
 
 // Join form
@@ -118,11 +110,15 @@ const changeOverlay = () => {
 }
 
 // 채팅 보내는 함수
-// 현재 임시로 'default'를 보냄
 const sendChat = (content) => {
-  session.value
+  // 입력값이 없을 경우 pass
+  if (!content) return
+
+  // session signal 메서드를 통해
+  // 세션 내의 참가자에게 'chat' 타입의 시그널을 임의의 데이터와 보냄 
+  sessionCamera.value
     .signal({
-      data: `${content}`, // Any string (optional)
+      data: `${myUserName.value}: ${content}`,
       to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
       type: 'chat' // The type of message (optional)
     })
@@ -134,46 +130,42 @@ const sendChat = (content) => {
     })
 }
 
+// 세션 참가
 const joinSession = () => {
-  OV.value = new OpenVidu()
+  OVCamera.value = new OpenVidu()
   OVScreen.value = new OpenVidu()
 
   // 마이크 입력 빈도와 제한 조절
-  OV.value.setAdvancedConfiguration({
+  OVCamera.value.setAdvancedConfiguration({
     publisherSpeakingEventsOptions: {
       interval: 100, // Frequency of the polling of audio streams in ms (default 100)
       threshold: -50 // Threshold volume in dB (default -50)
     }
   })
 
-  session.value = OV.value.initSession()
+  // 카메라 세션과 화면 공유 세션을 따로 생성
+  sessionCamera.value = OVCamera.value.initSession()
   sessionScreen.value = OVScreen.value.initSession()
 
-  // 화면 공유 기능 전 streamCreated 이벤트
-  // session.value.on('streamCreated', ({ stream }) => {
-  //   const subscriber = session.value.subscribe(stream)
-  //   subscribers.value.push(subscriber)
-  // })
-
-  // 세션 생성
-  session.value.on('streamCreated', ({ stream }) => {
+  // 카메라 스트림 생성
+  sessionCamera.value.on('streamCreated', ({ stream }) => {
     if (stream.typeOfVideo == 'CAMERA') {
-      // Subscribe to the Stream to receive it. HTML video will be appended to element with 'container-cameras' id
-      const subscriber = session.value.subscribe(stream)
+      const subscriber = sessionCamera.value.subscribe(stream)
       subscribers.value.push(subscriber)
     }
   })
 
+  // 화면 공유 스트림 생성
   sessionScreen.value.on('streamCreated', ({ stream }) => {
     if (stream.typeOfVideo == 'SCREEN') {
       // Subscribe to the Stream to receive it. HTML video will be appended to element with 'container-screens' id
       const subscriberScreen = sessionScreen.value.subscribe(stream)
-      subscribers.value.push(subscriber)
+      subscribers.value.push(subscriberScreen)
     }
   })
 
-  // 세션 삭제
-  session.value.on('streamDestroyed', ({ stream }) => {
+  // 카메라 스트림 삭제
+  sessionCamera.value.on('streamDestroyed', ({ stream }) => {
     const index = subscribers.value.indexOf(stream.streamManager, 0)
 
     if (index >= 0) {
@@ -181,59 +173,41 @@ const joinSession = () => {
     }
   })
 
-  session.value.on('exception', ({ exception }) => {
+  // 화면 공유 스트림 삭제
+  sessionScreen.value.on('streamDestroyed', ({ stream }) => {
+    const index = subscribers.value.indexOf(stream.streamManager, 0)
+
+    if (index >= 0) {
+      subscribers.value.splice(index, 1)
+    }
+  })
+
+  sessionCamera.value.on('exception', ({ exception }) => {
     console.warn(exception)
   })
 
   // 마이크 입력 시작 이벤트
-  session.value.on('publisherStartSpeaking', (event) => {
+  sessionCamera.value.on('publisherStartSpeaking', (event) => {
     onSpeak.value = true
     // 말하고 있는 사람 connection id를 onSpeakSub 배열에 삽입
     onSpeakSub.value.push(event.connection.connectionId)
-    console.log(onSpeakSub.value)
     console.log('User ' + event.connection.connectionId + ' start speaking')
   })
 
   // 마이크 입력 종료 이벤트
-  session.value.on('publisherStopSpeaking', (event) => {
+  sessionCamera.value.on('publisherStopSpeaking', (event) => {
     onSpeak.value = false
     // onSpeakSub 배열에서 마이크 입력이 없는 connection id를 삭제
     onSpeakSub.value.splice(event.connection.connectionId, 1)
     console.log('User ' + event.connection.connectionId + ' stop speaking')
   })
 
+  // 미디어 서버와 카메라 세션을 연결
   getToken(mySessionId.value).then((token) => {
-    session.value
+    sessionCamera.value
       .connect(token, { clientData: myUserName.value })
       .then(() => {
-        const newPublisher = OV.value.initPublisher(undefined, {
-          audioSource: undefined,
-          videoSource: undefined,
-          publishAudio: false,
-          publishVideo: true,
-          resolution: '640x480',
-          frameRate: 30,
-          insertMode: 'APPEND',
-          mirror: false
-        })
-
-        mainStreamManager.value = newPublisher
-        publisher.value = newPublisher
-
-        session.value.publish(publisher.value)
-      })
-      .catch((error) => {
-        console.log('There was an error connecting to the session:', error.code, error.message)
-      })
-  })
-
-  getToken(mySessionId.value).then((tokenScreen) => {
-    // Create a token for screen share
-    sessionScreen.value
-      .connect(tokenScreen, { clientData: myUserName.value })
-      .then(() => {
-        console.log('Session screen connected')
-        const newPublisher = OVScreen.value.initPublisher(undefined, {
+        const newPublisher = OVCamera.value.initPublisher(undefined, {
           audioSource: undefined,
           videoSource: undefined,
           publishAudio: true,
@@ -243,11 +217,24 @@ const joinSession = () => {
           insertMode: 'APPEND',
           mirror: false
         })
-        
+
         mainStreamManager.value = newPublisher
         publisher.value = newPublisher
 
-        session.value.publish(publisher.value)
+        sessionCamera.value.publish(publisher.value)
+      })
+      .catch((error) => {
+        console.log('There was an error connecting to the session:', error.code, error.message)
+      })
+  })
+
+  // 미디어 서버와 화면 공유 세션을 연결
+  getToken(mySessionId.value).then((tokenScreen) => {
+    // Create a token for screen share
+    sessionScreen.value
+      .connect(tokenScreen, { clientData: myUserName.value })
+      .then(() => {
+        console.log('Session screen connected')
       })
       .catch((error) => {
         console.warn(
@@ -259,57 +246,65 @@ const joinSession = () => {
   })
 
   // type이 chat인 signal을 받을 때 chats 배열에 data 삽입
-  session.value.on('signal:chat', (event) => {
+  sessionCamera.value.on('signal:chat', (event) => {
     chats.value.push(event.data)
-    console.log(event.data) // Message
-    console.log(event.from) // Connection object of the sender
-    console.log(event.type) // The type of message ("my-chat")
+    console.log(event.data)
+    console.log(event.from)
+    console.log(event.type)
   })
 
   window.addEventListener('beforeunload', leaveSession)
 }
 
+// 세션 퇴장
 const leaveSession = () => {
-  if (session.value) session.value.disconnect()
+  if (sessionCamera.value) sessionCamera.value.disconnect()
   if (sessionScreen.value) sessionScreen.value.disconnect()
 
-  session.value = null
+  sessionCamera.value = null
   sessionScreen.value = null
   mainStreamManager.value = null
   publisher.value = null
+  publisherScreen.value = null
   subscribers.value = []
-  OV.value = null
-  screensharing.value = false
+  OVCamera.value = null
+  screenShared.value = false
 
   window.removeEventListener('beforeunload', leaveSession)
 }
 
+// 화면 공유
 const publishScreenShare = () => {
-  // --- 9.1) To create a publisherScreen set the property 'videoSource' to 'screen'
+  // 화면 공유 초기 설정
   const publisherScreen = OVScreen.value.initPublisher(undefined, {
-    videoSource: 'screen'
+    audioSource: undefined,
+    videoSource: 'screen',
+    resolution: '640x480',
+    frameRate: 30,
+    insertMode: 'APPEND',
+    mirror: false
   })
 
-  // --- 9.2) Publish the screen share stream only after the user grants permission to the browser
+  // 화면 공유 권한이 있을 경우
   publisherScreen.once('accessAllowed', (event) => {
-    screenSharing.value = true
+    screenShared.value = true
 
-    // If the user closes the shared window or stops sharing it, unpublish the stream
+    // 화면 공유를 중지하면
+    // 화면 공유 스트림 삭제 후 카메라 스트림 생성
     publisherScreen.stream
       .getMediaStream()
       .getVideoTracks()[0]
       .addEventListener('ended', () => {
+        console.log('User pressed the "Stop sharing" button')
         sessionScreen.value.unpublish(publisherScreen)
-        screenSharing.value = false
+        sessionCamera.value.publish(publisher.value);
+
+        screenShared.value = false
       })
-
-    session.value.publish(publisherScreen)
-  })
-
-  publisherScreen.on('videoElementCreated', function (event) {
-    console.log("sdf")
-    subscribers.value.push(event.stream)
-    event.element['muted'] = true
+    
+    // 카메라 스트림 삭제 및 화면 공유 스트림 생성
+    sessionCamera.value.unpublish(publisher.value)
+    sessionScreen.value.publish(publisherScreen)
   })
 
   publisherScreen.once('accessDenied', (event) => {
@@ -346,39 +341,6 @@ const createToken = async (sessionId) => {
     }
   )
   return response.data
-}
-
-function appendUserData(videoElement, connection) {
-  var userData
-  var nodeId
-
-  if (typeof connection === 'string') {
-    userData = connection
-    nodeId = connection
-  } else {
-    userData = JSON.parse(connection.data).clientData
-    nodeId = connection.connectionId
-  }
-
-  var dataNode = document.createElement('div')
-  dataNode.className = 'data-node'
-  dataNode.id = 'data-' + nodeId
-  dataNode.innerHTML = '<p>' + userData + '</p>'
-  videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling)
-  addClickListener(videoElement, userData)
-}
-
-function addClickListener(videoElement, userData) {
-  videoElement.addEventListener('click', function () {
-    var mainVideo = $('#main-video video').get(0)
-    if (mainVideo.srcObject !== videoElement.srcObject) {
-      $('#main-video').fadeOut('fast', () => {
-        $('#main-video p').html(userData)
-        mainVideo.srcObject = videoElement.srcObject
-        $('#main-video').fadeIn('fast')
-      })
-    }
-  })
 }
 
 onBeforeUnmount(() => {
