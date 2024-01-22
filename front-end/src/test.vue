@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>gerrit code review</h1>
+        <h1>junsu meongcheong-i</h1>
     </div>
 </template>
 
