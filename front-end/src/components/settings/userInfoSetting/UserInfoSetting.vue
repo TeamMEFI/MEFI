@@ -4,6 +4,7 @@
         <HeaderVue id="setting-header" :option="option" @close="close"></HeaderVue>
         <div id="setting-body">
             <!-- 선택지 -->
+            
             <OptionsVue id="body-option" @change-option="optionChange"></OptionsVue>
             <!-- 선택지에 따른 컴포넌트 -->
             <div id="body-content">
