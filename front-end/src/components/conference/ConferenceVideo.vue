@@ -36,7 +36,7 @@
       <v-btn v-if="!screenShared" @click="publishScreenShare">screen share</v-btn>
       <div>{{ screenShared }}</div>
     </div>
-    <!-- 내 카메라 아직 켜지지 않았으면 당근 출력 -->
+    <!-- 내 카메라 아직 켜지지 않았으면 로딩 스피너 출력 -->
     <div v-else class="loading">
       <v-progress-circular indeterminate size="64" width="6"></v-progress-circular>
       <v-btn @click="joinSession" class="my-2" rounded="sm" size="large">Join session</v-btn>
