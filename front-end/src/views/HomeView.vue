@@ -6,7 +6,7 @@
     </v-app-bar>
 
     <!-- 사이드바 -->
-    <v-navigation-drawer app>
+    <v-navigation-drawer app class="w-15">
       <ProfileVue/>
     </v-navigation-drawer>
 
@@ -36,4 +36,6 @@ router.push({name:'main'})
 .v-footer {
   justify-content: center;
 }
+
+
 </style>
