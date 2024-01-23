@@ -29,6 +29,7 @@
                         상태 정보
                         <UserStateSetting @status-change="changeStatus"></UserStateSetting>
                     </v-list-item>
+                    
                     <!-- 회원 정보 조회 및 수정 -->
                     <v-list-item @click="openUserInfo">
                         회원 정보
