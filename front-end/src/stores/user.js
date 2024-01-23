@@ -7,7 +7,7 @@ export const useUserStore = defineStore('user', () => {
   const isLogin = ref(false)
   const router = useRouter()
   const userInfo = ref({
-    id:'ooo@gmail.com',
+    email:'ooo@gmail.com',
     name:'ooo',
     department:'department',
     position:'position',

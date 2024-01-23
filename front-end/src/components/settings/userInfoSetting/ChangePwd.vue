@@ -20,9 +20,12 @@
 </template>
 
 <script setup>
+// 비밀 번호 변경 함수
+// 유효성 검사 후 rest api 보내기
 const changePWD = () => {
-    alert('비밀 번호를 변경하시겠습니까?')
-    
+    if (window.confirm('비밀 번호를 변경하시겠습니까?')){
+        // api user password update
+    }
 }
 </script>
 

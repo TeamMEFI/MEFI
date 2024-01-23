@@ -14,9 +14,13 @@
 </template>
 
 <script setup>
+// 회원 탈퇴하는 함수
 const userDelete = () => {
-    // user delete api
+    // api
 }
+
+// 목적 : 상위 컴포넌트로 전달
+// 기능 : 해당 모달창 닫기
 const emit = defineEmits(['close'])
 const goOut = () => {
     emit('close')
