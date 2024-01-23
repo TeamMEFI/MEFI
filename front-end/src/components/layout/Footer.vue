@@ -1,16 +1,9 @@
 <template>
-    <div id="footer-container">
-        <div>&copy; Meeting everything for intelligence</div>
-    </div>
+    <p class="text-right">&copy; Meeting everything for intelligence</p>
 </template>
 
-<script setup></script>
+<script setup>
+</script>
 
 <style scoped>
-#footer-container{
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    bottom: 0px;
-}
 </style>

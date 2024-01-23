@@ -14,7 +14,8 @@
     border: 1px solid black;
     display: flex;
     flex-direction: column;
-
+    max-width: 350px;
+    min-width: 350px;
 }
 #body-img-img{
     width: 200px;

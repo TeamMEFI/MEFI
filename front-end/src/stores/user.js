@@ -1,10 +1,10 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 export const useUserStore = defineStore('user', () => {
 
-  const isLogin = ref(false)
+  const isLogin = ref(true)
   const router = useRouter()
   const userInfo = ref({
     id:'ooo@gmail.com',

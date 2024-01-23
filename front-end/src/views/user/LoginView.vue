@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import router from "@/router"
+import router from "@/router/index.js"
 import { useUserStore } from "@/stores/user"
 import { ref } from "vue"
 
