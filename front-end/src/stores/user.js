@@ -11,6 +11,7 @@ export const useUserStore = defineStore('user', () => {
     name:'ooo',
     department:'department',
     position:'position',
+    status:'green',
   })
 
   const signup = function(){
