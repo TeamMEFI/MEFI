@@ -1,3 +1,9 @@
+/* 대부분의 내부 내용은 vuetify의 커스터 마이징 혹은
+페이지 전처리(width, heith)용이므로 용도를 각 상단에
+주석으로 기입하면 좋음 */
+
+
+/* 페이지 전체화면 처리 */
 html, body {
   width: 100% !important;
   height: 100% !important;
@@ -11,10 +17,29 @@ a {
   padding: 3px;
 }
 
-.pa-0 {
-  padding: 0px !important;
+.bgcolor-setting {
+  background-color: #45566F;
 }
 
 html::-webkit-scrollbar {
   display: none;
+}
+
+/* 리스트 배경색 지정 */
+.list-bg-color {
+  background-color: #ffffff;
+}
+
+
+/* main 위치 이동... 기존 profile side가 너무 좁아서 늘리는 과정에서 파생됨. */
+.w-15 {
+  width: 15% !important;
+}
+
+.w-85 {
+  width: 85% !important;
+}
+
+.v-main {
+  padding-left: 15% !important;
 }
