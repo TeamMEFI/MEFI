@@ -4,6 +4,7 @@
         <HeaderVue id="setting-header" :option="option" @close="close"></HeaderVue>
         <div id="setting-body">
             <!-- 선택지 -->
+            
             <OptionsVue id="body-option" @change-option="optionChange"></OptionsVue>
             <!-- 선택지에 따른 컴포넌트 -->
             <div id="body-content">
@@ -12,7 +13,7 @@
                 <!-- 비밀번호 변경 -->
                 <ChangePwdVue v-if="option===2"></ChangePwdVue>
                 <!-- 회원 탈퇴 -->
-                <UserDelete v-if="option===3"></UserDelete>
+                <UserDelete v-if="option===3" @close="close"></UserDelete>
             </div>
         </div>
     </div>
@@ -38,7 +39,6 @@ const close = () => {
 
 <style scoped>
 #setting-header{
-    width: 600px;
     height: 30px;
     display: flex;
     flex-direction: row;
@@ -54,6 +54,6 @@ const close = () => {
     color: white;
 }
 #body-content{
-    height: 400px;
+    min-height: 400px;
 }
 </style>
