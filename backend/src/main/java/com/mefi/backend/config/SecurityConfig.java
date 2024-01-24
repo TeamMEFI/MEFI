@@ -40,6 +40,8 @@ public class SecurityConfig {
 
                         // 작성된 경로 모든 사용자 접근 허용
                         .requestMatchers("/", "/users").permitAll()
+                        // Swagger 접근 허용
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                         // 이외 인증된 사용자만 접근 허용
                         .anyRequest().authenticated());
