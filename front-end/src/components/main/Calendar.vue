@@ -1,18 +1,18 @@
 <template>
   <v-container>
-    <v-row class="d-flex align-center">
+    <v-row class="d-flex align-center justify-center ma-10">
       <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
       <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
       <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
     </v-row>
-    <v-row> 
+    <v-row class="d-flex align-center justify-center">
       <v-col v-for="i in weekday" class="day-header" style="flex-grow: 0;">
         <div>
           {{ dayofweek[i] }}
         </div>
       </v-col>
     </v-row>
-    <v-row v-for="week in cal">
+    <v-row v-for="week in cal" class="d-flex align-center justify-center">
       <v-col v-for="i in weekday" class="day"  style="flex-grow: 0;" :class="week[i]['type']" >
           <div >
               {{ week[i]['date'] }}
@@ -124,24 +124,22 @@ const cal = ref(makecalendar(year.value, month.value))
 
 <style scoped>
 .day {
-    max-width: 150px;
-    min-width: 100px;
-    height: 100px;
+    max-width: 180px;
+    min-width: 180px;
+    min-height: 130px;
+    max-height: 130px;
     border: 1px solid black;
     text-align: center;
     flex-grow: initial !important;
 }
 .day-header {
-  max-width: 150px;
-  min-width: 100px;
+  max-width: 180px;
+  min-width: 180px;
   text-align: center;
   background-color: #f2f2f2;
   border: 0.2px solid #495464;
 }
 .not_current {
-  background-color: #495464;
-}
-.v-row {
-  justify-content: center;
+  background-color: #e0e0e0;
 }
 </style>

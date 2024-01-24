@@ -43,6 +43,14 @@ html::-webkit-scrollbar {
   height: 15% !important;
 }
 
+.h-30 {
+  height: 30% !important;
+}
+
+.h-70 {
+  height: 70% !important;
+}
+
 .h-85 {
   height: 85% !important;
 }
