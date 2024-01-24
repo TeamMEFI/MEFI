@@ -16,7 +16,7 @@
     </v-main>
 
     <!-- 풋터 -->
-    <v-footer app class="w-100">
+    <v-footer app class="w-100 elevation-15" color="#f0f0f0">
       <FooterVue/>
     </v-footer>
   </v-app>
