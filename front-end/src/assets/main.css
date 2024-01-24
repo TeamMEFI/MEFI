@@ -17,19 +17,18 @@ a {
   padding: 3px;
 }
 
-.bgcolor-setting {
-  background-color: #45566F;
-}
-
 html::-webkit-scrollbar {
   display: none;
 }
 
-/* 리스트 배경색 지정 */
-.list-bg-color {
+/* 배경색 지정 */
+.bg-white {
   background-color: #ffffff;
 }
 
+.bg-main{
+  background-color: #45566F;
+}
 
 /* main 위치 이동... 기존 profile side가 너무 좁아서 늘리는 과정에서 파생됨. */
 .w-15 {
@@ -40,6 +39,19 @@ html::-webkit-scrollbar {
   width: 85% !important;
 }
 
+.h-15 {
+  height: 15% !important;
+}
+
+.h-85 {
+  height: 85% !important;
+}
+
 .v-main {
   padding-left: 15% !important;
+}
+
+/* 글씨 색상 지정용 */
+.text-white {
+  color: #ffffff;
 }
