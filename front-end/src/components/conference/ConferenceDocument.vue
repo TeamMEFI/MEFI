@@ -1,13 +1,13 @@
 <template>
   <div>
     <div ref="editorContainer" id="editor"></div>
-    <v-btn @click="createPDF">버튼</v-btn>
+    <v-btn @click="deleteContent">버튼</v-btn>
   </div>
 </template>
 
 <script setup>
 import axios from 'axios'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 // yjs 사용하기
@@ -23,6 +23,9 @@ import MarkdownShortcuts from 'quill-markdown-shortcuts'
 // import { quillEditor } from "vue-quill-editor";
 
 const route = useRoute()
+const props = defineProps({
+  conferenceState: Boolean
+})
 
 Quill.register('modules/cursors', QuillCursors)
 Quill.register('modules/markdownShortcuts', MarkdownShortcuts)
@@ -39,6 +42,8 @@ const provider = new WebsocketProvider(
 // Yjs + Quill 연동
 const ytext = ydoc.getText('quill')
 const editorContainer = ref(null)
+                             
+const binding = ref(null)
 
 onMounted(() => {
   const editor = new Quill(editorContainer.value, {
@@ -65,10 +70,10 @@ onMounted(() => {
         userOnly: true
       }
     },
-    placeholder: 'Start collaborating...'
+    placeholder: '회의 문서를 작성해 주세요...!'
   })
 
-  const binding = new QuillBinding(ytext, editor, provider.awareness)
+  binding.value = new QuillBinding(ytext, editor, provider.awareness)
 
   // 문서 작성 중인 이름 및 색상 설정
   provider.awareness.setLocalStateField('user', {
@@ -76,15 +81,19 @@ onMounted(() => {
     // 색깔 랜덤 할당
     color: `#${Math.floor(Math.random() * 16777215).toString(16)}`
   })
-
-  // window.example = { provider, ydoc, ytext, binding, Y };
-
-  onBeforeUnmount(() => {
-    binding.destroy()
-  })
-
-  console.log(`ws${location.protocol.slice(4)}//${location.host}/ws`)
 })
+
+onBeforeUnmount(() => {
+  binding.value.destroy()
+})
+
+const deleteContent = () => {
+  const qlEditor = document.querySelector(".ql-editor");
+
+  while (qlEditor.firstChild) {
+    qlEditor.removeChild(qlEditor.firstChild);
+  }
+}
 
 // const connectState = ref("Disconnect");
 
@@ -98,11 +107,20 @@ onMounted(() => {
 //   }
 // };
 
+watch(
+  () => props.conferenceState,
+  () => {
+    if (!props.conferenceState) {
+      createPDF()
+    }
+  }
+)
+
 // 공동 작업 문서 PDF 파일로 변환하여 저장
 const createPDF = () => {
   // editorContainer을 canvas객체로 변환
   html2canvas(editorContainer.value).then((canvas) => {
-    const filename = 'OTA-REPORT_' + Date.now() + '.pdf'
+    const filename = 'Meeting_' + Date.now() + '.pdf'
     const doc = new jsPDF('p', 'mm', 'a4') // jsPDF 객체 생성
     const imgData = canvas.toDataURL('image/png') // canvas를 .png 이미지로 변환
     const imgWidth = 210
@@ -111,7 +129,7 @@ const createPDF = () => {
 
     let position = 0
     let heightLeft = imgHeight
-
+                                  
     // 첫 페이지 생성
     doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
     heightLeft -= pageHeight
@@ -124,30 +142,35 @@ const createPDF = () => {
       heightLeft -= pageHeight
     }
 
-    doc.save(filename)
+    // 로컬에 문서 pdf 파일 저장
+    // doc.save(filename)
+
+    // 회의 문서 내용 모두 삭제
+    deleteContent()
 
     // 서버로 axios 요청
     // 공동 작업 문서를 pdf(binary) 형식으로 보냄
     // 백엔드와 소통하여 axios 연결할 예정
-    // const formData = new FormData()
-    // const file = doc.output('blob', filename)
+    const formData = new FormData()
+    const file = doc.output('blob', filename)
 
-    // formData.append('file', file)
+    formData.append('file', file)
 
-    // console.log(...formData)
+    console.log(...formData)
 
-    // axios({
-    //   url: 'http://localhost:5000/document',
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data'
-    //   },
-    //   data: formData
-    // })
-    //   .then((res) => {
-    //     console.log(res.data)
-    //   })
-    //   .catch((err) => console.error(err))
+    axios({
+      url: 'http://localhost:5000/document',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      data: formData
+    })
+      .then((res) => {
+        console.log(res.data)
+        router.push({ name: 'home' })
+      })
+      .catch((err) => console.error(err))
   })
 }
 </script>
@@ -155,6 +178,11 @@ const createPDF = () => {
 <style scoped>
 #editor {
   background-color: white;
-  height: 90%;
+  color: black;
+}
+
+/* quill 기본 css 오버라이딩 */
+.ql-container {
+  height: 75vh;
 }
 </style>
