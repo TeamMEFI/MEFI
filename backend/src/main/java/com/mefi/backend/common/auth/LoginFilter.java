@@ -15,11 +15,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.util.Collection;
 import java.util.Iterator;
 
-@RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+
+    // 생성자 주입 (Security 기본 로그인 URL 수정을 위해 직접 작성)
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        this.setFilterProcessesUrl("/users/login");
+    }
 
     @Override
     public Authentication attemptAuthentication(
@@ -44,8 +50,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 특정 유저 확인
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        // 유저 추출
-        String username = customUserDetails.getUsername();
+        // 유저 email 추출
+        String email = customUserDetails.getUsername();
 
         // 유저 position 추출
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -54,7 +60,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String position = auth.getAuthority();
 
         // JWT 발급 (아이디, Role, 만료 기간)
-        String token = jwtUtil.createJwt(username, position, 60*60*10L);
+        String token = jwtUtil.createJwt(email, position, 60*60*10L);
 
         // 응답 헤더에 담기 (키, 인증 접두사 + 토큰)
         response.addHeader("Authorization", "Bearer " + token);
