@@ -3,6 +3,17 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mefi?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
+<<<<<<< HEAD
+    password: Wnstn5460!
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+logging.level:
+    org.hibernate.SQL: debug # logger로 Hibernate 실행 SQL을 남긴다
+=======
     password: wd29684280$$
   jpa:
     properties:
@@ -12,3 +23,4 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug # logger로 Hibernate 실행 SQL을 남긴다
+>>>>>>> c309764f08e0bedc0f0f1b82c2965422533e9c5a

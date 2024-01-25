@@ -33,8 +33,7 @@
       <input v-model="chatInput" />
       <v-btn @click="sendChat(chatInput)" class="my-2" rounded="sm" size="large">Send chat</v-btn>
       <v-btn @click="leaveSession" class="my-2" rounded="sm" size="large">Leave session</v-btn>
-      <v-btn v-if="!screenShared" @click="publishScreenShare">screen share</v-btn>
-      <div>{{ screenShared }}</div>
+      <v-btn @click="check(mySessionId)" class="my-2" rounded="sm" size="large">Check</v-btn>
     </div>
     <!-- 내 카메라 아직 켜지지 않았으면 로딩 스피너 출력 -->
     <div v-else class="loading">
@@ -46,16 +45,18 @@
 
 <script setup>
 import axios from 'axios'
-import { ref, onBeforeUnmount, onMounted, defineProps, onUpdated } from 'vue'
+import { ref, onBeforeUnmount, onMounted, defineProps, onUpdated, watch } from 'vue'
 import { OpenVidu } from 'openvidu-browser'
 import UserVideo from './UserVideo.vue'
+import { useRouter } from 'vue-router'
 
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000/'
 
+const router = useRouter()
 const props = defineProps({
-  overlay: String
+  videoStatus: Object
 })
 
 // 1, 2번 layout은 true | 3번 layout은 false
@@ -66,9 +67,6 @@ const onSpeak = ref(false)
 
 // 말하고 있는 참가자 id 배열
 const onSpeakSub = ref([])
-
-// 화면 공유 중인지 검사
-const screenShared = ref(false)
 
 const chatInput = ref('')
 const chats = ref([])
@@ -102,12 +100,28 @@ onUpdated(() => {
 
 // 레이아웃에 따라 ref 변수 변경
 const changeOverlay = () => {
-  if (props.overlay.slice(-1) === '3') {
+  if (props.videoStatus.overlay.slice(-1) === '3') {
     isSide.value = false
   } else {
     isSide.value = true
   }
 }
+
+// 화면 공유 여부 확인
+watch(
+  () => props.videoStatus.screenShared,
+  () => {
+    publishScreenShare()
+  }
+)
+
+// 세션 나가기 여부 확인
+watch(
+  () => props.videoStatus.leaveSession,
+  () => {
+    leaveSession()
+  }
+)
 
 // 채팅 보내는 함수
 const sendChat = (content) => {
@@ -115,7 +129,7 @@ const sendChat = (content) => {
   if (!content) return
 
   // session signal 메서드를 통해
-  // 세션 내의 참가자에게 'chat' 타입의 시그널을 임의의 데이터와 보냄 
+  // 세션 내의 참가자에게 'chat' 타입의 시그널을 임의의 데이터와 보냄
   sessionCamera.value
     .signal({
       data: `${myUserName.value}: ${content}`,
@@ -191,7 +205,6 @@ const joinSession = () => {
     onSpeak.value = true
     // 말하고 있는 사람 connection id를 onSpeakSub 배열에 삽입
     onSpeakSub.value.push(event.connection.connectionId)
-    console.log('User ' + event.connection.connectionId + ' start speaking')
   })
 
   // 마이크 입력 종료 이벤트
@@ -199,7 +212,6 @@ const joinSession = () => {
     onSpeak.value = false
     // onSpeakSub 배열에서 마이크 입력이 없는 connection id를 삭제
     onSpeakSub.value.splice(event.connection.connectionId, 1)
-    console.log('User ' + event.connection.connectionId + ' stop speaking')
   })
 
   // 미디어 서버와 카메라 세션을 연결
@@ -257,7 +269,7 @@ const joinSession = () => {
 }
 
 // 세션 퇴장
-const leaveSession = () => {
+const leaveSession = async () => {
   if (sessionCamera.value) sessionCamera.value.disconnect()
   if (sessionScreen.value) sessionScreen.value.disconnect()
 
@@ -268,9 +280,8 @@ const leaveSession = () => {
   publisherScreen.value = null
   subscribers.value = []
   OVCamera.value = null
-  screenShared.value = false
 
-  window.removeEventListener('beforeunload', leaveSession)
+  check(mySessionId.value);
 }
 
 // 화면 공유
@@ -287,8 +298,6 @@ const publishScreenShare = () => {
 
   // 화면 공유 권한이 있을 경우
   publisherScreen.once('accessAllowed', (event) => {
-    screenShared.value = true
-
     // 화면 공유를 중지하면
     // 화면 공유 스트림 삭제 후 카메라 스트림 생성
     publisherScreen.stream
@@ -297,11 +306,9 @@ const publishScreenShare = () => {
       .addEventListener('ended', () => {
         console.log('User pressed the "Stop sharing" button')
         sessionScreen.value.unpublish(publisherScreen)
-        sessionCamera.value.publish(publisher.value);
-
-        screenShared.value = false
+        sessionCamera.value.publish(publisher.value)
       })
-    
+
     // 카메라 스트림 삭제 및 화면 공유 스트림 생성
     sessionCamera.value.unpublish(publisher.value)
     sessionScreen.value.publish(publisherScreen)
@@ -341,6 +348,28 @@ const createToken = async (sessionId) => {
     }
   )
   return response.data
+}
+
+const emit = defineEmits(['endConference'])
+
+// 회의가 종료되었는지 확인하는 메서드
+// response.status가 200이면 회의 진행 중
+// response.status가 204이면 회의 종료
+const check = async (sessionId) => {
+  const response = await axios.post( 
+    APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/',
+    {},
+    {
+      headers: { 'Content-Type': 'application/json' }
+    }
+  )
+
+  // 회의 종료 시 상위 컴포넌트에 알림
+  if (response.status == 204) {
+    emit('endConference')
+  } else {
+    router.push({ name: 'home' })
+  }
 }
 
 onBeforeUnmount(() => {
