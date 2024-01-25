@@ -26,12 +26,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             HttpServletRequest request,
             HttpServletResponse response) throws AuthenticationException {
 
-        // 요청을 가로채 클라이언트 요청에서 username (userEmail), password (userPassword) 추출
-        String userEmail = obtainUsername(request);
-        String userPassword = obtainPassword(request);
+        // 요청을 가로채 클라이언트 요청에서 email, password 추출
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
 
-        // username (userEmail), password (userPassword) 검증하기 위해 authToken 객체에 담기
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userEmail, userPassword, null);
+        // email, password 검증하기 위해 authToken 객체에 담기
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
 
         // 검증을 위해 authToken을 AuthenticationManager로 전달
         return authenticationManager.authenticate(authToken);
