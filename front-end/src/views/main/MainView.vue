@@ -11,16 +11,16 @@
         </v-col>
   
         <!-- 오른쪽(4) -->
-        <v-col cols="4">
+        <v-col cols="4" class="w-100 h-100 ma-0">
           <!-- 오른쪽 컴포넌트를 여기에 추가하세요 -->
-          <v-container class="w-100 h-100">
+          <v-container class="w-100 h-100 d-flex flex-column">
             <v-row class="w-100 h-70">
-              <v-col cols="12">
+              <v-col cols="12" class="w-100 ma-0">
                 <Schedule/>
               </v-col>
             </v-row>
             <v-row class="w-100 h-30">
-              <v-col cols="12">
+              <v-col cols="12" class="w-100 ma-0">
                 <SearchDoc/>
               </v-col>
             </v-row>
