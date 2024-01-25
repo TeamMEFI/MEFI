@@ -7,7 +7,7 @@
 <script setup>
 import axios from 'axios'
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 // yjs 사용하기
 import * as Y from 'yjs'
@@ -22,6 +22,7 @@ import MarkdownShortcuts from 'quill-markdown-shortcuts'
 // import { quillEditor } from "vue-quill-editor";
 
 const route = useRoute()
+const router = useRouter()
 const props = defineProps({
   conferenceState: Boolean
 })
