@@ -1,7 +1,6 @@
 <template>
   <div>
     <div ref="editorContainer" id="editor"></div>
-    <v-btn @click="deleteContent">버튼</v-btn>
   </div>
 </template>
 
@@ -87,14 +86,8 @@ onBeforeUnmount(() => {
   binding.value.destroy()
 })
 
-const deleteContent = () => {
-  const qlEditor = document.querySelector(".ql-editor");
-
-  while (qlEditor.firstChild) {
-    qlEditor.removeChild(qlEditor.firstChild);
-  }
-}
-
+// 공동 문서 작업 연결 종료
+// 추후 사용할 가능성이 있으므로 주석처리 함
 // const connectState = ref("Disconnect");
 
 // const connect = () => {
@@ -143,6 +136,7 @@ const createPDF = () => {
     }
 
     // 로컬에 문서 pdf 파일 저장
+    // 추후 사용을 위해 주석 처리함
     // doc.save(filename)
 
     // 회의 문서 내용 모두 삭제
