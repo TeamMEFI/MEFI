@@ -1,14 +1,14 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
-import { userLogin } from '@/api/user'
+import { userLogin } from '@/api/user.js'
 
 
 // user store
 // login, signup, user info, token regenerate
 export const useUserStore = defineStore('user', () => {
 
-  const isLogin = ref(true)
+  const isLogin = ref(false)
   const router = useRouter()
   const userInfo = ref({
     email:'ooo@gmail.com',
