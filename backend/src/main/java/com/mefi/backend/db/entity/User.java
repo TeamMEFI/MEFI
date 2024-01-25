@@ -3,6 +3,7 @@ package com.mefi.backend.db.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -66,4 +67,13 @@ public class User {
     // 회의와 연결 테이블
     @OneToMany(mappedBy = "user")
     private List<UserConference> userConferences = new ArrayList<>();
+
+    @Builder
+    public User(String email, String password, String name, String dept, String position) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.dept = dept;
+        this.position = position;
+    }
 }
