@@ -2,7 +2,11 @@
   <v-app class="bg-grey-darken-4">
     <div :class="['conference-view', layoutType]">
       <v-infinite-scroll id="conference-video" :height="layoutType.slice(-1) === '3' ? '' : '90vh'">
-        <ConferenceVideo :videoStatus="videoStatus" @end-conference="changeConferenceState" />
+        <ConferenceVideo
+          :videoStatus="videoStatus"
+          @end-conference="changeConferenceState"
+          @exit-chatBox="changeChatOverlay"
+        />
         <template v-slot:loading></template>
       </v-infinite-scroll>
       <div id="conference-document">
@@ -22,13 +26,13 @@
       </template>
 
       <v-list class="d-flex justify-space-around px-2 bg-grey-darken-4 rounded-lg">
-        <v-list-item type="button" align="center">
-          <font-awesome-icon v-if="true" :icon="['fas', 'video']" style="color: #ffffff" />
+        <v-list-item type="button" align="center" @click="changeCameraStatus">
+          <font-awesome-icon v-if="videoStatus.cameraStatus" :icon="['fas', 'video']" style="color: #ffffff" />
           <font-awesome-icon v-else :icon="['fas', 'video-slash']" style="color: #ffffff" />
           <p class="text-overline">카메라</p>
         </v-list-item>
-        <v-list-item type="button" align="center">
-          <font-awesome-icon v-if="true" :icon="['fas', 'microphone']" style="color: #ffffff" />
+        <v-list-item type="button" align="center" @click="changeVoiceStatus">
+          <font-awesome-icon v-if="videoStatus.voiceStatus" :icon="['fas', 'microphone']" style="color: #ffffff" />
           <font-awesome-icon v-else :icon="['fas', 'microphone-slash']" style="color: #ffffff" />
           <p class="text-overline">마이크</p>
         </v-list-item>
@@ -69,7 +73,7 @@
 </template>
 
 <script setup>
-import { ref, mergeProps } from 'vue'
+import { ref } from 'vue'
 import ConferenceVideo from '@/components/conference/ConferenceVideo.vue'
 import ConferenceDocument from '@/components/conference/ConferenceDocument.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -84,11 +88,19 @@ const conferenceState = ref(true)
 const videoStatus = ref({
   layoutType: 'conference-view3',
   screenShared: false,
-  videoStatus: true,
+  cameraStatus: true,
   voiceStatus: true,
   leaveSession: false,
   chatLayout: false
 })
+
+const changeCameraStatus = () => {
+  videoStatus.value.cameraStatus = !videoStatus.value.cameraStatus
+}
+
+const changeVoiceStatus = () => {
+  videoStatus.value.voiceStatus = !videoStatus.value.voiceStatus
+}
 
 const changeChatOverlay = () => {
   videoStatus.value.chatLayout = !videoStatus.value.chatLayout
