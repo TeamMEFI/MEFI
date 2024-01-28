@@ -1,7 +1,9 @@
 package com.mefi.backend.config;
 
+import com.mefi.backend.common.auth.JWTFilter;
 import com.mefi.backend.common.auth.LoginFilter;
 import com.mefi.backend.common.util.JWTUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -56,7 +63,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
 
                         // 작성된 경로 모든 사용자 접근 허용
-                        .requestMatchers("/", "/users").permitAll()
+                        .requestMatchers("/", "/users", "/users/login", "/users/**").permitAll()
                         // Swagger 접근 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
@@ -65,6 +72,9 @@ public class SecurityConfig {
 
         // 필터 등록
         http
+                // 해당 필터 이전에 수행 (수행 할 필터, 기준 필터)
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
+
                 // 해당 필터 자리에서 수행 (수행 할 필터, 대체 필터 자리)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
@@ -72,6 +82,36 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        // Cors 설정 (Security Filter를 위한 Cors 설정)
+        http
+                .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        // 클라이언트에서 온 요청 중에서 허용할 도메인 설정
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+
+                        // 모든 HTTP 메서드 허용 설정
+                        configuration.setAllowedMethods(Collections.singletonList("*"));
+
+                        // 자격 증명을 사용으로 설정
+                        configuration.setAllowCredentials(true);
+
+                        // 모든 HTTP 헤더 허용 설정
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+
+                        // 허용할 시간을 1시간 설정
+                        configuration.setMaxAge(3600L);
+
+                        // 브라우저 응답으로 전달할 헤더 설정
+                        configuration.setExposedHeaders(List.of("Authorization", "accessToken", "refreshToken"));
+                        return configuration;
+                    }
+                })));
 
         return http.build();
     }
