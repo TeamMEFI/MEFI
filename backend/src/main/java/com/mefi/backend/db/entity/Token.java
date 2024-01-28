@@ -1,11 +1,14 @@
 package com.mefi.backend.db.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name ="token")
 @Getter
+@NoArgsConstructor
 public class Token {
     @Id // PK
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto Increment
@@ -17,4 +20,13 @@ public class Token {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Builder
+    public Token(Long userId, String refreshToken) {
+        this.userId = userId;
+        this.refreshToken = refreshToken;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
