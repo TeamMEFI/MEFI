@@ -47,6 +47,7 @@ const handleMouseOut = () => {
   height: 100%;
   /* 가로 1.2 | 세로 1 */
   aspect-ratio: 1.2;
+  border-radius: 10px;
 }
 
 /* 마우스 hover 시 username 출력  */
