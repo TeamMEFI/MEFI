@@ -3,6 +3,8 @@ package com.mefi.backend.config;
 import com.mefi.backend.common.auth.JWTFilter;
 import com.mefi.backend.common.auth.LoginFilter;
 import com.mefi.backend.common.util.JWTUtil;
+import com.mefi.backend.db.repository.TokenRepository;
+import com.mefi.backend.db.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +30,8 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
     // AuthenticationManager 등록
     // 데이터베이스에서 회원 정보를 가져와 검증 수행하는 클래스
@@ -76,7 +80,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
 
                 // 해당 필터 자리에서 수행 (수행 할 필터, 대체 필터 자리)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,tokenRepository,userRepository), UsernamePasswordAuthenticationFilter.class);
 
         // 세션 설정 (JWT를 통한 인증/인가를 위해서 세션을 STATELESS 상태로 설정)
         http
