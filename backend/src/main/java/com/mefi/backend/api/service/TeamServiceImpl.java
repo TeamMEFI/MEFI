@@ -1,11 +1,13 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.TeamReqDto;
+import com.mefi.backend.api.response.TeamResDto;
 import com.mefi.backend.db.entity.Team;
 import com.mefi.backend.db.entity.User;
 import com.mefi.backend.db.entity.UserRole;
 import com.mefi.backend.db.entity.UserTeam;
 import com.mefi.backend.db.repository.TeamRepository;
+import com.mefi.backend.db.repository.TeamUserRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ public class TeamServiceImpl implements TeamService{
 
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
-//    private final
+    private final TeamUserRepository teamUserRepository;
 
     @Override
     @Transactional
@@ -55,5 +57,12 @@ public class TeamServiceImpl implements TeamService{
 
         // 팀 저장
         Team newTeam = teamRepository.save(team);
+    }
+
+    // 팀 목록 조회 서비스
+    @Override
+    public List<TeamResDto> getTeamList(Long userId) {
+
+        return teamUserRepository.findTeamsByUserId(userId);
     }
 }
