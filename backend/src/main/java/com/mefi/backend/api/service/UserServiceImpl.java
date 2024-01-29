@@ -33,6 +33,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    // 회원탈퇴
+    @Override
+    @Transactional
+    public void withdraw(User user) {
+        userRepository.delete(user);
+    }
+
     // 식별 ID로 유저 조회
     @Override
     public User findById(Long id) {
