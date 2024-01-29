@@ -31,6 +31,11 @@ html::-webkit-scrollbar {
 }
 
 /* main 위치 이동... 기존 profile side가 너무 좁아서 늘리는 과정에서 파생됨. */
+.w-10 {
+  width: 10% !important;
+}
+
+
 .w-15 {
   width: 15% !important;
 }
@@ -45,6 +50,14 @@ html::-webkit-scrollbar {
 
 .h-30 {
   height: 30% !important;
+}
+
+.h-40 {
+  height: 40% !important;
+}
+
+.h-60 {
+  height: 60% !important;
 }
 
 .h-70 {
