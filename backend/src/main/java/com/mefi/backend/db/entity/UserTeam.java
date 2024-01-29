@@ -1,12 +1,17 @@
 package com.mefi.backend.db.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * 유저-팀 연관테이블
  */
 @Entity
 @Table(name = "user_team")
+@NoArgsConstructor
+@ToString
 public class UserTeam {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,5 +25,12 @@ public class UserTeam {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Team team;
+
+    @Builder
+    public UserTeam(User user, Team team, UserRole role){
+        this.user = user;
+        this.team = team;
+        this.role = role;
+    }
 
 }
