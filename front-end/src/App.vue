@@ -12,7 +12,7 @@ const router = useRouter()
 const store = useUserStore()
 
 router.beforeEach((to, from)=>{
-  if(!store.isLogin && to.name!='login' && to.name!='signup'){
+  if(!store.isLogin && to.name!='login' && to.name!='signup' && to.name!='email' && to.name!='search-password'){
     return {name:'login'}
   }
 })
