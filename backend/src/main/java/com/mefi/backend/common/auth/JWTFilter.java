@@ -2,6 +2,7 @@ package com.mefi.backend.common.auth;
 
 import com.mefi.backend.common.util.JWTUtil;
 import com.mefi.backend.db.entity.User;
+import com.mefi.backend.db.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -54,11 +56,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String position = jwtUtil.getPosition(token);
 
         // user 생성하여 값 초기화
-        User user = User.builder()
-                .email(email)
-                .password("${spring.jwt.secret}")
-                .position(position)
-                .build();
+        User user = userRepository.findByEmail(email);
 
         // UserDetails 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(user);
