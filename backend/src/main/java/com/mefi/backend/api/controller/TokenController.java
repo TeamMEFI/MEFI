@@ -40,17 +40,10 @@ public class TokenController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         // 식별 ID로 유저 조회
-        Optional<User> user = userService.findById(userDetails.getUserId());
+        User user = userService.findById(userDetails.getUserId());
 
-        // 유저가 존재하는 경우
-        if(user.isPresent()) {
-
-            // 유저 리프레시 토큰으로 엑세스 토큰 재발급
-            CreateAccessTokenResDto accessToken = tokenService.createAccessToken(user.get(), refreshToken);
-            return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0,accessToken));
-        }
-
-        // 유저가 없는 경우
-        return null;
+        // 유저 리프레시 토큰으로 엑세스 토큰 재발급
+        CreateAccessTokenResDto accessToken = tokenService.createAccessToken(user, refreshToken);
+        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0,accessToken));
     }
 }
