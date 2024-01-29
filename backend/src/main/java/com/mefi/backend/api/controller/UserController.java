@@ -21,11 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-
     @Operation(summary = "회원가입", description = "/users\n\n 사용자의 정보를 통해 회원가입 한다.")
     @PostMapping("")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
-    public ResponseEntity<? extends BaseResponseBody> createUser(@RequestBody JoinReqDto joinReqDto) {
+    public ResponseEntity<? extends BaseResponseBody> join(@RequestBody JoinReqDto joinReqDto) {
 
         // 회원가입
         userService.join(joinReqDto);
