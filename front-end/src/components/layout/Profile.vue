@@ -9,12 +9,12 @@
                   <v-spacer></v-spacer>
                   <v-btn icon>
                       <v-icon>mdi-dots-vertical</v-icon>
+                      <v-dialog activator="parent" v-model="dialog" persistent width="1000" height="700">
+                        <TeamCreateDialog @close-dialog="dialog=false"/>
+                      </v-dialog>
                   </v-btn>
               </v-toolbar>
               <v-list :items="items"></v-list>
-              <v-dialog activator="parent" v-model="dialog" persistent width="1000" height="700">
-                <TeamCreateDialog @close-dialog="dialog=false"/>
-              </v-dialog>
           </div>
       </div>
   </v-container>
@@ -34,17 +34,13 @@ const items = ref([
           title: 'Item #2',
           value: 2,
         },
-        {
-          title: 'Item #3',
-          value: 3,
-        },
       ])
 </script>
 
 <style scoped>
 .body-img-img{
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
     border-radius: 50%;
     margin: 10px;
 }

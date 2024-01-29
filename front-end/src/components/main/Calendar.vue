@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row class="d-flex align-center justify-center ma-10">
+    <v-row class="d-flex align-center justify-center ma-3">
       <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
       <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
       <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
@@ -124,17 +124,17 @@ const cal = ref(makecalendar(year.value, month.value))
 
 <style scoped>
 .day {
-    max-width: 180px;
-    min-width: 180px;
-    min-height: 130px;
-    max-height: 130px;
+    max-width: 130px;
+    min-width: 130px;
+    min-height: 100px;
+    max-height: 100px;
     border: 1px solid black;
     text-align: center;
     flex-grow: initial !important;
 }
 .day-header {
-  max-width: 180px;
-  min-width: 180px;
+  max-width: 130px;
+  min-width: 130px;
   text-align: center;
   background-color: #f2f2f2;
   border: 0.2px solid #495464;
