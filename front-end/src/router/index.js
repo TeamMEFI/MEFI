@@ -1,17 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/main/HomeView.vue'
-import LoginView from "../views/user/LoginView.vue"
-import SignupView from "../views/user/SignupView.vue"
-import ConferenceView from "../views/conference/ConferenceView.vue"
-
+import HomeView from '@/views/HomeView.vue'
+import LoginView from "@/views/user/LoginView.vue"
+import SignupView from "@/views/user/SignupView.vue"
+import ConferenceView from "@/views/conference/ConferenceView.vue"
+import MainView from "@/views/main/MainView.vue"
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      children: [
+        {
+          path: '/main',
+          name: 'main',
+          component: MainView
+        },
+
+      ]
     },
+
     {
       path: '/login',
       name: 'login',

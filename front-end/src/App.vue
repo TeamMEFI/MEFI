@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <RouterView></RouterView>
+  <div class="wrap">
+    <RouterView/>
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import {useUserStore} from "./stores/user.js"
 const router = useRouter()
 const store = useUserStore()
 
-router.beforeEach((to,from)=>{
+router.beforeEach((to, from)=>{
   if(!store.isLogin && to.name!='login' && to.name!='signup'){
     return {name:'login'}
   }
@@ -19,8 +19,4 @@ router.beforeEach((to,from)=>{
 </script>
 
 <style scoped>
-.container{
-  width: 100%;
-  height: 100%;
-}
 </style>

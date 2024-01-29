@@ -1,40 +1,53 @@
 <template>
-  <div id="main-container">
+  <div>
+    <v-btn v-if="selectedVideo" style="width: 0px" class="cancleButton bg-grey-darken-4" @click="cancleExpand"
+      ><font-awesome-icon :icon="['fas', 'xmark']" style="color: #ffffff" />
+    </v-btn>
     <!-- 내 카메라가 켜졌을 때 화상회의 열기 -->
     <div id="session" v-if="mainStreamManager">
       <!-- isSide ref 변수에 따라 class를 동적 할당하여 스타일 변경 -->
-      <div id="video-container" ref="videos" :class="[isSide ? 'videos' : 'upSideVideos']">
+      <div
+        id="video-container"
+        ref="videos"
+        :class="['bg-grey-darken-4', isSide ? 'videos' : 'upSideVideos']"
+      >
         <UserVideo
           :stream-manager="mainStreamManager"
           :class="[
             isSide ? 'video' : 'upSideVideo',
             // 마이크 입력을 인식하면 클래스 적용
-            onSpeak ? 'toRight' : ''
+            onSpeak ? 'toRight' : '',
+            selectedVideo === 'mainStream' ? 'selectedVideo' : '',
           ]"
+          @click="expandVideo('mainStream')"
         />
         <UserVideo
           v-for="sub in subscribers"
           :class="[
             isSide ? 'video' : 'upSideVideo',
             // 말하고 있는 참가자에 따라 class 속성 변경
-            onSpeakSub.includes(sub.stream.connection.connectionId) ? 'toRight' : ''
+            onSpeakSub.includes(sub.stream.connection.connectionId) ? 'toRight' : '',
+            selectedVideo === sub.stream.connection.connectionId ? 'selectedVideo' : ''
           ]"
           :key="sub.stream.connection.connectionId"
           :stream-manager="sub"
-          @click.native="updateMainVideoStreamManager(sub)"
+          @click="expandVideo(sub.stream.connection.connectionId)"
         />
       </div>
-      <v-infinite-scroll id="chatBox" :height="100" :onLoad="ok">
-        <template v-for="chat in chats">
-          <div>{{ chat }}</div>
-        </template>
-        <template v-slot:loading></template>
-      </v-infinite-scroll>
-      <v-btn @click="sendChat('default')" class="my-2" rounded="sm" size="large">Send chat</v-btn>
-      <v-btn @click="leaveSession" class="my-2" rounded="sm" size="large">Leave session</v-btn>
+      <v-overlay persistent :model-value="chatOverlay" class="bg-transparent align-end justify-end">
+        <div>X</div>
+        <v-infinite-scroll id="chatBox" class="border-width-5" height="50vh">
+          <template v-for="chat in chats">
+            <div>{{ chat }}</div>
+          </template>
+          <template v-slot:loading></template>
+        </v-infinite-scroll>
+        <input class="bg-grey" v-model="chatInput" />
+        <v-btn @click="sendChat(chatInput)" class="my-2" rounded="sm" size="small">send</v-btn>
+      </v-overlay>
     </div>
-    <!-- 내 카메라 아직 켜지지 않았으면 당근 출력 -->
-    <div v-else class="loading">
+    <!-- 내 카메라 아직 켜지지 않았으면 로딩 스피너 출력 -->
+    <div v-else class="loading bg-grey-darken-4">
       <v-progress-circular indeterminate size="64" width="6"></v-progress-circular>
       <v-btn @click="joinSession" class="my-2" rounded="sm" size="large">Join session</v-btn>
     </div>
@@ -43,16 +56,18 @@
 
 <script setup>
 import axios from 'axios'
-import { ref, onBeforeUnmount, onMounted, defineProps, onUpdated, computed } from 'vue'
+import { ref, onBeforeUnmount, onMounted, defineProps, onUpdated, watch } from 'vue'
 import { OpenVidu } from 'openvidu-browser'
 import UserVideo from './UserVideo.vue'
+import { useRouter } from 'vue-router'
 
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000/'
 
+const router = useRouter()
 const props = defineProps({
-  overlay: String
+  videoStatus: Object
 })
 
 // 1, 2번 layout은 true | 3번 layout은 false
@@ -64,12 +79,21 @@ const onSpeak = ref(false)
 // 말하고 있는 참가자 id 배열
 const onSpeakSub = ref([])
 
-const chats = ref(["sd"])
+const chatInput = ref('')
+const chats = ref([])
 
-const OV = ref(null)
-const session = ref(undefined)
+const selectedVideo = ref('')
+const chatOverlay = ref(false)
+
+const OVCamera = ref(null)
+const OVScreen = ref(null)
+
+const sessionCamera = ref(undefined)
+const sessionScreen = ref(undefined)
+
 const mainStreamManager = ref(null)
 const publisher = ref(null)
+const publisherScreen = ref(null)
 const subscribers = ref([])
 
 // Join form
@@ -80,27 +104,73 @@ onMounted(() => {
   joinSession()
 
   // 레이아웃에 따라 ref 변수 변경
-  if (props.overlay.slice(-1) == '3') {
-    isSide.value = false
-  } else {
-    isSide.value = true
-  }
+  changeOverlay()
 })
 
 onUpdated(() => {
   // 레이아웃에 따라 ref 변수 변경
-  if (props.overlay.slice(-1) === '3') {
+  changeOverlay()
+})
+
+const expandVideo = (connectionId) => {
+  selectedVideo.value = connectionId
+}
+
+const cancleExpand = () => {
+  selectedVideo.value = ''
+}
+
+// 레이아웃에 따라 ref 변수 변경
+const changeOverlay = () => {
+  if (props.videoStatus.layoutType.slice(-1) === '3') {
     isSide.value = false
   } else {
     isSide.value = true
   }
-})
+}
+
+// 채팅방 오픈 여부 확인
+watch(
+  () => props.videoStatus.chatLayout,
+  () => {
+    chatOverlay.value = !chatOverlay.value
+  }
+)
+
+// 레이아웃 변경 여부 확인
+watch(
+  () => props.videoStatus.layoutType,
+  () => {
+    changeOverlay()
+  }
+)
+
+// 화면 공유 여부 확인
+watch(
+  () => props.videoStatus.screenShared,
+  () => {
+    publishScreenShare()
+  }
+)
+
+// 세션 나가기 여부 확인
+watch(
+  () => props.videoStatus.leaveSession,
+  () => {
+    leaveSession()
+  }
+)
 
 // 채팅 보내는 함수
 const sendChat = (content) => {
-  session.value
+  // 입력값이 없을 경우 pass
+  if (!content) return
+
+  // session signal 메서드를 통해
+  // 세션 내의 참가자에게 'chat' 타입의 시그널을 임의의 데이터와 보냄
+  sessionCamera.value
     .signal({
-      data: `${content}`, // Any string (optional)
+      data: `${myUserName.value}: ${content}`,
       to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
       type: 'chat' // The type of message (optional)
     })
@@ -112,27 +182,42 @@ const sendChat = (content) => {
     })
 }
 
+// 세션 참가
 const joinSession = () => {
-  OV.value = new OpenVidu()
+  OVCamera.value = new OpenVidu()
+  OVScreen.value = new OpenVidu()
 
   // 마이크 입력 빈도와 제한 조절
-  OV.value.setAdvancedConfiguration({
+  OVCamera.value.setAdvancedConfiguration({
     publisherSpeakingEventsOptions: {
       interval: 100, // Frequency of the polling of audio streams in ms (default 100)
       threshold: -50 // Threshold volume in dB (default -50)
     }
   })
 
-  session.value = OV.value.initSession()
+  // 카메라 세션과 화면 공유 세션을 따로 생성
+  sessionCamera.value = OVCamera.value.initSession()
+  sessionScreen.value = OVScreen.value.initSession()
 
-  // 세션 생성
-  session.value.on('streamCreated', ({ stream }) => {
-    const subscriber = session.value.subscribe(stream)
-    subscribers.value.push(subscriber)
+  // 카메라 스트림 생성
+  sessionCamera.value.on('streamCreated', ({ stream }) => {
+    if (stream.typeOfVideo == 'CAMERA') {
+      const subscriber = sessionCamera.value.subscribe(stream)
+      subscribers.value.push(subscriber)
+    }
   })
 
-  // 세션 삭제
-  session.value.on('streamDestroyed', ({ stream }) => {
+  // 화면 공유 스트림 생성
+  sessionScreen.value.on('streamCreated', ({ stream }) => {
+    if (stream.typeOfVideo == 'SCREEN') {
+      // Subscribe to the Stream to receive it. HTML video will be appended to element with 'container-screens' id
+      const subscriberScreen = sessionScreen.value.subscribe(stream)
+      subscribers.value.push(subscriberScreen)
+    }
+  })
+
+  // 카메라 스트림 삭제
+  sessionCamera.value.on('streamDestroyed', ({ stream }) => {
     const index = subscribers.value.indexOf(stream.streamManager, 0)
 
     if (index >= 0) {
@@ -140,31 +225,39 @@ const joinSession = () => {
     }
   })
 
-  session.value.on('exception', ({ exception }) => {
+  // 화면 공유 스트림 삭제
+  sessionScreen.value.on('streamDestroyed', ({ stream }) => {
+    const index = subscribers.value.indexOf(stream.streamManager, 0)
+
+    if (index >= 0) {
+      subscribers.value.splice(index, 1)
+    }
+  })
+
+  sessionCamera.value.on('exception', ({ exception }) => {
     console.warn(exception)
   })
 
   // 마이크 입력 시작 이벤트
-  session.value.on('publisherStartSpeaking', (event) => {
+  sessionCamera.value.on('publisherStartSpeaking', (event) => {
     onSpeak.value = true
     // 말하고 있는 사람 connection id를 onSpeakSub 배열에 삽입
     onSpeakSub.value.push(event.connection.connectionId)
-    console.log('User ' + event.connection.connectionId + ' start speaking')
   })
 
   // 마이크 입력 종료 이벤트
-  session.value.on('publisherStopSpeaking', (event) => {
+  sessionCamera.value.on('publisherStopSpeaking', (event) => {
     onSpeak.value = false
     // onSpeakSub 배열에서 마이크 입력이 없는 connection id를 삭제
     onSpeakSub.value.splice(event.connection.connectionId, 1)
-    console.log('User ' + event.connection.connectionId + ' stop speaking')
   })
 
+  // 미디어 서버와 카메라 세션을 연결
   getToken(mySessionId.value).then((token) => {
-    session.value
+    sessionCamera.value
       .connect(token, { clientData: myUserName.value })
       .then(() => {
-        const newPublisher = OV.value.initPublisher(undefined, {
+        const newPublisher = OVCamera.value.initPublisher(undefined, {
           audioSource: undefined,
           videoSource: undefined,
           publishAudio: true,
@@ -178,34 +271,90 @@ const joinSession = () => {
         mainStreamManager.value = newPublisher
         publisher.value = newPublisher
 
-        session.value.publish(publisher.value)
+        sessionCamera.value.publish(publisher.value)
       })
       .catch((error) => {
         console.log('There was an error connecting to the session:', error.code, error.message)
       })
   })
 
+  // 미디어 서버와 화면 공유 세션을 연결
+  getToken(mySessionId.value).then((tokenScreen) => {
+    // Create a token for screen share
+    sessionScreen.value
+      .connect(tokenScreen, { clientData: myUserName.value })
+      .then(() => {
+        console.log('Session screen connected')
+      })
+      .catch((error) => {
+        console.warn(
+          'There was an error connecting to the session for screen share:',
+          error.code,
+          error.message
+        )
+      })
+  })
+
   // type이 chat인 signal을 받을 때 chats 배열에 data 삽입
-  session.value.on('signal:chat', (event) => {
+  sessionCamera.value.on('signal:chat', (event) => {
     chats.value.push(event.data)
-    console.log(event.data) // Message
-    console.log(event.from) // Connection object of the sender
-    console.log(event.type) // The type of message ("my-chat")
+    console.log(event.data)
+    console.log(event.from)
+    console.log(event.type)
   })
 
   window.addEventListener('beforeunload', leaveSession)
 }
 
-const leaveSession = () => {
-  if (session.value) session.value.disconnect()
+// 세션 퇴장
+const leaveSession = async () => {
+  if (sessionCamera.value) sessionCamera.value.disconnect()
+  if (sessionScreen.value) sessionScreen.value.disconnect()
 
-  session.value = undefined
-  mainStreamManager.value = undefined
-  publisher.value = undefined
+  sessionCamera.value = null
+  sessionScreen.value = null
+  mainStreamManager.value = null
+  publisher.value = null
+  publisherScreen.value = null
   subscribers.value = []
-  OV.value = undefined
+  OVCamera.value = null
 
-  window.removeEventListener('beforeunload', leaveSession)
+  checkConferenceDone(mySessionId.value)
+}
+
+// 화면 공유
+const publishScreenShare = () => {
+  // 화면 공유 초기 설정
+  const publisherScreen = OVScreen.value.initPublisher(undefined, {
+    audioSource: undefined,
+    videoSource: 'screen',
+    resolution: '640x480',
+    frameRate: 30,
+    insertMode: 'APPEND',
+    mirror: false
+  })
+
+  // 화면 공유 권한이 있을 경우
+  publisherScreen.once('accessAllowed', (event) => {
+    // 화면 공유를 중지하면
+    // 화면 공유 스트림 삭제 후 카메라 스트림 생성
+    publisherScreen.stream
+      .getMediaStream()
+      .getVideoTracks()[0]
+      .addEventListener('ended', () => {
+        console.log('User pressed the "Stop sharing" button')
+        sessionScreen.value.unpublish(publisherScreen)
+        sessionCamera.value.publish(publisher.value)
+      })
+
+    // 카메라 스트림 삭제 및 화면 공유 스트림 생성
+    sessionCamera.value.unpublish(publisher.value)
+    sessionScreen.value.publish(publisherScreen)
+  })
+
+  publisherScreen.once('accessDenied', (event) => {
+    console.error('Screen Share: Access Denied')
+  })
 }
 
 const updateMainVideoStreamManager = (stream) => {
@@ -239,6 +388,28 @@ const createToken = async (sessionId) => {
   return response.data
 }
 
+const emit = defineEmits(['endConference'])
+
+// 회의가 종료되었는지 확인하는 메서드
+// response.status가 200이면 회의 진행 중
+// response.status가 204이면 회의 종료
+const checkConferenceDone = async (sessionId) => {
+  const response = await axios.post(
+    APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/',
+    {},
+    {
+      headers: { 'Content-Type': 'application/json' }
+    }
+  )
+
+  // 회의 종료 시 상위 컴포넌트에 알림
+  if (response.status == 204) {
+    emit('endConference')
+  } else {
+    router.push({ name: 'home' })
+  }
+}
+
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', leaveSession)
 })
@@ -251,7 +422,6 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   justify-content: center;
   background-color: black;
-  padding: 10px;
   gap: 10px;
   max-width: 600px;
 }
@@ -266,10 +436,10 @@ onBeforeUnmount(() => {
 /* 3번 레이아웃 비디오 컨테이너 스타일 */
 .upSideVideos {
   display: flex;
-  position: relative;
+  justify-content: center;
   top: 0;
   background-color: black;
-  padding: 10px;
+  padding: 0 10px;
   gap: 10px;
 }
 
@@ -277,6 +447,22 @@ onBeforeUnmount(() => {
 .upSideVideo {
   display: flex;
   height: 100px;
+}
+
+.selectedVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  background-color: black;
+}
+
+.cancleButton {
+  position: fixed;
+  bottom: 10px;
+  z-index: 2;
 }
 
 /* 화면 크기에 따라 스타일 조정 */
@@ -295,7 +481,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px
+  padding: 20px;
 }
 
 /* 캠돌리기 파티 */
@@ -314,7 +500,17 @@ onBeforeUnmount(() => {
 
 .toRight {
   /* animation: rotate 2s linear infinite; */
-  animation: sizeup linear;
-  border: 2px solid green;
+  /* animation: sizeup linear; */
+  border: 2px solid #B2FF59;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar {
+  width: 0px; /* 스크롤바의 너비 설정 */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* 스크롤바의 색상 설정 */
+  border-radius: 10px; /* 스크롤바의 모서리 반경 설정 */
 }
 </style>
