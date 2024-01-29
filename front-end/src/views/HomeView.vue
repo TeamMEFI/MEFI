@@ -27,9 +27,8 @@
 import HeaderVue from '@/components/layout/Header.vue';
 import FooterVue from '@/components/layout/Footer.vue';
 import ProfileVue from '@/components/layout/Profile.vue';
-import { RouterView, useRouter } from "vue-router";
-const router = useRouter()
-router.push({name:'main'})
+import { RouterView } from "vue-router";
+
 </script>
 
 <style>
