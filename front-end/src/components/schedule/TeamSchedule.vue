@@ -4,8 +4,9 @@
             <v-toolbar-title class="font-weight-bold text-h5">Team's Schedule</v-toolbar-title>
             <v-btn icon>
                 <v-icon>mdi-dots-vertical</v-icon>
-                <v-dialog activator="parent" v-model="dialog" persistent width="600" height="700">
-                  <ScheduleDialog @close-dialog="dialog=false"/>
+                <!-- <v-dialog activator="parent" v-model="dialog" persistent width="600" height="700"> -->
+                <v-dialog activator="parent" v-model="dialog" fullscreen :scrim="false" transition="dialog-bottom-transition">
+                  <ConferenceDialog @close-dialog="dialog=false"/>
                 </v-dialog>
             </v-btn>
         </v-toolbar>
@@ -15,7 +16,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import ScheduleDialog from '@/components/dialog/ScheduleDialog.vue';
+import ConferenceDialog from '@/components/dialog/ConferenceDialog.vue';
 const dialog = ref(false)
 // 검색어
 

@@ -1,7 +1,7 @@
 <template>
-  <v-container class="bg-main w-100 h-100 d-flex flex-column aling-center justify-space-between">
+  <v-container class="bg-main w-100 h-100 d-flex flex-column aling-center justify-space-between pa-3">
       <div class="d-flex justify-center mb-10">
-        <img class="body-img-img elevation-20" src="../../assets/sampleImg.PNG" alt="" @click="router.push({name: 'main'})">
+        <img class="body-img-img w-100 h-100 elevation-20" src="../../assets/sampleImg.PNG" alt="" @click="router.push({name: 'main'})">
       </div>
       <div class="h-15">팀캘린더</div>
       <div class="h-85">
@@ -48,8 +48,7 @@ const items = ref([
 
 <style scoped>
 .body-img-img{
-    width: 250px;
-    height: 250px;
+    height: calc(width);
     border-radius: 50%;
     margin: 10px;
 }
