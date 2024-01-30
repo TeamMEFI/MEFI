@@ -34,7 +34,7 @@ public class FileRepository {
                 .getResultList();
     }
 
-    // TODO : TEAM API 완성되면 사라질 메소드
+    // TODO : CONFERENCE API 완성되면 사라질 메소드
     public Conference findById(Long conferenceId){
         return em.find(Conference.class, conferenceId);
     }
