@@ -1,6 +1,10 @@
 package com.mefi.backend.common.util;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JWTUtil {
 
     // 키를 저장할 객체
@@ -20,6 +25,28 @@ public class JWTUtil {
 
         // 객체 타입으로 암호화하여 생성
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+    }
+
+    // 토큰 유효성 검사
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+            return true;
+
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
+
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
+
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰 입니다.");
+
+        } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
+        }
+
+        return false;
     }
 
     // 검증 - 아이디 추출 메서드

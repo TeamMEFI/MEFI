@@ -77,7 +77,7 @@ public class SecurityConfig {
         // 필터 등록
         http
                 // 해당 필터 이전에 수행 (수행 할 필터, 기준 필터)
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
+                .addFilterBefore(new JWTFilter(jwtUtil,userRepository), LoginFilter.class)
 
                 // 해당 필터 자리에서 수행 (수행 할 필터, 대체 필터 자리)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,tokenRepository,userRepository), UsernamePasswordAuthenticationFilter.class);
