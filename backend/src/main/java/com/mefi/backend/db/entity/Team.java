@@ -1,7 +1,10 @@
 package com.mefi.backend.db.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "team")
 @Getter
+@NoArgsConstructor
 public class Team {
     // 식별ID
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 키 생성을 DB에 위임하는 전략
@@ -25,10 +29,19 @@ public class Team {
     private LocalDateTime createdTime;
 
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     private List<UserTeam> userTeams = new ArrayList<>();
 
     @OneToMany(mappedBy = "team")
     private List<Conference> conferences = new ArrayList<>();
 
+    @Builder
+    public Team(String name, String description){
+        this.name = name;
+        this.description = description;
+    }
+
+    public void addUserTeam(UserTeam teamLeader) {
+        this.userTeams.add(teamLeader);
+    }
 }

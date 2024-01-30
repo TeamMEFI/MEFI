@@ -1,3 +1,29 @@
+<template>
+  <v-container class="pa-0">
+    <v-row class="d-flex align-center justify-center ma-3">
+      <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
+      <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
+      <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
+    </v-row>
+    <v-row class="d-flex align-center justify-center">
+      <v-col v-for="i in weekday" class="day-header" style="flex-grow: 0;">
+        <div>
+          {{ dayofweek[i] }}
+        </div>
+      </v-col>
+    </v-row>
+    <v-row v-for="week in cal" class="d-flex align-center justify-center">
+      <v-col v-for="i in weekday" class="day"  style="flex-grow: 0;" :class="week[i]['type']" >
+          <div >
+              {{ week[i]['date'] }}
+              <v-btn @click="clicksomething(week[i]['date'])" class="ma-0 pa-0">
+              일정잇음?
+              </v-btn>
+          </div>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
 <script setup>
 import { ref } from 'vue';
 // 셀렉터 옵션 및 캘린더 옵션들
@@ -93,6 +119,7 @@ const cal = ref(makecalendar(year.value, month.value))
 
 </script>
 
+<<<<<<< HEAD
 <template>
 <v-sheet>
   <v-row class="d-flex align-center">
@@ -140,11 +167,32 @@ const cal = ref(makecalendar(year.value, month.value))
   text-align: center;
 }
 .day-header {
+=======
+
+
+<style scoped>
+.day {
+    max-width: 160px;
+    min-width: 160px;
+    min-height: 110px;
+    max-height: 110px;
+    border: 1px solid black;
+    text-align: center;
+    flex-grow: initial !important;
+}
+.day-header {
+  max-width: 160px;
+  min-width: 160px;
+>>>>>>> 8bc6e3a5436d92814655aea55233eaf1a6234853
   text-align: center;
   background-color: #f2f2f2;
   border: 0.2px solid #495464;
 }
 .not_current {
+<<<<<<< HEAD
   background-color: #495464;
+=======
+  background-color: #e0e0e0;
+>>>>>>> 8bc6e3a5436d92814655aea55233eaf1a6234853
 }
 </style>
