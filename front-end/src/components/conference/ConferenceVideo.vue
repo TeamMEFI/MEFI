@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-btn v-if="selectedVideo" style="width: 0px" class="cancleButton bg-grey-darken-4" @click="cancleExpand"
+    <v-btn
+      v-if="selectedVideo"
+      class="cancleButton bg-grey-darken-4"
+      @click="cancleExpand"
       ><font-awesome-icon :icon="['fas', 'xmark']" style="color: #ffffff" />
     </v-btn>
     <!-- 내 카메라가 켜졌을 때 화상회의 열기 -->
@@ -17,7 +20,7 @@
             isSide ? 'video' : 'upSideVideo',
             // 마이크 입력을 인식하면 클래스 적용
             onSpeak ? 'toRight' : '',
-            selectedVideo === 'mainStream' ? 'selectedVideo' : '',
+            selectedVideo === 'mainStream' ? 'selectedVideo' : ''
           ]"
           @click="expandVideo('mainStream')"
         />
@@ -35,15 +38,20 @@
         />
       </div>
       <v-overlay persistent :model-value="chatOverlay" class="bg-transparent align-end justify-end">
-        <div>X</div>
-        <v-infinite-scroll id="chatBox" class="border-width-5" height="50vh">
+        <v-btn size="small" @click="exitChatBox" style="position: absolute; right: 0;"
+          ><font-awesome-icon :icon="['fas', 'xmark']" style="color: #000000" />
+        </v-btn>
+        <v-infinite-scroll load id="chatBox" class="bg-white px-4 rounded-lg" width="50vw" height="50vh">
           <template v-for="chat in chats">
             <div>{{ chat }}</div>
           </template>
           <template v-slot:loading></template>
         </v-infinite-scroll>
-        <input class="bg-grey" v-model="chatInput" />
-        <v-btn @click="sendChat(chatInput)" class="my-2" rounded="sm" size="small">send</v-btn>
+        <v-divider :thickness="1"></v-divider>
+        <div class="d-flex bg-white px-4 align-center rounded-lg">
+          <v-textarea class="bg-white mt-4 mr-2" auto-grow rows="1" row-height="1" v-model="chatInput" @keydown.ctrl.enter="sendChat(chatInput)" ></v-textarea>
+          <v-btn @click="sendChat(chatInput)" rounded="sm">send</v-btn>
+        </div>
       </v-overlay>
     </div>
     <!-- 내 카메라 아직 켜지지 않았으면 로딩 스피너 출력 -->
@@ -120,6 +128,10 @@ const cancleExpand = () => {
   selectedVideo.value = ''
 }
 
+const test = () => {
+  publisher.value.publishVideo(false);
+}
+
 // 레이아웃에 따라 ref 변수 변경
 const changeOverlay = () => {
   if (props.videoStatus.layoutType.slice(-1) === '3') {
@@ -128,6 +140,22 @@ const changeOverlay = () => {
     isSide.value = true
   }
 }
+
+// 카메라 온/오프 여부 확인
+watch(
+  () => props.videoStatus.cameraStatus,
+  () => {
+    publisher.value.publishVideo(props.videoStatus.cameraStatus);
+  }
+)
+
+// 마이크 온/오프 여부 확인
+watch(
+  () => props.videoStatus.voiceStatus,
+  () => {
+    publisher.value.publishAudio(props.videoStatus.voiceStatus);
+  }
+)
 
 // 채팅방 오픈 여부 확인
 watch(
@@ -175,6 +203,7 @@ const sendChat = (content) => {
       type: 'chat' // The type of message (optional)
     })
     .then(() => {
+      chatInput.value = '';
       console.log('Message successfully sent')
     })
     .catch((error) => {
@@ -298,6 +327,12 @@ const joinSession = () => {
   // type이 chat인 signal을 받을 때 chats 배열에 data 삽입
   sessionCamera.value.on('signal:chat', (event) => {
     chats.value.push(event.data)
+
+    // 새로운 채팅이 들어오면 스크롤을 가장 아래로 당김
+    const chatBox = document.querySelector("#chatBox")
+    chatBox.scrollTo(0, chatBox.scrollHeight)
+
+    console.log(chatBox)
     console.log(event.data)
     console.log(event.from)
     console.log(event.type)
@@ -388,7 +423,7 @@ const createToken = async (sessionId) => {
   return response.data
 }
 
-const emit = defineEmits(['endConference'])
+const emit = defineEmits(['endConference', 'exitChatBox'])
 
 // 회의가 종료되었는지 확인하는 메서드
 // response.status가 200이면 회의 진행 중
@@ -408,6 +443,10 @@ const checkConferenceDone = async (sessionId) => {
   } else {
     router.push({ name: 'home' })
   }
+}
+
+const exitChatBox = () => {
+  emit('exitChatBox')
 }
 
 onBeforeUnmount(() => {
@@ -461,6 +500,8 @@ onBeforeUnmount(() => {
 
 .cancleButton {
   position: fixed;
+  width: 0px;
+  right: 10px;
   bottom: 10px;
   z-index: 2;
 }
@@ -501,7 +542,7 @@ onBeforeUnmount(() => {
 .toRight {
   /* animation: rotate 2s linear infinite; */
   /* animation: sizeup linear; */
-  border: 2px solid #B2FF59;
+  border: 2px solid #b2ff59;
   border-radius: 10px;
 }
 
