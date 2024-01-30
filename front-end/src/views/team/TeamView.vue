@@ -1,9 +1,9 @@
 <template>
-    <v-container fluid class="w-100 h-100 ma-0 d-flex justify-center">
+    <v-container fluid class="w-100 h-100 d-flex justify-center">
       <!-- v-row를 사용하여 왼쪽(6), 오른쪽(4)으로 나눈 레이아웃 -->
       <v-row>
         <!-- 왼쪽(6) -->
-        <v-col cols="9" class="w-100 h-100 pa-0 d-flex justify-center">
+        <v-col cols="9" class="w-100 h-100 d-flex justify-center">
           <!-- 왼쪽 컴포넌트를 여기에 추가하세요 -->
           <v-container class="w-100 h-100">
             <CalendarVue/>
