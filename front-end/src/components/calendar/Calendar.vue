@@ -1,9 +1,13 @@
 <template>
   <v-container class="pa-0">
-    <v-row class="d-flex align-center justify-center ma-3">
+    <v-row class="d-flex align-center justify-start ma-3">
       <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
       <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
       <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
+      <v-spacer></v-spacer>
+      <v-btn @click="navigateToInsertPage">
+        <p class="font-weight-black text-h6">개인 일정 생성</p>
+      </v-btn>
     </v-row>
     <v-row class="d-flex align-center justify-center">
       <v-col v-for="i in weekday" class="day-header" style="flex-grow: 0;">
@@ -24,17 +28,18 @@
     </v-row>
   </v-container>
 </template>
+
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter()
+const navigateToInsertPage = () => {
+  const type = 'schedule'
+  router.push({ name: 'insert', params: { type } });
+};
+
 // 셀렉터 옵션 및 캘린더 옵션들
-const type = ref('month')
-const types = ref(['month', 'week'])
 const weekday = ref([0, 1, 2, 3, 4, 5, 6])
-const weekdays = ref([
-          { title: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
-          { title: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
-          { title: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
-        ])
 const dayofweek = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
 const listofmonthword = ['January','February','March','April','May','June','July','August','September','October','November', 'December']
 
@@ -117,63 +122,17 @@ const day   = ref(nowdate.value.getDay())
 // 달력 날짜 계산
 const cal = ref(makecalendar(year.value, month.value))
 
+// 일정 생성 관련
+
+
 </script>
 
-<<<<<<< HEAD
-<template>
-<v-sheet>
-  <v-row class="d-flex align-center">
-    <v-col cols="4">
-      <v-select
-        v-model="type"
-        :items="types"
-        dense
-        variant="outlined"
-        hide-details
-        class="ma-2"
-        label="View Mode"
-      ></v-select>
-    </v-col>
-    <v-col cols="4" class="text-button d-flex align-center">
-      <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
-      <p class="ma-2"> {{ year }} {{ listofmonthword[month] }}</p>
-      <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-col v-for="i in weekday" class="day-header">
-      <div>
-        {{ dayofweek[i] }}
-      </div>
-    </v-col>
-  </v-row>
-  <v-row v-for="week in cal">
-    <v-col v-for="i in weekday" class="pa-0 ma-0">
-      <div class="day pa-0 ma-0" :class="week[i]['type']">
-        {{ week[i]['date'] }}
-        <v-btn @click="clicksomething(week[i]['date'])">
-          일정잇음?
-        </v-btn>
-      </div>
-    </v-col>
-  </v-row>
-</v-sheet>
-</template>
-
-<style scoped>
-.day {
-  height: 100px;
-  border: 1px solid black;
-  text-align: center;
-}
-.day-header {
-=======
 
 
 <style scoped>
 .day {
-    max-width: 160px;
-    min-width: 160px;
+    max-width: calc(95%/7);
+    min-width: calc(95%/7);
     min-height: 110px;
     max-height: 110px;
     border: 1px solid black;
@@ -181,18 +140,12 @@ const cal = ref(makecalendar(year.value, month.value))
     flex-grow: initial !important;
 }
 .day-header {
-  max-width: 160px;
-  min-width: 160px;
->>>>>>> 8bc6e3a5436d92814655aea55233eaf1a6234853
-  text-align: center;
+  max-width: calc(95%/7);
+  min-width: calc(95%/7);
   background-color: #f2f2f2;
   border: 0.2px solid #495464;
 }
 .not_current {
-<<<<<<< HEAD
-  background-color: #495464;
-=======
   background-color: #e0e0e0;
->>>>>>> 8bc6e3a5436d92814655aea55233eaf1a6234853
 }
 </style>
