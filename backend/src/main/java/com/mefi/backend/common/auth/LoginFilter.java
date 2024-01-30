@@ -2,6 +2,7 @@ package com.mefi.backend.common.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mefi.backend.api.request.LoginReqDto;
+import com.mefi.backend.api.response.LoginResDto;
 import com.mefi.backend.common.util.JWTUtil;
 import com.mefi.backend.db.entity.Token;
 import com.mefi.backend.db.entity.User;
@@ -10,7 +11,6 @@ import com.mefi.backend.db.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +19,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -100,7 +102,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         else {
 
-            // 유저가 토큰이 없음
+            // 유저가 토큰이 없는 경우
             Token newToken = Token.builder()
                     .userId(user.getId())
                     .refreshToken(refreshToken)
@@ -110,11 +112,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             tokenRepository.save(newToken);
         }
 
-        // 응답에 저장 (상태, 헤더)
-        response.setStatus(HttpStatus.OK.value());
+        // 응답에 저장 (헤더, 상태)
         response.addHeader("accessToken",accessToken);
         response.addHeader("refreshToken",refreshToken);
-        response.getWriter().write("Success");
+        response.setStatus(200);
+
+        // 응답에 저장 (바디)
+        Map<String,LoginResDto> reposenBody = new HashMap<>();
+        LoginResDto loginResDto = new LoginResDto(user.getEmail(),user.getName(),user.getDept(),user.getPosition());
+        reposenBody.put("dataBody",loginResDto);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(reposenBody));
+        response.getWriter().flush();
     }
 
     // 로그인 실패시 실행하는 메소드
