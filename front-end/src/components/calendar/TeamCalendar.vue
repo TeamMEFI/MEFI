@@ -5,8 +5,8 @@
       <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
       <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
       <v-spacer></v-spacer>
-      <v-btn @click="navigateToInsertPage">
-        <p class="font-weight-black text-h6">개인 일정 생성</p>
+      <v-btn @click="navigateToInsertPage(type)">
+        <p class="font-weight-black text-h6">회의 예약</p>
       </v-btn>
     </v-row>
     <v-row class="d-flex align-center justify-center">
@@ -34,7 +34,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter()
 const navigateToInsertPage = () => {
-  const type = 'schedule'
+  const type = 'conference'
   router.push({ name: 'insert', params: { type } });
 };
 
@@ -124,6 +124,8 @@ const cal = ref(makecalendar(year.value, month.value))
 
 // 일정 생성 관련
 
+const type = ref(11)
+const data = ref(22)
 
 </script>
 

@@ -6,7 +6,7 @@
         <v-col cols="9" class="w-100 h-100 d-flex justify-center">
           <!-- 왼쪽 컴포넌트를 여기에 추가하세요 -->
           <v-container class="w-100 h-100">
-            <CalendarVue/>
+            <TeamCalendarVue/>
           </v-container>
         </v-col>
   
@@ -31,7 +31,7 @@
 </template>
   
 <script setup>
-import CalendarVue from '@/components/calendar/Calendar.vue';
+import TeamCalendarVue from '@/components/calendar/TeamCalendar.vue';
 import Schedule from '@/components/schedule/TeamSchedule.vue';
 import SearchDoc from '@/components/docs/SearchDoc.vue';
 </script>
