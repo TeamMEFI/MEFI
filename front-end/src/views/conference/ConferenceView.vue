@@ -80,7 +80,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const sheet = ref(false)
 
-// overlay 설정
+// overlay 설정 변수
 const layoutType = ref('conference-view3')
 
 const conferenceState = ref(true)
