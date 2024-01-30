@@ -1,6 +1,7 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.TeamReqDto;
+import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.TeamResDto;
 import com.mefi.backend.db.entity.Team;
 import com.mefi.backend.db.entity.User;
@@ -64,5 +65,21 @@ public class TeamServiceImpl implements TeamService{
     public List<TeamResDto> getTeamList(Long userId) {
 
         return teamUserRepository.findTeamsByUserId(userId);
+    }
+
+    // 팀원 목록 조회
+    @Override
+    public List<MemberResDto> getMemberList(Long userId, Long teamId) {
+        // 해당 팀에 현재 로그인한 유저가 속해있는지 확인 -> 만약 0으로 반환되면 속해있지 않음
+        Long count = teamUserRepository.isMember(userId, teamId);
+
+        // 예외처리 : 만약 해당 팀의 멤버가 아니라면... 예외 발생!!
+        if(count == 0L){
+            log.info("현재 로그인된 사용자는 해당 팀의 멤버가 아닙니다.");
+            return null;
+        }
+
+        // 팀 구성원 목록 반환
+        return teamUserRepository.getMemberList(teamId);
     }
 }

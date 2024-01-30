@@ -1,13 +1,18 @@
 package com.mefi.backend.db.repository;
 
+import com.mefi.backend.api.response.MemberResDto;
+import com.mefi.backend.api.response.QMemberResDto;
 import com.mefi.backend.api.response.QTeamResDto;
 import com.mefi.backend.api.response.TeamResDto;
-import com.mefi.backend.db.entity.QTeam;
-import com.mefi.backend.db.entity.QUserTeam;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
+import java.util.Optional;
+
+import static com.mefi.backend.db.entity.QTeam.team;
+import static com.mefi.backend.db.entity.QUser.user;
+import static com.mefi.backend.db.entity.QUserTeam.userTeam;
 
 // 사용자 정의 인터페이스 구현
 public class TeamUserRepositoryImpl implements TeamUserRepositoryCustom{
@@ -21,16 +26,36 @@ public class TeamUserRepositoryImpl implements TeamUserRepositoryCustom{
 
     @Override
     public List<TeamResDto> findTeamsByUserId(Long userId) {
-        // QType 생성
-        QTeam team = QTeam.team;
-        QUserTeam userTeam = QUserTeam.userTeam;
-
         // Querydsl 반환
         return queryFactory
                 .select(new QTeamResDto(team.id, team.name, team.description, userTeam.role))
                 .from(userTeam)
                 .leftJoin(userTeam.team, team)
                 .where(userTeam.user.id.eq(userId))
+                .fetch();
+    }
+
+    // 사용자가 해당 팀의 구성원인지 확인하는 메서드
+    @Override
+    public Long isMember(Long userId, Long teamId){
+        // Querydsl 반환
+        return Optional.ofNullable(queryFactory
+                .select(userTeam.count())
+                .from(userTeam)
+                .where(userTeam.user.id.eq(userId)
+                        .and(userTeam.team.id.eq(teamId)))
+                .fetchOne()).orElse(0L);
+    }
+
+    // 해당 팀원 정보 조회하는 메서드
+    @Override
+    public List<MemberResDto> getMemberList(Long teamId){
+        // Querydsl 반환
+        return queryFactory
+                .select(new QMemberResDto(user.id, user.email, user.name, user.position, user.dept))
+                .from(userTeam)
+                .leftJoin(userTeam.user, user)
+                .where(userTeam.team.id.eq(teamId))
                 .fetch();
     }
 }

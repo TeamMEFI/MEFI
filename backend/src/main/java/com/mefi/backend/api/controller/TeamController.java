@@ -1,6 +1,7 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.TeamReqDto;
+import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.TeamResDto;
 import com.mefi.backend.api.service.TeamService;
 import com.mefi.backend.common.auth.CustomUserDetails;
@@ -61,5 +62,24 @@ public class TeamController {
 
         // 사용자가 속한 팀 목록 반환
         return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0,teamList));
+    }
+
+    @GetMapping("/{teamId}")
+    @Operation(summary = "팀원 목록 조회", description = "해당 팀의 팀원을 조회한다.")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n 팀의 팀원 리스트 반환")
+    public ResponseEntity<? extends BaseResponseBody> getMemberList(Authentication authentication, @PathVariable(name = "teamId") Long teamId){
+
+        // 현재 사용자 식별 ID 가져옴
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        // 파라미터 확인 로그
+        log.info("userId : {}", user.getUserId());
+        log.info("teamId : {}", teamId);
+
+        // 팀 ID로 자신이 속한 팀원 목록 조회 로직
+        List<MemberResDto> memberList = teamService.getMemberList(user.getUserId(), teamId);
+
+        // 현재 팀의 팀원 목록 반환
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, memberList));
     }
 }
