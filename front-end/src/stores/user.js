@@ -7,7 +7,7 @@ import { userLogin, userSignup } from '@/api/user.js'
 // login, signup, user info, token regenerate
 export const useUserStore = defineStore('user', () => {
 
-  const isLogin = ref(true)
+  const isLogin = ref(false)
   const router = useRouter()
   const userInfo = ref({
     email:'ooo@gmail.com',
@@ -22,8 +22,7 @@ export const useUserStore = defineStore('user', () => {
   const signup = async (user) => {
     await userSignup(
       user,(response)=>{
-        console.log(response.config.data)
-        console.log(response.config.data.email)
+        console.log(response)
         
         isLogin.value = true
         router.push({name:'home'})
@@ -37,6 +36,7 @@ export const useUserStore = defineStore('user', () => {
   // 로그인 함수
   // user 정보 : email, password
   const login = async (user) => {
+    console.log('store', user)
     await userLogin(user)(
       user,(response) => {
         console.log(response)

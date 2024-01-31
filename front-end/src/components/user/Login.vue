@@ -1,11 +1,11 @@
 <template>
     <v-sheet class="w-30 mx-auto pa-12 ma-10" style="border-radius: 10px;">
         <!-- 로그 -->
-        <div class="">MEFI</div>
+        <div>MEFI</div>
         <!-- 입력창 -->
         <v-form @submit.prevent="login">
             <v-text-field
-                label="아이디"
+                label="이메일"
                 v-model="email"
                 hide-details="auto"
                 type="email"
@@ -17,16 +17,12 @@
                 hide-details="auto"
             ></v-text-field>
             <!-- 로그인 버튼 -->
-            <v-row class="align-center justify-center">
-                <v-btn type="submit">로그인</v-btn>
-            </v-row>
+            <v-btn type="submit">로그인</v-btn>
         </v-form>
 
         <!-- 그 외 비밀번호 찾기 / 회원 가입 기능 -->
-        <v-row class="align-center justify-center">
-            <v-btn @click="goSearchPassword">비밀번호 찾기 </v-btn>  |  
-            <v-btn @click="goSignup"> 회원가입</v-btn>
-        </v-row>
+        <v-btn @click="goSearchPassword">비밀번호 찾기 </v-btn>  |  
+        <v-btn @click="goSignup"> 회원가입</v-btn>
     </v-sheet>
 </template>
 
@@ -47,6 +43,7 @@ const login = function(){
         email:email.value,
         password:password.value,
     }
+    console.log('component', user)
     store.login(user)
 }
 
@@ -57,7 +54,7 @@ const goSignup = function(){
 
 // 기능 : 비밀 번호 찾기 페이지로 이동
 const goSearchPassword = () => {
-    router.push({name:'search-password'})
+    router.push({name:'search-password1'})
 }
 </script>
 
