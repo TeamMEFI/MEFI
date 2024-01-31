@@ -42,4 +42,4 @@ out/
 /application-prod.properties
 
 # Spring Boot specific files
-/application.yml
+application.yml
