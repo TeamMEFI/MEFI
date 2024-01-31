@@ -13,14 +13,11 @@
             </v-dialog>
         </v-btn>
 
-        <!-- user 설정 -->        
+        <!-- user 설정 -->      
         <!-- user 설정 drawer -->
         <v-btn variant="text" @click.stop="userSetting = !userSetting">
             <!-- 헤더에 보이는 이미지 & status -->
-            <div id="profile">
-                <font-awesome-icon :icon="['fas', 'user']" :class="store.userInfo.status"/>
-                <font-awesome-icon :icon="['fas', 'circle']" :class="store.userInfo.status"/>
-            </div>
+            <font-awesome-icon :icon="['fas', 'user']" style="font-size: large;"/>
             <!-- 회원 설정 -->
             <v-menu location="buttom" activator="parent">
                 <v-list class="overflow-hidden ma-0">

@@ -87,6 +87,7 @@ html::-webkit-scrollbar {
   height: 40% !important;
 }
 
+
 .h-60 {
   height: 60% !important;
 }
@@ -105,6 +106,10 @@ html::-webkit-scrollbar {
 
 .h-95 {
   height: 95% !important;
+}
+
+.h-cal {
+  height: calc(100% - 64px) !important;
 }
 
 .v-main {
