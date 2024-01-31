@@ -7,7 +7,7 @@ import { userLogin, userSignup } from '@/api/user.js'
 // login, signup, user info, token regenerate
 export const useUserStore = defineStore('user', () => {
 
-  const isLogin = ref(false)
+  const isLogin = ref(true)
   const router = useRouter()
   const userInfo = ref({
     email:'ooo@gmail.com',

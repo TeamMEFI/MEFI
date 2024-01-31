@@ -12,8 +12,10 @@
     </v-navigation-drawer>
 
     <!-- 메인 컨텐츠 -->
-    <v-main class="w-100 h-100">
-      <RouterView/>
+    <v-main>
+      <div class="w-100 h-100 wrapper pa-2">
+        <RouterView class="bg-white rounded" />
+      </div>
     </v-main>
 
     <!-- 풋터 -->
@@ -38,5 +40,7 @@ router.push({name:'main'})
   justify-content: center;
 }
 
-
+.wrapper {
+  background-color: #F7F9FF;
+}
 </style>
