@@ -2,12 +2,14 @@ package com.mefi.backend.db.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
+@Getter
 @Table(name = "email_auth")
 public class EmailAuth {
 
@@ -33,5 +35,6 @@ public class EmailAuth {
 
     public void updateAuthCode(int randomNum) {
         this.randomNum = randomNum;
+        this.createdTime = LocalDateTime.now();
     }
 }
