@@ -1,7 +1,9 @@
 <template>
-    <v-sheet class="w-30 mx-auto pa-12 ma-10" style="border-radius: 10px;">
+    <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" style="border-radius: 10px;">
         <!-- 로그 -->
-        <div>MEFI</div>
+        <div class="d-flex justify-center">
+            <span style="font-size: xx-large; font-weight: bolder;">MEFI</span>
+        </div>
         <!-- 입력창 -->
         <v-form @submit.prevent="login">
             <v-text-field
@@ -9,20 +11,25 @@
                 v-model="email"
                 hide-details="auto"
                 type="email"
+                class="ma-3"
             ></v-text-field>
             <v-text-field
                 label="비밀번호"
-                type="password"
                 v-model="password"
                 hide-details="auto"
+                type="password"
+                class="ma-3"
             ></v-text-field>
             <!-- 로그인 버튼 -->
-            <v-btn type="submit">로그인</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn type="submit" class="w-100">로그인</v-btn>
         </v-form>
 
         <!-- 그 외 비밀번호 찾기 / 회원 가입 기능 -->
-        <v-btn @click="goSearchPassword">비밀번호 찾기 </v-btn>  |  
-        <v-btn @click="goSignup"> 회원가입</v-btn>
+        <div class="d-flex justify-center">
+            <a @click="goSearchPassword">비밀번호 찾기 </a>  |  
+            <a @click="goSignup"> 회원가입</a>
+        </div>
     </v-sheet>
 </template>
 

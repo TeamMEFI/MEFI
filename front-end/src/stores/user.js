@@ -6,19 +6,16 @@ import { userLogin, userSignup } from '@/api/user.js'
 // user store
 // login, signup, user info, 토큰 관리
 export const useUserStore = defineStore('user', () => {
-  const isLogin = ref(false)
   const router = useRouter()
+  const isLogin = ref(false)
   const userInfo = ref(null)
 
   // 회원 가입 함수
   // user 정보 : email, password, name, position, department
   const signup = async (user) => {
     await userSignup(
-      user,(response)=>{
-      },
-      (error)=>{
-        console.log(error)
-      }
+      user,(response)=>{},
+      (error)=>{console.log(error)}
     )
      .then(()=>{
       const loginUser = {
@@ -56,4 +53,5 @@ export const useUserStore = defineStore('user', () => {
   }
 
   return { isLogin, signup, login, logout, userInfo }
-})
+},{ persist:true }
+)
