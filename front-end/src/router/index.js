@@ -7,6 +7,8 @@ import MainView from "@/views/main/MainView.vue"
 import TeamView from "@/views/team/TeamView.vue"
 import InsertView from "@/views/schedule/InsertView.vue"
 import DetailView from "@/views/schedule/DetailView.vue"
+import NotFoundView from "@/views/notFound/NotFoundView.vue"
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -16,7 +18,7 @@ const router = createRouter({
       component: HomeView,
       children: [
         {
-          path: '/main',
+          path: '/',
           name: 'main',
           component: MainView
         },
@@ -59,6 +61,11 @@ const router = createRouter({
       name: 'conference',
       component: ConferenceView
     },
+    {
+      path: "/:pathMatch(.*)*",
+      name: 'notFound',
+      component: NotFoundView
+    }
   ]
 })
 

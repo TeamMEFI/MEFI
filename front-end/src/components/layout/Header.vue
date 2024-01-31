@@ -18,7 +18,7 @@
         <v-btn variant="text" @click.stop="userSetting = !userSetting">
             <!-- 헤더에 보이는 이미지 & status -->
             <div id="profile">
-                <img src="../../assets/sampleImg.PNG" alt="" style="width: 40px; height: 40px; padding: 0px; margin: 0px; border-radius: 50%;">
+                <font-awesome-icon :icon="['fas', 'user']" :class="store.userInfo.status"/>
                 <font-awesome-icon :icon="['fas', 'circle']" :class="store.userInfo.status"/>
             </div>
             <!-- 회원 설정 -->

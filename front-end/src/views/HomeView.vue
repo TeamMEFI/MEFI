@@ -7,7 +7,7 @@
     </v-app-bar>
 
     <!-- 사이드바 -->
-    <v-navigation-drawer app class="w-15">
+    <v-navigation-drawer permanent app class="w-15">
       <ProfileVue/>
     </v-navigation-drawer>
 
