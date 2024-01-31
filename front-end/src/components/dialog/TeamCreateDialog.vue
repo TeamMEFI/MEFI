@@ -11,6 +11,7 @@
                 <v-row>
                     <v-col cols="5">
                         <v-text-field
+                        v-model="teamName"
                         label="Team Name"
                         variant="solo"
                         required
@@ -18,7 +19,8 @@
                     </v-col>
                     <v-col cols="7">
                         <v-text-field
-                        label="Team Explanation"
+                        v-model="teamDescription"
+                        label="Team Description"
                         variant="solo"
                         required
                         ></v-text-field>
@@ -61,7 +63,7 @@
                                 <v-toolbar-title class="font-weight-bold text-h5">Added</v-toolbar-title>
                                 <v-spacer></v-spacer>
                             </v-toolbar>
-                            <v-list :items="joinList"></v-list>
+                            <v-list :items="members"></v-list>
                         </div>
                     </v-col>
                 </v-row>
@@ -72,13 +74,14 @@
             <v-btn
             variant="text"
             class="text-h5"
-            @click="$emit('closeDialog')"
+            @click="emit('closeDialog')"
             >
             Close
             </v-btn>
             <v-btn
             variant="text"
             class="text-h5"
+            @click="create"
             >
             Save
             </v-btn>
@@ -88,35 +91,40 @@
 
 <script setup>
 import { ref } from 'vue';
+import { teamCreate, teamSelect } from '@/api/team.js'
+import router from '@/router';
 
-const joinList = ref([
-        {
-          title: 'Item #1',
-        },
-        {
-          title: 'Item #2',
-          value: 2,
-        },
-        {
-          title: 'Item #3',
-          value: 3,
-        },
-])
+const emit = defineEmits(['closeDialog'])
 const searchList = ref([
-        {
-          title: 'Item #1',
-          value: 1,
-        },
-        {
-          title: 'Item #2',
-          value: 2,
-        },
-        {
-          title: 'Item #3',
-          value: 3,
-        },
 ])
 
+const leaderId = ref(11)
+const teamName = ref('')
+const teamDescription = ref('')
+const members = ref([10, 12])
+
+const gocreate = async (data) => {
+    console.log(data)
+    await teamCreate(
+        data,(response) => {
+            console.log(response)
+            emit('closeDialog')
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
+  }
+
+const create = () => {
+    const data = {
+        leaderId : leaderId.value,
+        teamName : teamName.value,
+        teamDescription : teamDescription.value,
+        members : members.value,
+    }
+    gocreate(data)
+}
 </script>
 
 <style lang="scss" scoped>
