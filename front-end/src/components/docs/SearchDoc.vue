@@ -1,21 +1,7 @@
 <template>
-    <div class="bg-white w-100 h-100 elevation-3 pa-0">
-        <v-toolbar color="#2A4770" class="elevation-1 w-100" >
-            <v-toolbar-title class="font-weight-bold text-h5">Docs</v-toolbar-title>
-            <v-text-field
-                density="compact"
-                variant="solo"
-                append-inner-icon="mdi-magnify"
-                single-line
-                hide-details
-                v-model="keyword"
-                @click:append-inner="console.log(keyword)"
-                class="me-3 w-10"
-            ></v-text-field>
-            
-        </v-toolbar>
-        <v-list :items="docsList"></v-list>
-    </div>
+  <v-sheet height="100%" width="100%" rounded="xl" elevation="12" class="pa-5">
+    <v-list :items="docsList"></v-list>
+  </v-sheet>
 </template>
 
 <script setup>
@@ -41,10 +27,10 @@ const docsList = ref([
           value: 3,
         },
 ])
-
-
 </script>
 
 <style scoped>
-
+.bg {
+  background-color: #f0f0f0;
+}
 </style>

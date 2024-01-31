@@ -1,12 +1,5 @@
 <template>
-  <template v-if="type === 'schedule'">
-    수정
-    <ScheduleDialog/>
-  </template>
-  <template v-else>
-    수정
-    <ConferenceDialog/>
-  </template>
+
 </template>
 
 <script setup>
@@ -15,7 +8,8 @@ import ScheduleDialog from '@/components/dialog/ScheduleDialog.vue';
 import ConferenceDialog from '@/components/dialog/ConferenceDialog.vue';
 // defineProps를 사용하여 동적으로 전달된 props를 가져옵니다.
 const props = defineProps({
-  type:String
+  type:String,
+  scheduleId: String
 });
 
 const type = ref(props.type)
