@@ -1,6 +1,8 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.JoinReqDto;
+import com.mefi.backend.api.request.VerifyEmailReqDto;
+import com.mefi.backend.api.service.MailServiceImpl;
 import com.mefi.backend.api.service.TokenService;
 import com.mefi.backend.api.service.UserService;
 import com.mefi.backend.common.auth.CustomUserDetails;
@@ -24,6 +26,7 @@ public class UserController {
 
     private final UserService userService;
     private final TokenService tokenService;
+    private final MailServiceImpl mailService;
 
     @Operation(summary = "회원가입", description = "/users\n\n 사용자의 정보를 통해 회원가입 한다.")
     @PostMapping("")
@@ -64,5 +67,15 @@ public class UserController {
         Token token = tokenService.findByUserId(userDetails.getUserId());
         tokenService.deleteRefreshToken(token);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,"Success"));
+    }
+
+    @Operation(summary = "이메일 인증", description = "/users/regist/{userId}/auth\n\n 사용자는 이메일 인증을 한다.")
+    @PostMapping("/regist/auth")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
+    public ResponseEntity<? extends BaseResponseBody> verifyEmail(@RequestBody VerifyEmailReqDto verifyEmailReqDto) throws Exception {
+
+        // 메일 전송 후 코드 받기
+        mailService.sendMessage(verifyEmailReqDto.getEmail());
+        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0,"Success"));
     }
 }

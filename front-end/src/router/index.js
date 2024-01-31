@@ -1,13 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import LoginView from "@/views/user/LoginView.vue"
-import SignupView from "@/views/user/SignupView.vue"
+
 import ConferenceView from "@/views/conference/ConferenceView.vue"
 import MainView from "@/views/main/MainView.vue"
+
+import UserView from "@/views/user/UserView.vue"
+import Login from "@/components/user/Login.vue"
+import Signup from "@/components/user/Signup.vue"
+import Email from "@/components/user/Email.vue"
+import SearchPassword1 from "@/components/user/SearchPassword1.vue"
+import SearchPassword2 from "@/components/user/SearchPassword2.vue"
 import TeamView from "@/views/team/TeamView.vue"
 import InsertView from "@/views/schedule/InsertView.vue"
 import DetailView from "@/views/schedule/DetailView.vue"
 import NotFoundView from "@/views/notFound/NotFoundView.vue"
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,16 +52,37 @@ const router = createRouter({
         },
       ]
     },
-
     {
-      path: '/login',
-      name: 'login',
-      component: LoginView
-    },
-    {
-      path: '/signup',
-      name: 'signup',
-      component: SignupView
+      path: '/user',
+      name: 'user',
+      component: UserView,
+      children:[
+        {
+          path:'/user/login',
+          name:'login',
+          component: Login,
+        },
+        {
+          path:'/user/signup',
+          name:'signup',
+          component: Signup,
+        },
+        {
+          path:'/user/email',
+          name:'email',
+          component: Email,
+        },
+        {
+          path:'/user/signup/email',
+          name:'search-password1',
+          component: SearchPassword1,
+        },
+        {
+          path:'/user/signup/search-password',
+          name:'search-password2',
+          component: SearchPassword2,
+        }
+      ]
     },
     {
       path: '/conference',
