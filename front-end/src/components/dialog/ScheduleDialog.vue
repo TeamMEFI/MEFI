@@ -1,36 +1,53 @@
 <template>
-    <v-card class="bgcolor-setting w-100 h-100">
-        <v-card-title class="ma-0 pa-0">
-            <v-toolbar color="#2A4770" >
-                <v-toolbar-title class="font-weight-bold text-h5">Create Scheldule</v-toolbar-title>
-                <v-spacer></v-spacer>
-            </v-toolbar>
+    <v-card class="h-100 pa-10">
+        <v-card-title class="d-flex h-5 align-center pa-2">
+            <p class="text-h5 font-weight-black">일정 등록</p>
+            <v-spacer></v-spacer>
+            <v-btn>일정 등록하기</v-btn>
         </v-card-title>
-        <v-card-text>
-            <v-container class=" ma-0">
-                <v-row class="h-100">
-                    <v-col cols="12">
-                        <v-container class="pa-0">
+        <v-card-item class="pa-3 h-40">
+            <form @submit.prevent="submit">
+                <v-container>
+                    <v-row>
+                        <v-col cols="6">
+                            <p>일정 종류</p>
+                        </v-col>
+                        <v-col cols="3">
+                            <p>시작 시간</p>
+                        </v-col>
+                        <v-col cols="3">
+                            <p>종료 시간</p>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="6">
+                            <v-select
+                                label="Choice Type"
+                                :items="typeschedule"
+                                variant="outlined"
+                                density="compact"
+                                hide-details="true"
+                            ></v-select>
+                        </v-col>
+                        <v-col cols="6">
                             <v-row>
-                                <v-col>
+                                <v-col cols="3">
                                     <v-select
-                                        label="Choice Type"
-                                        :items="typeschedule"
+                                        :items="endhours"
                                         variant="outlined"
                                         density="compact"
                                         hide-details="true"
                                     ></v-select>
                                 </v-col>
-                            </v-row>
-                        </v-container>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-container class="pa-0 pe-3">
-                            <v-row>
-                                <v-col cols="12 py-0">
-                                    <p>start</p>
+                                <v-col cols="3">
+                                    <v-select
+                                        :items="endmins"
+                                        variant="outlined"
+                                        density="compact"
+                                        hide-details="true"
+                                    ></v-select>
                                 </v-col>
-                                <v-col>
+                                <v-col cols="3">
                                     <v-select
                                         :items="starthours"
                                         variant="outlined"
@@ -38,7 +55,7 @@
                                         hide-details="true"
                                     ></v-select>
                                 </v-col>
-                                <v-col>
+                                <v-col cols="3">
                                     <v-select
                                         :items="startmins"
                                         variant="outlined"
@@ -47,72 +64,46 @@
                                     ></v-select>
                                 </v-col>
                             </v-row>
-                        </v-container>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-container class="pa-0 ps-3">
-                            <v-row>
-                                <v-col cols="12 py-0">
-                                    <p>end</p>
-                                </v-col>
-                                <v-col>
-                                    <v-select
-                                        :items="endhours"
-                                        variant="outlined"
-                                        density="compact"
-                                        hide-details="true"
-                                    ></v-select>
-                                </v-col>
-                                <v-col>
-                                    <v-select
-                                        :items="endmins"
-                                        variant="outlined"
-                                        density="compact"
-                                        hide-details="true"
-                                    ></v-select>
-                                </v-col>
-                            </v-row>
-                        </v-container>
-                    </v-col>
-                    <v-col cols="12">
-                        <v-text-field
-                            label="Summary"
-                            variant="outlined"
-                            required
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="12 pt-0">
-                        <v-textarea
-                            label="Label"
-                            variant="outlined"
-                            rows="10"
-                            hide-details="ture"
-                            >
-                        </v-textarea>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-card-text>
-        <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-            variant="text"
-            class="text-h5"
-            @click="router.back()"
-            >
-            Close
-            </v-btn>
-            <v-btn
-            variant="text"
-            class="text-h5"
-            >
-            Save
-            </v-btn>
-        </v-card-actions>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="6">
+                            <p>요약</p>
+                        </v-col>
+                        <v-col cols="6">
+                            <p>설명</p>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="6">
+                            <v-text-field
+                                label="Summary"
+                                variant="outlined"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="6">
+                            <v-text-field
+                                label="Summary"
+                                variant="outlined"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </form>
+        </v-card-item>
+        <v-card-title class="d-flex h-5 align-center pa-2">
+            <p class="text-h5 font-weight-black">일정 관련 문서</p>
+        </v-card-title>
+        <div class="h-50 pa-3">
+            <SearchDoc/>
+        </div>
     </v-card>
 </template>
 
 <script setup>
+import SearchDoc from '../docs/SearchDoc.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const starthours = ref(['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])

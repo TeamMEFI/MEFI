@@ -5,7 +5,7 @@
       <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
       <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
       <v-spacer></v-spacer>
-      <v-btn @click="navigateToInsertPage(type)">
+      <v-btn @click="navigateToInsertPage">
         <p class="font-weight-black text-h6">회의 예약</p>
       </v-btn>
     </v-row>
