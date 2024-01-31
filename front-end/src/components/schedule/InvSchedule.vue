@@ -115,9 +115,6 @@ const s = () => {
 </script>
 
 <style scoped>
-.h-cal {
-  height: calc(100% - 64px) !important;
-}
 
 .businesstrip {
   background-color: burlywood;
