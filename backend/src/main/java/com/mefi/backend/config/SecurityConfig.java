@@ -77,7 +77,7 @@ public class SecurityConfig {
         // 필터 등록
         http
                 // 해당 필터 이전에 수행 (수행 할 필터, 기준 필터)
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
+                .addFilterBefore(new JWTFilter(jwtUtil,userRepository), LoginFilter.class)
 
                 // 해당 필터 자리에서 수행 (수행 할 필터, 대체 필터 자리)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,tokenRepository,userRepository), UsernamePasswordAuthenticationFilter.class);
@@ -97,7 +97,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         // 클라이언트에서 온 요청 중에서 허용할 도메인 설정
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
 
                         // 모든 HTTP 메서드 허용 설정
                         configuration.setAllowedMethods(Collections.singletonList("*"));

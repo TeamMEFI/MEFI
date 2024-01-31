@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
     define: {
       'process.env.VUE_APP_API_URL': JSON.stringify(env.VUE_APP_API_URL)
     },
+    assetsInclude: "**/*.PNG",
     plugins: [
       vue(),
     ],

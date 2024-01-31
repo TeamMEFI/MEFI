@@ -32,4 +32,18 @@ public class UserServiceImpl implements UserService {
         // DB 저장
         userRepository.save(user);
     }
+
+    // 회원탈퇴
+    @Override
+    @Transactional
+    public void withdraw(User user) {
+        userRepository.delete(user);
+    }
+
+    // 식별 ID로 유저 조회
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException());
+    }
 }

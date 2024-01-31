@@ -27,6 +27,7 @@ public class CustomUserDetails implements UserDetails {
 
         return collection;
     }
+
     // 암호 반환
     @Override
     public String getPassword() {
@@ -69,5 +70,10 @@ public class CustomUserDetails implements UserDetails {
 
         // 사용 가능
         return true;
+    }
+
+    // 식별 아이디 반환
+    public Long getUserId() {
+        return user.getId();
     }
 }

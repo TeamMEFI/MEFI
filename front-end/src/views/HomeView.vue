@@ -1,12 +1,13 @@
 <template>
   <v-app>
     <!-- 헤더 -->
-    <v-app-bar app>
+    <v-app-bar
+      height="40">
       <HeaderVue/>
     </v-app-bar>
 
     <!-- 사이드바 -->
-    <v-navigation-drawer app class="w-15">
+    <v-navigation-drawer permanent app class="w-15">
       <ProfileVue/>
     </v-navigation-drawer>
 
@@ -16,9 +17,9 @@
     </v-main>
 
     <!-- 풋터 -->
-    <v-footer app class="w-100 elevation-15" color="#f0f0f0">
+    <!-- <v-footer app class="w-100" color="#f0f0f0">
       <FooterVue/>
-    </v-footer>
+    </v-footer> -->
   </v-app>
   
 </template>
@@ -27,7 +28,7 @@
 import HeaderVue from '@/components/layout/Header.vue';
 import FooterVue from '@/components/layout/Footer.vue';
 import ProfileVue from '@/components/layout/Profile.vue';
-import { RouterView, useRouter } from "vue-router";
+import { useRouter, RouterView } from "vue-router";
 const router = useRouter()
 router.push({name:'main'})
 </script>

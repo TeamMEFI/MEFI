@@ -1,9 +1,13 @@
 <template>
-  <v-container>
-    <v-row class="d-flex align-center justify-center ma-10">
+  <v-container class="pa-0">
+    <v-row class="d-flex align-center justify-start ma-3">
       <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
       <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
       <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
+      <v-spacer></v-spacer>
+      <v-btn @click="navigateToInsertPage">
+        <p class="font-weight-black text-h6">개인 일정 생성</p>
+      </v-btn>
     </v-row>
     <v-row class="d-flex align-center justify-center">
       <v-col v-for="i in weekday" class="day-header" style="flex-grow: 0;">
@@ -27,15 +31,15 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter()
+const navigateToInsertPage = () => {
+  const type = 'schedule'
+  router.push({ name: 'insert', params: { type } });
+};
+
 // 셀렉터 옵션 및 캘린더 옵션들
-const type = ref('month')
-const types = ref(['month', 'week'])
 const weekday = ref([0, 1, 2, 3, 4, 5, 6])
-const weekdays = ref([
-          { title: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
-          { title: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
-          { title: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
-        ])
 const dayofweek = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
 const listofmonthword = ['January','February','March','April','May','June','July','August','September','October','November', 'December']
 
@@ -118,24 +122,26 @@ const day   = ref(nowdate.value.getDay())
 // 달력 날짜 계산
 const cal = ref(makecalendar(year.value, month.value))
 
+// 일정 생성 관련
+
+
 </script>
 
 
 
 <style scoped>
 .day {
-    max-width: 180px;
-    min-width: 180px;
-    min-height: 130px;
-    max-height: 130px;
+    max-width: calc(95%/7);
+    min-width: calc(95%/7);
+    min-height: 110px;
+    max-height: 110px;
     border: 1px solid black;
     text-align: center;
     flex-grow: initial !important;
 }
 .day-header {
-  max-width: 180px;
-  min-width: 180px;
-  text-align: center;
+  max-width: calc(95%/7);
+  min-width: calc(95%/7);
   background-color: #f2f2f2;
   border: 0.2px solid #495464;
 }
