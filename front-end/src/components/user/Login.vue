@@ -27,8 +27,8 @@
 
         <!-- 그 외 비밀번호 찾기 / 회원 가입 기능 -->
         <div class="d-flex justify-center">
-            <a @click="goSearchPassword">비밀번호 찾기 </a>  |  
-            <a @click="goSignup"> 회원가입</a>
+            <a @click="goSearchPassword" class="cursor-pointer">비밀번호 찾기 </a>  |  
+            <a @click="goSignup" class="cursor-pointer">회원가입</a>
         </div>
     </v-sheet>
 </template>
@@ -37,6 +37,8 @@
 import router from "@/router/index.js"
 import { useUserStore } from "@/stores/user"
 import { ref } from "vue"
+import inputVue from "../common/input.vue"
+
 
 // 입력 정보를 담을 변수
 const email = ref('')
@@ -62,6 +64,10 @@ const goSignup = function(){
 // 기능 : 비밀 번호 찾기 페이지로 이동
 const goSearchPassword = () => {
     router.push({name:'search-password1'})
+}
+
+const InputEmail = (value) => {
+    console.log(value)
 }
 </script>
 
