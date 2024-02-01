@@ -1,5 +1,10 @@
 <template>
-
+  <template v-if="type === 'schedule'">
+    <ScheduleDialog/>
+  </template>
+  <template v-else>
+    <ConferenceDialog/>
+  </template>
 </template>
 
 <script setup>
