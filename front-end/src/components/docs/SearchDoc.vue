@@ -1,45 +1,61 @@
 <template>
   <v-sheet height="100%" width="100%" rounded="xl" border elevation="0" class="pa-5">
-    <v-list :items="docsList"></v-list>
-    <div
+    <!-- <div
       class="file-upload-container"
       @dragenter="onDragenter"
       @dragover="onDragover"
       @dragleave="onDragleave"
       @drop="onDrop"
       @click="onClick"
-    >
-      <div class="file-upload" :class="isDragged ? 'dragged' : ''">Drag & Drop Files</div>
+    > -->
+    <div>
+      <!-- </div> -->
+      <!-- <div class="file-upload" :class="isDragged ? 'dragged' : ''">Drag & Drop Files</div> -->
     </div>
     <!-- 파일 업로드 -->
     <input type="file" ref="file" class="file-upload-input" @change="onFileChange" multiple />
     <!-- 업로드된 리스트 -->
-    <div class="file-upload-list">
-      <div class="file-upload-list__item" v-for="(file, index) in fileList" :key="index">
-        <div class="file-upload-list__item__data">
-          <img class="file-upload-list__item__data-thumbnail" :src="file.src" />
-          <div class="file-upload-list__item__data-name">
-            {{ file.name }}
-          </div>
-        </div>
-        <div class="file-upload-list__item__btn-remove" @click="handleRemove(index)">삭제</div>
-      </div>
+    <div class="d-flex file-upload-list" v-for="file in fileList" :key="file.fileName">
+      <a>{{ file.fileName }}</a>
+      <v-btn @click="saveFile(file.fileName)">다운</v-btn>
+      <v-btn @click="eraseFile(file.fileName)">삭제</v-btn>
     </div>
-    <v-btn @click="uploadFile"></v-btn>
+    <!-- 업로드할 리스트 -->
+    <div
+      class="d-flex file-upload-list"
+      v-for="addedFile in addedFileList"
+      :key="addedFile.fileName"
+    >
+      <a>{{ addedFile.name }}</a>
+      <v-btn disabled>추가됨</v-btn>
+      <v-btn @click="removeFile(addedFile.name)">삭제</v-btn>
+    </div>
+    <v-btn @click="uploadFile">업로드?</v-btn>
   </v-sheet>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getFiles, createFile } from '@/api/file.js'
-
-const route = useRoute()
-const router = useRouter()
+import { getFiles, createFile, downloadFile, deleteFile } from '@/api/file.js'
 
 // API 호출 함수
-const files = ref(null)
 const file = ref(null)
+const fileList = ref([])
+const addedFileList = ref([])
+
+const fetchFiles = () => {
+  getFiles(
+    {},
+    546,
+    (response) => {
+      fileList.value = response.data.dataBody
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
 
 const uploadFile = () => {
   const formData = new FormData()
@@ -59,9 +75,6 @@ const uploadFile = () => {
   formData.append('file', file.value.files[0])
   formData.append('fileRequestDto', fileRequestDto)
 
-  console.log(file.value.files[0])
-  console.log(formData.get('fileRequestDto'))
-
   createFile(
     formData,
     (response) => {
@@ -73,35 +86,53 @@ const uploadFile = () => {
   )
 }
 
-onMounted(() => {
-  getFiles(
+const saveFile = (fileName) => {
+  downloadFile(
     {
-      conferenceId: 546
+      fileName: fileName
     },
+    546,
     (response) => {
-      console.log(response.data)
+      const blob = new Blob([response.data], { type: 'application/octet-stream' });
+      const filepath = URL.createObjectURL(blob)
+
+      var element = document.createElement('a')
+      element.setAttribute('href', filepath)
+      document.body.appendChild(element)
+      element.click()
+      document.body.removeChild(element)
     },
     (error) => {
       console.log(error)
     }
   )
-})
+}
 
-// 검색 결과 값 List
-const docsList = ref([
-  {
-    title: 'Item #1',
-    value: 2
-  },
-  {
-    title: 'Item #2',
-    value: 2
-  },
-  {
-    title: 'Item #3',
-    value: 3
-  }
-])
+const eraseFile = (fileName) => {
+  console.log(name)
+  deleteFile(
+    {
+      fileName: fileName
+    },
+    546,
+    (response) => {
+      console.log(response.data)
+      alert('삭제되었답니다~')
+      fetchFiles()
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
+const removeFile = (fileName) => {
+  addedFileList.value = addedFileList.value.filter((addedFile) => addedFile.name !== fileName)
+}
+
+onMounted(() => {
+  fetchFiles()
+})
 
 // const onClick = () => {
 //   this.$refs.fileInput.click()
@@ -130,10 +161,11 @@ const docsList = ref([
 //   this.addFiles(files)
 // }
 
-// const onFileChange = (event) => {
-//   const files = event.target.files
-//   this.addFiles(files)
-// }
+const onFileChange = (event) => {
+  const files = event.target.files[0]
+  console.log(files)
+  addedFileList.value.push(files)
+}
 
 // const addFiles = async (files) => {
 //   for (let i = 0; i < files.length; i++) {
@@ -152,9 +184,9 @@ const docsList = ref([
 //     reader.readAsDataURL(files)
 //   })
 // }
-const handleRemove = (index) => {
-  this.fileList.splice(index, 1)
-}
+// const handleRemove = (index) => {
+//   this.fileList.splice(index, 1)
+// }
 </script>
 
 <style scoped>
