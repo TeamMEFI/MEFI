@@ -2,6 +2,7 @@ package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.JoinReqDto;
 import com.mefi.backend.api.response.MemberResDto;
+import com.mefi.backend.db.entity.Token;
 import com.mefi.backend.db.entity.User;
 import com.mefi.backend.db.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -17,6 +18,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final TokenService tokenService;
 
     // 회원가입
     @Override
@@ -40,6 +42,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void withdraw(User user) {
+
+        // 유저 토큰 삭제
+        Token token = tokenService.findByUserId(user.getId());
+        tokenService.deleteRefreshToken(token);
+
+        // 유저 삭제
         userRepository.delete(user);
     }
 
