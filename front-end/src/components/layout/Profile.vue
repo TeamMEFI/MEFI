@@ -27,7 +27,7 @@
       </v-dialog>
     </div>
     <div>
-      <v-list>
+      <v-list v-if="teams">
         <v-list-item
             v-for="team in teams"
             :key="team"
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeMount } from 'vue'
+import { ref, onMounted } from 'vue'
 import TeamCreateDialog from '@/components/dialog/TeamCreateDialog.vue'
 import { useRouter } from 'vue-router'
 import { teamSelect } from '@/api/team.js'
@@ -50,7 +50,6 @@ import { teamSelect } from '@/api/team.js'
 const dialog = ref(false)
 const router = useRouter()
 const teams = ref([])
-
 
 const select = async () => {
     await teamSelect(
@@ -61,9 +60,9 @@ const select = async () => {
             console.log(error)
         }
     )
-  }
+}
 
-onBeforeMount(async () => {
+onMounted(() => {
   select()
 });
 
