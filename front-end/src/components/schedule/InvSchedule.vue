@@ -103,10 +103,9 @@ const getheight = (i) => {
 }
 
 const final = drowingtime(tabletimes, scheduleList.value)
-console.log(final);
  
 const s = () => {
-  const type = 'schedule'
+  const type = 'modify'
   router.push({ name: 'detail', params: { type } });
 }
 // 검색 결과 값 List
