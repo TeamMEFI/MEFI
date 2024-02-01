@@ -92,16 +92,16 @@
 <script setup>
 import { ref } from 'vue';
 import { teamCreate, teamSelect } from '@/api/team.js'
-import router from '@/router';
+
 
 const emit = defineEmits(['closeDialog'])
 const searchList = ref([
 ])
 
-const leaderId = ref(11)
+const leaderId = ref('')
 const teamName = ref('')
 const teamDescription = ref('')
-const members = ref([10, 12])
+const members = ref([])
 
 const gocreate = async (data) => {
     console.log(data)
