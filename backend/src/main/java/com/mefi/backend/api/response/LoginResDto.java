@@ -11,7 +11,7 @@ import lombok.Setter;
 public class LoginResDto {
     
     // 이메일
-    private String emial;
+    private String email;
 
     // 이름
     private String name;
