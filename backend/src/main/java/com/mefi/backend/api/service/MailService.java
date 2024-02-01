@@ -1,5 +1,6 @@
 package com.mefi.backend.api.service;
 
+import com.mefi.backend.api.request.VerifyCodeReqDto;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -15,4 +16,7 @@ public interface MailService {
 
     // 메일 전송
     public int sendMessage(String email) throws MessagingException, UnsupportedEncodingException;
+
+    // 인증 코드 확인
+    String validateAuthCode(VerifyCodeReqDto verifyCodeReqDto);
 }

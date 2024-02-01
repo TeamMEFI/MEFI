@@ -30,9 +30,12 @@ const router = createRouter({
           component: MainView
         },
         {
-          path: '/team',
+          path: '/team/:id',
           name: 'team',
-          component: TeamView
+          component: TeamView,
+          props: (route) =>({
+            id: route.params.id,
+          })
         },
         {
           path: '/insert/:type',

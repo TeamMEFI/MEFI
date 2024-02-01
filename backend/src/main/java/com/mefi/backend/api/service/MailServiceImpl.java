@@ -1,5 +1,9 @@
 package com.mefi.backend.api.service;
 
+import com.mefi.backend.api.request.VerifyCodeReqDto;
+import com.mefi.backend.common.exception.ErrorCode;
+import com.mefi.backend.common.exception.Exceptions;
+import com.mefi.backend.common.util.JWTUtil;
 import com.mefi.backend.db.entity.EmailAuth;
 import com.mefi.backend.db.repository.MailRepository;
 import jakarta.mail.MessagingException;
@@ -12,15 +16,18 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.mefi.backend.common.exception.ErrorCode.CODE_NOT_MATCH;
 
 @RequiredArgsConstructor
 @Service
 public class MailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
     private final MailRepository mailRepository;
+    private final JWTUtil jwtUtil;
 
     // 이메일
     @Value("${spring.mail.username}")
@@ -102,8 +109,6 @@ public class MailServiceImpl implements MailService {
                     .randomNum(authCode)
                     .build();
 
-            System.out.println("emailAuth = " + emailAuth);
-
             // DB 저장
             mailRepository.save(emailAuth);
         }
@@ -113,5 +118,28 @@ public class MailServiceImpl implements MailService {
 
         // 인증 코드 반환
         return authCode;
+    }
+
+    // 인증 코드 확인
+    @Override
+    public String validateAuthCode(VerifyCodeReqDto verifyCodeReqDto) {
+
+        // 이메일로 은증 엔티티 조회
+        EmailAuth emailAuth = mailRepository.findByEmail(verifyCodeReqDto.getEmail())
+                .orElseThrow(() -> new Exceptions(ErrorCode.EMAIL_NOT_EXIST));
+
+        // 인증 코드 유효성 검사
+
+        // 인증 시간 만료 여부
+        if(emailAuth.getCreatedTime().plusMinutes(3)
+                .isBefore(LocalDateTime.now()))
+            return ErrorCode.CODE_TIME_EXPIRED.getErrorCode();
+
+        // 인증 코드 일치 여부
+        if(emailAuth.getRandomNum()!=Integer.parseInt(verifyCodeReqDto.getAuthCode()))
+            return CODE_NOT_MATCH.getErrorCode();
+
+        // 토큰 발행
+        return jwtUtil.createJwt(emailAuth.getEmail(), "undefined", 60*3*1000L);
     }
 }

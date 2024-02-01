@@ -91,20 +91,25 @@
 
 <script setup>
 import { ref } from 'vue';
-import { teamCreate, teamSelect } from '@/api/team.js'
-import router from '@/router';
+import { teamCreate } from '@/api/team.js'
+
 
 const emit = defineEmits(['closeDialog'])
 const searchList = ref([
 ])
 
-const leaderId = ref(11)
+const leaderId = ref('')
 const teamName = ref('')
 const teamDescription = ref('')
-const members = ref([10, 12])
+const members = ref([])
 
-const gocreate = async (data) => {
-    console.log(data)
+const create = async () => {
+    const data = {
+        leaderId : leaderId.value,
+        teamName : teamName.value,
+        teamDescription : teamDescription.value,
+        members : members.value,
+    }
     await teamCreate(
         data,(response) => {
             console.log(response)
@@ -116,15 +121,6 @@ const gocreate = async (data) => {
     )
   }
 
-const create = () => {
-    const data = {
-        leaderId : leaderId.value,
-        teamName : teamName.value,
-        teamDescription : teamDescription.value,
-        members : members.value,
-    }
-    gocreate(data)
-}
 </script>
 
 <style lang="scss" scoped>
