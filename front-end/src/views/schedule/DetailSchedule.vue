@@ -1,9 +1,10 @@
 <template>
     <v-card class="pa-5">
         <v-card-title class="d-flex align-center pa-2">
-            <p class="text-h5 font-weight-black">일정 등록</p>
+            <p class="text-h5 font-weight-black">일정 상세</p>
             <v-spacer></v-spacer>
-            <v-btn>일정 등록하기</v-btn>
+            <v-btn>일정 수정하기</v-btn>
+            <v-btn>일정 삭제하기</v-btn>
         </v-card-title>
         <v-card-item class="pa-3 h-40">
             <form @submit.prevent="submit">
@@ -33,22 +34,6 @@
                             <v-row>
                                 <v-col cols="3">
                                     <v-select
-                                        :items="endhours"
-                                        variant="outlined"
-                                        density="compact"
-                                        hide-details="true"
-                                    ></v-select>
-                                </v-col>
-                                <v-col cols="3">
-                                    <v-select
-                                        :items="endmins"
-                                        variant="outlined"
-                                        density="compact"
-                                        hide-details="true"
-                                    ></v-select>
-                                </v-col>
-                                <v-col cols="3">
-                                    <v-select
                                         :items="starthours"
                                         variant="outlined"
                                         density="compact"
@@ -58,6 +43,22 @@
                                 <v-col cols="3">
                                     <v-select
                                         :items="startmins"
+                                        variant="outlined"
+                                        density="compact"
+                                        hide-details="true"
+                                    ></v-select>
+                                </v-col>
+                                <v-col cols="3">
+                                    <v-select
+                                        :items="endhours"
+                                        variant="outlined"
+                                        density="compact"
+                                        hide-details="true"
+                                    ></v-select>
+                                </v-col>
+                                <v-col cols="3">
+                                    <v-select
+                                        :items="endmins"
                                         variant="outlined"
                                         density="compact"
                                         hide-details="true"
@@ -103,15 +104,14 @@
 </template>
 
 <script setup>
-import SearchDoc from '../docs/SearchDoc.vue';
+import SearchDoc from '@/components/docs/SearchDoc.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-const starthours = ref(['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
-const endhours = ref(['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
 const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const typeschedule = ref(['연차', '회의', '출장','기타'])
-const router = useRouter()
 
 </script>
 
