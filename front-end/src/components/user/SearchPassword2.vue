@@ -1,5 +1,5 @@
 <template>
-    <v-sheet class="w-30 mx-auto pa-12 ma-10" style="border-radius: 10px;">
+    <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" style="border-radius: 10px;">
         <v-form @submit.prevent="chagnePassword">
             <v-text-field
                 label="새로운 비밀번호"
@@ -13,7 +13,9 @@
                 v-model="password_check"
                 :rules="rule_pass_check"
             ></v-text-field>
-            <v-btn type="submit">비밀 번호 변경</v-btn>
+            <div class="d-flex align-center justify-center">
+                <v-btn type="submit">비밀 번호 변경</v-btn>
+            </div>
         </v-form>
     </v-sheet>
 </template>

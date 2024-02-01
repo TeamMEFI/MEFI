@@ -1,5 +1,5 @@
 <template>
-    <v-sheet class="w-30 mx-auto pa-12 ma-10" style="border-radius: 10px;">
+    <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" style="border-radius: 10px;">
         <p class="text-center">
             비밀번호를 찾고자하는 이메일을 입력하세요.
         </p>
@@ -9,7 +9,7 @@
                 v-model="email"
                 :rules="rule_email"
             ></v-text-field>
-            <div class="align-center justify-center">
+            <div class="d-flex align-center justify-center">
                 <v-btn :disabled="email_check" @click="goSearchPassword">다음</v-btn>
             </div>
         </v-form>
