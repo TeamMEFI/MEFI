@@ -5,7 +5,6 @@ async function teamSelect(param, success, fail){
     await local.get(`/team`, param).then(success).catch(fail);
 }
 async function teamCreate(param, success, fail){
-    
     await local.post(`/team`, param).then(success).catch(fail);
 }
 export { teamSelect, teamCreate };

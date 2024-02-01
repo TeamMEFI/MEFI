@@ -34,6 +34,11 @@
 import TeamCalendarVue from '@/components/calendar/TeamCalendar.vue';
 import Schedule from '@/components/schedule/TeamSchedule.vue';
 import SearchDoc from '@/components/docs/SearchDoc.vue';
+
+const props = defineProps({
+  id: Number
+});
+console.log(props.id)
 </script>
 <style>
 

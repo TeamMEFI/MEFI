@@ -26,20 +26,15 @@
         <TeamCreateDialog @close-dialog="dialog = false" />
       </v-dialog>
     </div>
-    <div v-for="team in teams">
+    <div>
       <v-list>
-        <v-list-group :value="team.teamName" @click="router.push({ name: 'team' })">
-          <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" :title="team.teamName"></v-list-item>
-          </template>
-
-          <v-list-item
-            v-for="teamMember in team.teamMembers"
-            :key="teamMember"
-            :title="teamMember"
-            :value="teamMember"
+        <v-list-item
+            v-for="team in teams"
+            :key="team"
+            :title="team.teamName"
+            :value="team.teamId"
+            @click="goTeamPage(team.teamId)"
           ></v-list-item>
-        </v-list-group>
       </v-list>
     </div>
     <template v-slot:loading></template>
@@ -47,37 +42,34 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeMount } from 'vue'
 import TeamCreateDialog from '@/components/dialog/TeamCreateDialog.vue'
 import { useRouter } from 'vue-router'
+import { teamSelect } from '@/api/team.js'
 
 const dialog = ref(false)
 const router = useRouter()
+const teams = ref([])
 
-const teamOpen = ref(['Teams'])
-const teams = ref([
-  {
-    teamName: 'Team1',
-    teamMembers: ['Member1', 'Member2', 'Member3']
-  },
-  {
-    teamName: 'Team2',
-    teamMembers: [
-      'Member4',
-      'Member5',
-      'Member6',
-      'Member7',
-      'Member8',
-      'Member9',
-      'Member10',
-      'Member11'
-    ]
-  },
-  {
-    teamName: 'Team3',
-    teamMembers: ['Member12', 'Member13', 'Member14', 'Member15', 'Member16']
+
+const select = async () => {
+    await teamSelect(
+        '',(response) => {
+            teams.value = response.data.dataBody
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
   }
-])
+
+onBeforeMount(async () => {
+  select()
+});
+
+const goTeamPage = (id) => {
+  router.push({name: 'team', params: { id }})
+}
 </script>
 
 <style scoped>
