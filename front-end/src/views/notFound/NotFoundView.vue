@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="notfound">
-      <img src='@/assets/NotFoundImage.jpg' width="100%"/>
+      <img class="notfound-img" src='@/assets/NotFoundImage.jpg' width="100%"/>
       <div class="text-box">
         <h1 style="font-size: 52px; color: white">404 Not Found</h1>
         <p style="font-size: 18px; color: rgb(159, 159, 159)">3초 후 메인 페이지로 이동합니다</p>
@@ -34,5 +34,9 @@ setTimeout(() => {
   top: 40px;
   height: 0px;
   text-align: center;
+}
+
+.notfound-img {
+  object-fit: cover;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-    <v-card class="h-100 pa-10">
-        <v-card-title class="d-flex h-5 align-center pa-2">
+    <v-card class="pa-5">
+        <v-card-title class="d-flex align-center pa-2">
             <p class="text-h5 font-weight-black">일정 등록</p>
             <v-spacer></v-spacer>
             <v-btn>일정 등록하기</v-btn>

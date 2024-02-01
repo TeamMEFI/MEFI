@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="w-100 h-100 d-flex justify-center">
+    <v-app fluid class="w-100 h-100 d-flex justify-center">
       <!-- v-row를 사용하여 왼쪽(6), 오른쪽(4)으로 나눈 레이아웃 -->
       <v-row>
         <!-- 왼쪽(6) -->
@@ -22,7 +22,7 @@
           </v-container>
         </v-col>
       </v-row>
-    </v-container>
+    </v-app>
 </template>
   
 <script setup>

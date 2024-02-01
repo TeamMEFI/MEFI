@@ -1,7 +1,7 @@
 <template>
-  <div class="wrap">
+  <v-app class="wrap">
     <RouterView/>
-  </div>
+  </v-app>
 </template>
 
 <script setup>

@@ -1,14 +1,13 @@
 <template>
   <v-app>
     <!-- 헤더 -->
-    <v-app-bar
-      height="40">
-      <HeaderVue/>
+    <v-app-bar height="40" class="elevation-0">
+      <HeaderVue />
     </v-app-bar>
 
     <!-- 사이드바 -->
-    <v-navigation-drawer permanent app class="w-15">
-      <ProfileVue/>
+    <v-navigation-drawer permanent app class="w-15 md-15">
+      <ProfileVue />
     </v-navigation-drawer>
 
     <!-- 메인 컨텐츠 -->
@@ -23,16 +22,15 @@
       <FooterVue/>
     </v-footer> -->
   </v-app>
-  
 </template>
 
 <script setup>
-import HeaderVue from '@/components/layout/Header.vue';
-import FooterVue from '@/components/layout/Footer.vue';
-import ProfileVue from '@/components/layout/Profile.vue';
-import { useRouter, RouterView } from "vue-router";
+import HeaderVue from '@/components/layout/Header.vue'
+import FooterVue from '@/components/layout/Footer.vue'
+import ProfileVue from '@/components/layout/Profile.vue'
+import { useRouter, RouterView } from 'vue-router'
 const router = useRouter()
-router.push({name:'main'})
+router.push({ name: 'main' })
 </script>
 
 <style>
@@ -41,6 +39,6 @@ router.push({name:'main'})
 }
 
 .wrapper {
-  background-color: #F7F9FF;
+  background-color: #f7f9ff;
 }
 </style>

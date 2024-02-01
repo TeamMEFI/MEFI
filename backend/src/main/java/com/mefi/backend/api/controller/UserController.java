@@ -1,6 +1,7 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.JoinReqDto;
+import com.mefi.backend.api.request.VerifyCodeReqDto;
 import com.mefi.backend.api.request.VerifyEmailReqDto;
 import com.mefi.backend.api.service.MailServiceImpl;
 import com.mefi.backend.api.service.TokenService;
@@ -77,5 +78,15 @@ public class UserController {
         // 메일 전송 후 코드 받기
         mailService.sendMessage(verifyEmailReqDto.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0,"Success"));
+    }
+
+    @Operation(summary = "이메일 인증 확인", description = "/users/regist/auth/check\n\n 사용자는 이메일 인증 확인을 한다.")
+    @PostMapping("/regist/auth/check")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n Token 반환")
+    public ResponseEntity<? extends BaseResponseBody> verifyEmailCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
+
+        // 인증 코드 확인 후 토큰 반환
+        String token = mailService.validateAuthCode(verifyCodeReqDto);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,token));
     }
 }

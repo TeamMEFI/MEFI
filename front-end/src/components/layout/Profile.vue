@@ -1,33 +1,34 @@
 <template>
   <v-infinite-scroll class="sidebar w-100 h-100 d-flex flex-column aling-center pa-3">
-    <div class="d-flex mb-4">
+    <div class="d-flex mb-4 align-center">
       <div class="w-25">
         <img
-          class="body-img-img w-100 h-100 rounded-circle"
+          class="rounded-circle"
           width="50px"
+          height="50px"
           src="@/assets/sampleImg.PNG"
           alt="profile-image"
         />
       </div>
-      <div class="w-80">
+      <div class="w-75 pl-2">
         <p>박병조</p>
         <p>구미 2반 204조</p>
       </div>
     </div>
 
-    <v-btn class="my-4 border" height="60" @click="router.push({ name: 'main' })"
+    <v-btn class="my-4 border elevation-0" height="60" @click="router.push({ name: 'main' })"
       >개인 일정 조회
     </v-btn>
     <div class="d-flex mx-2 my-4 justify-space-between align-center">
-      <p>팀 목록</p>
+      <p style="font-weight: bold">팀 목록</p>
       <font-awesome-icon :icon="['fas', 'plus']" />
       <v-dialog activator="parent" v-model="dialog" persistent width="70%" height="70%">
         <TeamCreateDialog @close-dialog="dialog = false" />
       </v-dialog>
     </div>
     <div v-for="team in teams">
-      <v-list v-model:opened="teamOpen">
-        <v-list-group :value="team.teamName">
+      <v-list>
+        <v-list-group :value="team.teamName" @click="router.push({ name: 'team' })">
           <template v-slot:activator="{ props }">
             <v-list-item v-bind="props" :title="team.teamName"></v-list-item>
           </template>

@@ -1,5 +1,5 @@
 <template>
-  <v-sheet height="100%" width="100%" rounded="xl" elevation="12" class="pa-5">
+  <v-sheet height="100%" width="100%" rounded="xl" border elevation="0" class="pa-5">
     <v-list :items="docsList"></v-list>
   </v-sheet>
 </template>
