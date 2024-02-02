@@ -73,18 +73,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,"Success"));
     }
 
-    @Operation(summary = "이메일 인증", description = "/users/regist/{userId}/auth\n\n 사용자는 이메일 인증을 한다.")
-    @PostMapping("/regist/auth")
+    @Operation(summary = "이메일 인증", description = "/users/join/auth\n\n 사용자는 이메일 인증을 한다.")
+    @PostMapping("/join/auth")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> verifyEmail(@RequestBody VerifyEmailReqDto verifyEmailReqDto) throws Exception {
 
         // 메일 전송 후 코드 받기
         mailService.sendMessage(verifyEmailReqDto.getEmail());
-        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0,"Success"));
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,"Success"));
     }
 
-    @Operation(summary = "이메일 인증 확인", description = "/users/regist/auth/check\n\n 사용자는 이메일 인증 확인을 한다.")
-    @PostMapping("/regist/auth/check")
+    @Operation(summary = "이메일 인증 확인", description = "/users/join/auth/check\n\n 사용자는 이메일 인증 확인을 한다.")
+    @PostMapping("/join/auth/check")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Token 반환")
     public ResponseEntity<? extends BaseResponseBody> verifyEmailCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
 
