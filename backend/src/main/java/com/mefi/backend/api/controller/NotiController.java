@@ -1,6 +1,7 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.response.NotiResponseDto;
+import com.mefi.backend.api.response.SseReponseDto;
 import com.mefi.backend.api.service.NotiService;
 import com.mefi.backend.common.auth.CustomUserDetails;
 import com.mefi.backend.common.model.BaseResponseBody;
