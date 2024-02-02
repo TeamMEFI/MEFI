@@ -178,67 +178,9 @@ const onDrop = (event) => {
 </script>
 
 <style scoped>
-.bg {
-  background-color: #f0f0f0;
-}
-.file-upload {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  border: transparent;
-  border-radius: 20px;
-  cursor: pointer;
-  &-container {
-    height: 300px;
-    padding: 20px;
-    margin: 0 auto;
-    box-shadow: 0 0.625rem 1.25rem #0000001a;
-    border-radius: 20px;
-  }
-  &-input {
-    display: none;
-  }
-  &-list {
-    margin-top: 10px;
-    width: 100%;
-    &__item {
-      padding: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      &__data {
-        display: flex;
-        align-items: center;
-        &-thumbnail {
-          margin-right: 10px;
-          border-radius: 20px;
-          width: 120px;
-          height: 120px;
-        }
-      }
-      &__btn-remove {
-        cursor: pointer;
-        border: 1px solid powderblue;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 5px;
-        border-radius: 6px;
-      }
-    }
-  }
-}
-
-.drag-container {
-  position: relative;
-  background-color: #0000001a;
-}
-
 .dragged {
-  border: 1px dashed powderblue;
-  background-color: aqua;
+  border: 1px dashed #495464;
+  background-color: #f7f9ff;
   opacity: 0.6;
 }
 
