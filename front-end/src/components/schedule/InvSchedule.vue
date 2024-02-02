@@ -2,13 +2,6 @@
     <div class="bg-white h-100 w-100 elevation-3 pa-0">
         <v-toolbar color="#2A4770" class="elevation-1" >
             <v-toolbar-title class="font-weight-bold text-h5">Schedule</v-toolbar-title>
-            <v-spacer/>
-            <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-                <v-dialog activator="parent" v-model="dialog" persistent width="600" height="700">
-                  <ScheduleDialog @close-dialog="dialog=false"/>
-                </v-dialog>
-            </v-btn>
         </v-toolbar>
         <div class="w-100 h-cal d-flex">
           <div class="w-25 d-flex flex-column">
@@ -20,9 +13,9 @@
             </div>
           </div>
           <div class="w-75 d-flex flex-column">
-            <div v-for="hour in final" :key="hour" :style="{height : getheight(hour['duration'])}" :class="hour['scheduletype']">
-                <div v-if="hour['scheduletype'] != 'none'" @click="s()" class="w-100 h-100">
-                  <p>시간 {{ hour['start'] }} ~ {{ hour['end'] }}</p>
+            <div v-for="hour in final" :key="hour" :style="{height : getheight(hour['duration'])}" :class="hour['type']">
+                <div v-if="hour['type'] != 'none'" @click="detailSchedule(hour['id'])" class="w-100 h-100">
+                  <p>시간 {{ hour['start_time'] }} ~ {{ hour['end_time'] }}</p>
                   <p>요약 : {{ hour['summary'] }}</p>
                 </div>
             </div>
@@ -33,18 +26,17 @@
 
 <script setup>
 import { ref } from 'vue';
-import ScheduleDialog from '@/components/dialog/ScheduleDialog.vue';
 import { useRouter } from 'vue-router';
 const router = useRouter()
-const dialog = ref(false)
+
+// 스케줄 필요코드
 const hours = ref(['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'])
 const timerhours = ['08:', '09:', '10:', '11:', '12:', '13:', '14:', '15:', '16:', '17:', '18:', '19:', '20:', '21:']
 const mins = ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55']
 const scheduleList = ref([
-    { summary: '오전일정', description:'회의', scheduletype:'businesstrip', start: '09:35', end: '12:00'},
-    { summary: '오후일정', description:'회의', scheduletype:'dispatch', start: '14:00', end: '16:00'},
+    { id: 1,summary: '오전일정', type:'businesstrip', start_time: '09:35', end_time: '12:00'},
+    { id: 2,summary: '오후일정', type:'dispatch', start_time: '14:00', end_time: '16:00'},
 ])
-
 const times = () => {
   const newtimes = []
   for (const hour of timerhours) {
@@ -69,22 +61,22 @@ const drowingtime = (table, schedule) => {
 
   for (const time of schedule) {
     const startIdx = table.indexOf(previousEnd);
-    const endIdx = table.indexOf(time.start);
+    const endIdx = table.indexOf(time.start_time);
 
     if (startIdx !== -1 && endIdx !== -1) {
       const duration = endIdx - startIdx;
-      tabledata.push({ duration, summary: '', description:'', scheduletype:'none', start: '', end: '' });
+      tabledata.push({ duration, type:'none' });
     }
 
-    const startIdxTime = table.indexOf(time.start);
-    const endIdxTime = table.indexOf(time.end);
+    const startIdxTime = table.indexOf(time.start_time);
+    const endIdxTime = table.indexOf(time.end_time);
 
     tabledata.push({
       duration: endIdxTime - startIdxTime,
       ...time
     });
 
-    previousEnd = time.end;
+    previousEnd = time.end_time;
   }
 
   const lastEndIdx = table.indexOf(previousEnd);
@@ -92,7 +84,7 @@ const drowingtime = (table, schedule) => {
 
   if (lastEndIdx !== -1 && finalEndIdx !== -1 && lastEndIdx !== finalEndIdx) {
     const duration = finalEndIdx - lastEndIdx;
-    tabledata.push({ duration, summary: '', description:'', scheduletype:'none', start: '', end: '' });
+    tabledata.push({ duration, type:'none'});
   }
 
   return tabledata;
@@ -104,11 +96,11 @@ const getheight = (i) => {
 
 const final = drowingtime(tabletimes, scheduleList.value)
  
-const s = () => {
-  const type = 'modify'
-  router.push({ name: 'detail', params: { type } });
+
+// 스케줄 상세정보 이동
+const detailSchedule = (data) => {
+  router.push({name: 'detailschedule', params: {scheduleid : data}})
 }
-// 검색 결과 값 List
 
 
 </script>

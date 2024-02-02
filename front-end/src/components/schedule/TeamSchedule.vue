@@ -4,39 +4,45 @@
             <v-toolbar-title class="font-weight-bold text-h5">Team's Schedule</v-toolbar-title>
             <v-btn icon>
                 <v-icon>mdi-dots-vertical</v-icon>
-                <!-- <v-dialog activator="parent" v-model="dialog" persistent width="600" height="700"> -->
-                <v-dialog activator="parent" v-model="dialog" fullscreen :scrim="false" transition="dialog-bottom-transition">
-                  <ConferenceDialog @close-dialog="dialog=false"/>
-                </v-dialog>
             </v-btn>
         </v-toolbar>
-        <v-list :items="scheduleList"></v-list>
+        <v-list>
+          <v-list-item
+            v-for="schedule in scheduleList"
+            :key="schedule"
+            :title="schedule.title"
+            @click="router.push({name: 'detailconference', params: { teamid : props.teamId, conferenceid : schedule['id']}})"
+          ></v-list-item>
+        </v-list>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import ConferenceDialog from '@/components/dialog/ConferenceDialog.vue';
-const dialog = ref(false)
+import { useRouter } from 'vue-router';
+const router = useRouter()
+const props = defineProps({
+  teamId: Number
+});
 // 검색어
 
 // 검색 API 호출 함수
-const searchdocs = () => {
-    console.log(1)
-}
 // 검색 결과 값 List
 const scheduleList = ref([
         {
           title: 'Item #1',
           value: 2,
+          id: 1
         },
         {
           title: 'Item #2',
           value: 2,
+          id: 2
         },
         {
           title: 'Item #3',
           value: 3,
+          id: 3
         },
 ])
 

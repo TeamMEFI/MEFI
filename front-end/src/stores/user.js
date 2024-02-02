@@ -39,7 +39,9 @@ export const useUserStore = defineStore('user', () => {
       (error)=>{
         console.log(error)
       }
-    ).then(()=>{router.push({name:'home'})})
+    ).then(()=>{
+      router.push({name:'home'})
+    })
   }
 
   // 로그아웃 함수

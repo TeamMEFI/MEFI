@@ -93,11 +93,8 @@
 import { ref } from 'vue';
 import { teamCreate } from '@/api/team.js'
 
-
 const emit = defineEmits(['closeDialog'])
-const searchList = ref([
-])
-
+const searchList = ref([])
 const leaderId = ref('')
 const teamName = ref('')
 const teamDescription = ref('')
