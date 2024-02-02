@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-white h-100 w-100 elevation-3 pa-0">
-        <v-toolbar color="#2A4770" class="elevation-1" >
+    <div class="bg-white h-100 w-100 elevation-0 pa-0">
+        <v-toolbar class="elevation-0" >
             <v-toolbar-title class="font-weight-bold text-h5">Schedule</v-toolbar-title>
         </v-toolbar>
         <div class="w-100 h-cal d-flex">

@@ -1,5 +1,5 @@
 <template>
-  <v-app class="wrap">
+  <v-app>
     <RouterView/>
   </v-app>
 </template>
