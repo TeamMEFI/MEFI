@@ -1,61 +1,66 @@
 <template>
-  <v-sheet height="100%" width="100%" rounded="xl" border elevation="0" class="pa-5">
-    <!-- <div
-      class="file-upload-container"
-      @dragenter="onDragenter"
-      @dragover="onDragover"
-      @dragleave="onDragleave"
-      @drop="onDrop"
-      @click="onClick"
-    > -->
-    <div>
-      <!-- </div> -->
-      <!-- <div class="file-upload" :class="isDragged ? 'dragged' : ''">Drag & Drop Files</div> -->
-    </div>
-    <!-- 파일 업로드 -->
-    <input type="file" ref="file" class="file-upload-input" @change="onFileChange" multiple />
-    <!-- 업로드된 리스트 -->
-    <div
-      class="d-flex justify-space-between file-upload-list"
-      v-for="file in fileList"
-      :key="file.fileName"
-    >
-      <a class="file-name">{{
-        file.fileName
-      }}</a>
-      <div class="d-flex">
-        <v-btn @click="saveFile(file.fileName)">다운</v-btn>
-        <v-btn @click="eraseFile(file.fileName)">삭제</v-btn>
+  <v-sheet
+    height="100%"
+    width="100%"
+    rounded="lg"
+    border
+    elevation="0"
+    :class="[isDragged ? 'dragged' : '', 'pa-5']"
+    @dragenter.prevent="onDragenter"
+    @dragover.prevent="onDragenter"
+    @dragleave.prevent="onDragleave"
+    @drop.prevent="onDrop"
+  >
+    <div v-if="fileList.length + addedFileList.length > 0">
+      <!-- 업로드된 리스트 -->
+      <div
+        class="d-flex justify-space-between file-upload-list"
+        v-for="file in fileList"
+        :key="file.fileName"
+      >
+        <a class="file-name">{{ file.fileName }}</a>
+        <div class="d-flex">
+          <v-btn @click="saveFile(file.fileName)">다운</v-btn>
+          <v-btn @click="eraseFile(file.fileName)">삭제</v-btn>
+        </div>
+      </div>
+      <!-- 업로드할 리스트 -->
+      <div
+        class="d-flex justify-space-between file-upload-list"
+        v-for="addedFile in addedFileList"
+        :key="addedFile.fileName"
+      >
+        <a>{{ addedFile.name }}</a>
+        <div class="d-flex">
+          <!-- <v-btn disabled>추가됨</v-btn> -->
+          <v-btn @click="removeFile(addedFile.name)">삭제</v-btn>
+        </div>
       </div>
     </div>
-    <!-- 업로드할 리스트 -->
-    <div
-      class="d-flex file-upload-list"
-      v-for="addedFile in addedFileList"
-      :key="addedFile.fileName"
-    >
-      <a>{{ addedFile.name }}</a>
-      <v-btn disabled>추가됨</v-btn>
-      <v-btn @click="removeFile(addedFile.name)">삭제</v-btn>
-    </div>
-    <v-btn @click="uploadFile">업로드?</v-btn>
+    <div v-else>관련 문서가 없습니다.</div>
   </v-sheet>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { getFiles, createFile, downloadFile, deleteFile } from '@/api/file.js'
+
+const route = useRoute()
+const teamId = ref(route.params?.teamId)
+const conferenceId = ref(route.params?.conferenceId)
 
 // API 호출 함수
 const file = ref(null)
 const fileList = ref([])
 const addedFileList = ref([])
 
+const isDragged = ref(false)
+
 const fetchFiles = () => {
   getFiles(
     {},
-    546,
+    conferenceId.value,
     (response) => {
       fileList.value = response.data.dataBody
     },
@@ -71,8 +76,8 @@ const uploadFile = () => {
   const fileRequestDto = new Blob(
     [
       JSON.stringify({
-        teamId: 123,
-        conferenceId: 546,
+        teamId: teamId.value,
+        conferenceId: conferenceId.value,
         fileName: 'test.png',
         type: 'DOCUMENT'
       })
@@ -96,13 +101,13 @@ const uploadFile = () => {
 }
 
 const saveFile = (fileName) => {
-  const originFileName = fileName;
+  const originFileName = fileName
 
   downloadFile(
     {
       fileName: originFileName
     },
-    546,
+    conferenceId.value,
     (response) => {
       // Blob 파일 형식을 URL 객체로 변환
       const filepath = URL.createObjectURL(response.data)
@@ -127,14 +132,12 @@ const saveFile = (fileName) => {
 }
 
 const eraseFile = (fileName) => {
-  console.log(name)
   deleteFile(
     {
       fileName: fileName
     },
     546,
     (response) => {
-      console.log(response.data)
       alert('삭제되었답니다~')
       fetchFiles()
     },
@@ -152,59 +155,26 @@ onMounted(() => {
   fetchFiles()
 })
 
-// const onClick = () => {
-//   this.$refs.fileInput.click()
+// 드래그 앤 드롭을 사용하지 않고 수동으로 파일을 넣는 함수
+// const onFileChange = (event) => {
+//   const files = event.target.files[0]
+//   console.log(files)
+//   addedFileList.value.push(files)
 // }
 
-// const onDragenter = (event) => {
-//   // class 넣기
-//   this.isDragged = true
-// }
-
-// const onDragleave = (event) => {
-//   // class 삭제
-//   this.isDragged = false
-// }
-
-// const onDragover = (event) => {
-//   // 드롭을 허용하도록 prevetDefault() 호출
-//   event.preventDefault()
-// }
-
-// const onDrop = (event) => {
-//   // 기본 액션을 막음 (링크 열기같은 것들)
-//   event.preventDefault()
-//   this.isDragged = false
-//   const files = event.dataTransfer.files
-//   this.addFiles(files)
-// }
-
-const onFileChange = (event) => {
-  const files = event.target.files[0]
-  console.log(files)
-  addedFileList.value.push(files)
+const onDragenter = (event) => {
+  isDragged.value = true
 }
 
-// const addFiles = async (files) => {
-//   for (let i = 0; i < files.length; i++) {
-//     const src = await this.readFiles(files[i])
-//     files[i].src = src
-//     this.fileList.push(files[i])
-//   }
-// }
-// // FileReader를 통해 파일을 읽어 thumbnail 영역의 src 값으로 셋팅
-// const readFiles = async (files) => {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader()
-//     reader.onload = async (e) => {
-//       resolve(e.target.result)
-//     }
-//     reader.readAsDataURL(files)
-//   })
-// }
-// const handleRemove = (index) => {
-//   this.fileList.splice(index, 1)
-// }
+const onDragleave = (event) => {
+  isDragged.value = false
+}
+
+const onDrop = (event) => {
+  isDragged.value = false
+  const files = event.dataTransfer.files[0]
+  addedFileList.value.push(files)
+}
 </script>
 
 <style scoped>
@@ -220,10 +190,6 @@ const onFileChange = (event) => {
   border: transparent;
   border-radius: 20px;
   cursor: pointer;
-  &.dragged {
-    border: 1px dashed powderblue;
-    opacity: 0.6;
-  }
   &-container {
     height: 300px;
     padding: 20px;
@@ -263,6 +229,17 @@ const onFileChange = (event) => {
       }
     }
   }
+}
+
+.drag-container {
+  position: relative;
+  background-color: #0000001a;
+}
+
+.dragged {
+  border: 1px dashed powderblue;
+  background-color: aqua;
+  opacity: 0.6;
 }
 
 .file-name {
