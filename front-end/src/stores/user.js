@@ -8,16 +8,13 @@ import { userLogin, userSignup } from '@/api/user.js'
 export const useUserStore = defineStore('user', () => {
   const router = useRouter()
   const isLogin = ref(false)
-  // pinia가 로컬스토리지를 대신 관리함
-  // 브라우저 실행, 어플리케이션 실행,
-  // pinia가 브라우저 실행되고, 어플리케이션 실행 전에 로컬 스토리지 관리해서 생성됨.
   const userInfo = ref(null)
 
   // 회원 가입 함수
   // user 정보 : email, password, name, position, department
   const signup = async (user) => {
     await userSignup(
-      user,(response)=>{},
+      user,(response)=>{console.log(response)},
       (error)=>{console.log(error)}
     )
      .then(()=>{
@@ -32,19 +29,17 @@ export const useUserStore = defineStore('user', () => {
   // 로그인 함수
   // user 정보 : email, password
   const login = async (user) => {
-    console.log(user)
     await userLogin(
       user,(response) => {
         userInfo.value = response.data.dataBody
         localStorage.setItem("accessToken", response.headers.accesstoken)
         localStorage.setItem("refreshToken", response.headers.refreshtoken)
         isLogin.value = true;
-        router.push({name:'home'})
       },
       (error)=>{
         console.log(error)
       }
-    )
+    ).then(()=>{router.push({name:'home'})})
   }
 
   // 로그아웃 함수

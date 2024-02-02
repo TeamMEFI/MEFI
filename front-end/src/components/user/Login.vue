@@ -29,11 +29,11 @@
                 prepend-inner-icon="mdi-lock-outline"
             ></v-text-field>
             <!-- 로그인 버튼 -->
-            <v-btn type="submit" class="w-100 ma-1">로그인</v-btn>
+            <v-btn type="submit" class="w-100 h-20" variant="flat" color="#45566F">로그인</v-btn>
         </v-form>
 
         <!-- 그 외 비밀번호 찾기 / 회원 가입 기능 -->
-        <div class="d-flex justify-center">
+        <div class="d-flex justify-center mt-3">
             <a @click="goSearchPassword" class="cursor-pointer">비밀번호 찾기 </a>  |  
             <a @click="goSignup" class="cursor-pointer">회원가입</a>
         </div>
@@ -45,11 +45,12 @@ import router from "@/router/index.js"
 import { useUserStore } from "@/stores/user"
 import { ref } from "vue"
 
+// 역할 : login함수 불러오기
+const store = useUserStore()
 
 // 입력 정보를 담을 변수
 const email = ref('')
 const password = ref('')
-const store = useUserStore()
 const visible = ref(false)
 
 // 로그인 함수
@@ -70,10 +71,6 @@ const goSignup = function(){
 // 기능 : 비밀 번호 찾기 페이지로 이동
 const goSearchPassword = () => {
     router.push({name:'search-password1'})
-}
-
-const InputEmail = (value) => {
-    console.log(value)
 }
 </script>
 

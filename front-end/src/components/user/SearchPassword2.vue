@@ -1,21 +1,26 @@
 <template>
-    <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" style="border-radius: 10px;">
-        <v-form @submit.prevent="chagnePassword">
+    <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" min-width="500" style="border-radius: 10px;">
+        <v-form @submit.prevent="chagnePassword" class="d-flex flex-column justify-center">
+            <!-- 새 비밀번호 입력창 -->
             <v-text-field
                 label="새로운 비밀번호"
-                type="password"
                 v-model="password"
                 :rules="rule_pass"
+                variant="outlined"
+                type="password"
             ></v-text-field>
+
+            <!-- 새 비밀번호 확인 입력창 -->
             <v-text-field
                 label="새로운 비밀번호 확인"
-                type="password"
                 v-model="password_check"
                 :rules="rule_pass_check"
+                variant="outlined"
+                type="password"
             ></v-text-field>
-            <div class="d-flex align-center justify-center">
-                <v-btn type="submit">비밀 번호 변경</v-btn>
-            </div>
+
+            <!-- submit 버튼 -->
+            <v-btn type="submit" class="w-100" variant="flat" color="#45566F">비밀 번호 변경</v-btn>
         </v-form>
     </v-sheet>
 </template>
@@ -25,8 +30,11 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
+// 입력받은 정보
 const password = ref('')
 const password_check = ref('')
+
+// 유효성
 // 비밀번호 (필수항목 / 영문숫자특수문자(8-16))
 const rule_pass = [
     value => !!value || '필수 항목 입니다.',
@@ -37,11 +45,13 @@ const rule_pass_check = [
     value => !!value || '필수 항목 입니다.',
     value => (value&&value==password.value) || '비밀번호가 일치하지 않습니다'
 ]
-// 비밀번호
+
+// 정규식
+// 비밀번호 정규식
 const regex_pass =  /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,16}$/
 
+// 비밀 번호 변경 api
 const chagnePassword = () => {
-    console.log('change password')
     // api 연결
     router.push({name:'login'})
 }
