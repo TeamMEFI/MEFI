@@ -1,17 +1,29 @@
 <template>
     <!-- 회원 가입 -->
-    <v-sheet class="w-30 mx-auto pa-12 ma-10" style="border-radius: 10px;">
+    <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" min-width="500" style="border-radius: 10px;">
+        <!-- 로그 -->
+        <div class="d-flex justify-center">
+            <span style="font-size: xx-large; font-weight: bolder;">MEFI</span>
+        </div>
         <!-- 회원 가입 입력창 -->
-        <v-form @submit.prevent="signup">
+        <v-form @submit.prevent="signup" class="d-flex flex-column justify-center">
             <!-- 이메일 입력창 -->
             <v-text-field
                 label="이메일"
                 v-model="email"
+                variant="outlined"
+                type="email"
                 :rules="rule_email"
-            ></v-text-field>
-
-            <!-- 이메일 인증 하기 -->
-            <v-btn :disabled="email_check" @click="goEmail">이메일 인증</v-btn>
+            >
+                <!-- 이메일 인증 모달창 -->
+                <template v-slot:append-inner>    
+                    <v-btn variant="flat" :disabled="email_check"  @click="emailDialog = true">인증
+                        <v-dialog v-model="emailDialog">
+                            <Email @close="emailDialog = false"></Email>
+                        </v-dialog>
+                    </v-btn>
+                </template>
+            </v-text-field>
 
             <!-- 비밀 번호 입력창 -->
             <v-text-field
@@ -19,6 +31,7 @@
                 type="password"
                 v-model="password"
                 :rules="rule_pass"
+                variant="outlined"
             ></v-text-field>
 
             <!-- 비밀번호 확인 입력창 -->
@@ -27,6 +40,7 @@
                 type="password"
                 v-model="password_check"
                 :rules="rule_pass_check"
+                variant="outlined"
             ></v-text-field>
 
             <!-- 이름 입력창 -->
@@ -34,30 +48,33 @@
                 label="이름"
                 v-model="name"
                 :rules="rule_name"
+                variant="outlined"
             ></v-text-field>
 
             <!-- 부서 입력창 -->
             <v-text-field
                 label="부서"
                 v-model="dept"
+                variant="outlined"
             ></v-text-field>
 
             <!-- 직급 입력창 -->
             <v-text-field
                 label="직급"
                 v-model="position"
+                variant="outlined"
             ></v-text-field>
 
             <!-- 회원 가입 버튼 -->
-            <v-btn type="submit">회원 가입</v-btn>
+            <v-btn type="submit" class="w-100" variant="flat" color="#45566F">회원 가입</v-btn>
         </v-form>
     </v-sheet>
 </template>
 
 <script setup>
-import router from "@/router";
 import { useUserStore } from "@/stores/user"
 import { ref, watch } from "vue"
+import Email from "./Email.vue";
 
 const store = useUserStore();
 
@@ -80,6 +97,9 @@ watch(
         }
     }
 )
+
+// 이메일 인증 모달창 on/off
+const emailDialog = ref(false)
 
 // 유효성 검사
 // 이메일 : 필수항목 / 이메일 형식
@@ -117,7 +137,6 @@ const signup = function(){
         !name.value){
         alert("모두 입력해 주세요")
     }
-    // api 전달
     else{
         const userInfo = {
             email:email.value,
@@ -128,11 +147,6 @@ const signup = function(){
         }
         store.signup(userInfo)
     }
-}
-
-// 이메일 인증 하는 router로 이동
-const goEmail = () => {
-    router.push({name:'email'})
 }
 </script>
 
