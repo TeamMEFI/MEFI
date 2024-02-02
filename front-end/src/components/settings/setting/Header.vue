@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <span>설정</span>
-        <span @click="close" id="close">X</span>
+    <div class="d-flex pa-3 justify-space-between align-center">
+        <p>설정</p>
+        <font-awesome-icon type="button" @click="close" :icon="['fas', 'xmark']" />
     </div>
 </template>
 
@@ -14,11 +14,7 @@ const close = () => {
 
 <style scoped>
 *{
-    font-size: larger;
-    background-color: rgb(73, 84, 100);
+    background-color: #495464;
     color: white;
-}
-#close{
-    cursor: pointer;
 }
 </style>
