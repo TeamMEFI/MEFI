@@ -1,34 +1,41 @@
 <template>
-    <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" style="border-radius: 10px;">
+    <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" min-width="500" style="border-radius: 10px;">
         <!-- 로그 -->
         <div class="d-flex justify-center">
             <span style="font-size: xx-large; font-weight: bolder;">MEFI</span>
         </div>
         <!-- 입력창 -->
-        <v-form @submit.prevent="login">
+        <v-form @submit.prevent="login" class="d-flex flex-column justify-center">
             <v-text-field
                 label="이메일"
                 v-model="email"
                 hide-details="auto"
                 type="email"
-                class="ma-3"
+                class="ma-1"
+                variant="outlined"
+                prepend-inner-icon="mdi-email-outline"
             ></v-text-field>
+            <!-- style="border-radius: 20px;" -->
             <v-text-field
                 label="비밀번호"
                 v-model="password"
                 hide-details="auto"
-                type="password"
-                class="ma-3"
+                variant="outlined"
+                class="ma-1"
+
+                :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                :type="visible ? 'text' : 'password'"
+                @click:append-inner="visible = !visible"
+                prepend-inner-icon="mdi-lock-outline"
             ></v-text-field>
             <!-- 로그인 버튼 -->
-            <v-spacer></v-spacer>
-            <v-btn type="submit" class="w-100">로그인</v-btn>
+            <v-btn type="submit" class="w-100 h-20" variant="flat" color="#45566F">로그인</v-btn>
         </v-form>
 
         <!-- 그 외 비밀번호 찾기 / 회원 가입 기능 -->
-        <div class="d-flex justify-center">
-            <a @click="goSearchPassword">비밀번호 찾기 </a>  |  
-            <a @click="goSignup"> 회원가입</a>
+        <div class="d-flex justify-center mt-3">
+            <a @click="goSearchPassword" class="cursor-pointer">비밀번호 찾기 </a>  |  
+            <a @click="goSignup" class="cursor-pointer">회원가입</a>
         </div>
     </v-sheet>
 </template>
@@ -38,10 +45,13 @@ import router from "@/router/index.js"
 import { useUserStore } from "@/stores/user"
 import { ref } from "vue"
 
+// 역할 : login함수 불러오기
+const store = useUserStore()
+
 // 입력 정보를 담을 변수
 const email = ref('')
 const password = ref('')
-const store = useUserStore()
+const visible = ref(false)
 
 // 로그인 함수
 // 유효성 검사 후 로그인 정보를 넘겨줌
@@ -50,7 +60,6 @@ const login = function(){
         email:email.value,
         password:password.value,
     }
-    console.log('component', user)
     store.login(user)
 }
 

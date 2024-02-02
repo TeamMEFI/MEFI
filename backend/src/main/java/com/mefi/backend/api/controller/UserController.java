@@ -3,6 +3,7 @@ package com.mefi.backend.api.controller;
 import com.mefi.backend.api.request.JoinReqDto;
 import com.mefi.backend.api.request.VerifyCodeReqDto;
 import com.mefi.backend.api.request.VerifyEmailReqDto;
+import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.service.MailServiceImpl;
 import com.mefi.backend.api.service.TokenService;
 import com.mefi.backend.api.service.UserService;
@@ -19,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -31,7 +34,7 @@ public class UserController {
 
     @Operation(summary = "회원가입", description = "/users\n\n 사용자의 정보를 통해 회원가입 한다.")
     @PostMapping("")
-    @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
+    @ApiResponse(responseCode = "201", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> join(@RequestBody JoinReqDto joinReqDto) {
 
         // 회원가입
@@ -70,23 +73,33 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,"Success"));
     }
 
-    @Operation(summary = "이메일 인증", description = "/users/regist/{userId}/auth\n\n 사용자는 이메일 인증을 한다.")
-    @PostMapping("/regist/auth")
+    @Operation(summary = "이메일 인증", description = "/users/join/auth\n\n 사용자는 이메일 인증을 한다.")
+    @PostMapping("/join/auth")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> verifyEmail(@RequestBody VerifyEmailReqDto verifyEmailReqDto) throws Exception {
 
         // 메일 전송 후 코드 받기
         mailService.sendMessage(verifyEmailReqDto.getEmail());
-        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0,"Success"));
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,"Success"));
     }
 
-    @Operation(summary = "이메일 인증 확인", description = "/users/regist/auth/check\n\n 사용자는 이메일 인증 확인을 한다.")
-    @PostMapping("/regist/auth/check")
+    @Operation(summary = "이메일 인증 확인", description = "/users/join/auth/check\n\n 사용자는 이메일 인증 확인을 한다.")
+    @PostMapping("/join/auth/check")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Token 반환")
     public ResponseEntity<? extends BaseResponseBody> verifyEmailCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
 
         // 인증 코드 확인 후 토큰 반환
         String token = mailService.validateAuthCode(verifyCodeReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,token));
+    }
+
+    @Operation(summary = "회원 검색", description = "/users/search/{keyword} \n\n 사용자는 회원을 검색한다.")
+    @GetMapping("/search/{keyword}")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n 검색 결과 리스트 반환")
+    public ResponseEntity<? extends BaseResponseBody> searchUsers(@PathVariable String keyword) {
+
+        // 검색어로 회원 조회
+        List<MemberResDto> searchResultList = userService.getSearchUsers(keyword);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,searchResultList));
     }
 }

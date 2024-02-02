@@ -11,8 +11,12 @@ import Email from "@/components/user/Email.vue"
 import SearchPassword1 from "@/components/user/SearchPassword1.vue"
 import SearchPassword2 from "@/components/user/SearchPassword2.vue"
 import TeamView from "@/views/team/TeamView.vue"
-import InsertView from "@/views/schedule/InsertView.vue"
-import DetailView from "@/views/schedule/DetailView.vue"
+
+import InsertSchedule from "@/views/schedule/InsertSchedule.vue"
+import InsertConference from "@/views/schedule/InsertConference.vue"
+import DetailSchedule from "@/views/schedule/DetailSchedule.vue"
+import DetailConference from "@/views/schedule/DetailConference.vue"
+
 import NotFoundView from "@/views/notFound/NotFoundView.vue"
 
 
@@ -38,19 +42,33 @@ const router = createRouter({
           })
         },
         {
-          path: '/insert/:type',
-          name: 'insert',
-          component: InsertView,
+          path: '/insert/schedule',
+          name: 'insertschedule',
+          component: InsertSchedule,
+        },
+        {
+          path: '/insert/conference/:teamid',
+          name: 'insertconference',
+          component: InsertConference,
           props: (route) =>({
-            type: route.params.type,
+            teamid: route.params.teamid,
           })
         },
         {
-          path: '/detail/:type',
-          name: 'detail',
-          component: DetailView,
-          props: route => ({
-            type: route.params.type,
+          path: '/Detail/schedule/:scheduleid',
+          name: 'detailschedule',
+          component: DetailSchedule,
+          props: (route) =>({
+            scheduleid: route.params.scheduleid,
+          })
+        },
+        {
+          path: '/Detail/conference/:teamid/:conferenceid',
+          name: 'detailconference',
+          component: DetailConference,
+          props: (route) =>({
+            teamid: route.params.teamid,
+            conferenceid: route.params.conferenceid,
           })
         },
       ]
@@ -69,11 +87,6 @@ const router = createRouter({
           path:'/user/signup',
           name:'signup',
           component: Signup,
-        },
-        {
-          path:'/user/email',
-          name:'email',
-          component: Email,
         },
         {
           path:'/user/signup/email',

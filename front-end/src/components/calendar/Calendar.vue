@@ -5,7 +5,7 @@
       <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
       <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
       <v-spacer></v-spacer>
-      <v-btn @click="navigateToInsertPage">
+      <v-btn @click="router.push({ name: 'insertschedule' })">
         <p class="font-weight-black text-h6">개인 일정 생성</p>
       </v-btn>
     </v-row>
@@ -33,10 +33,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter()
-const navigateToInsertPage = () => {
-  const type = 'schedule'
-  router.push({ name: 'insert', params: { type } });
-};
+
 
 // 셀렉터 옵션 및 캘린더 옵션들
 const weekday = ref([0, 1, 2, 3, 4, 5, 6])

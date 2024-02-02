@@ -1,17 +1,21 @@
 <template>
-    <v-sheet class="w-30 mx-auto pa-12 ma-10" style="border-radius: 10px;">
-        <p class="text-center">
-            비밀번호를 찾고자하는 이메일을 입력하세요.
-        </p>
-        <v-form>
+    <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" min-width="500" style="border-radius: 10px;">
+        <!-- 문구 -->
+        <div class="d-flex justify-center mb-3">
+            <span style="font-size:medium;">비밀번호를 찾고자하는 이메일을 입력하세요.</span>
+        </div>
+        
+        <v-form class="d-flex flex-column justify-center ">
+            <!-- 이메일 입력창 -->
             <v-text-field
                 label="이메일"
                 v-model="email"
-                :rules="rule_email"
+                type="email"
+                variant="outlined"
             ></v-text-field>
-            <div class="align-center justify-center">
-                <v-btn :disabled="email_check" @click="goSearchPassword">다음</v-btn>
-            </div>
+
+            <!-- 이메일 api 던지고, url 받은 클라이언트가 사이트로 다시 연결 -->
+            <v-btn :disabled="email_check" @click="goSearchPassword" class="w-100" variant="flat" color="#45566F">다음</v-btn>
         </v-form>
     </v-sheet>
 </template>
@@ -20,7 +24,12 @@
 import { ref, watch } from "vue"
 import { useRouter } from "vue-router"
 const router = useRouter()
+
+// 입력받은 이메일
 const email = ref("")
+
+
+// 버튼 : 이메일 형식이 맞으면 인증 버튼 활성화
 const email_check = ref(true)
 watch(
     ()=>email.value,
@@ -30,11 +39,16 @@ watch(
         }
     }
 )
+
+// 기능 : 이메일 정규식 확인
 const rule_email = [
     value => !!value || '필수 항목 입니다.',
     value => (value && regex_email.test(value)) || '이메일 주소를 정확히 입력해주세요',
 ]
 const regex_email = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+// 기능 : password 변경 페이지로 이동
+// 해당 이메일을 가진 회원의 비밀번호 변경
 const goSearchPassword = () => {
     router.push({name:"search-password2"})
 }
