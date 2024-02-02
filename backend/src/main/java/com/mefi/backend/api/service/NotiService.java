@@ -28,4 +28,5 @@ public interface NotiService {
     // 팀에 소속된 사용자 모두에게 알림 전송
     void sendNotiForTeam(Long teamId, String message);
 
+    int readNotiAll(Long userId);
 }

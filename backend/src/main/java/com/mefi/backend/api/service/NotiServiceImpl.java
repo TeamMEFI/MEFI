@@ -140,6 +140,13 @@ public class NotiServiceImpl implements NotiService{
         return notiResponseDto;
     }
 
+    // 전체 알림 읽음 처리 메소드
+    @Transactional
+    public int readNotiAll(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        return notiRepository.readNotiAll(user);
+    }
+
     private String makeTimeIncludeEventId(String userId){
         return userId + "_" + System.currentTimeMillis();
     }

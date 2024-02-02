@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -63,5 +64,17 @@ public class NotiController {
         // 특정 알림에 대해 읽음 처리
         NotiResponseDto noti = notiService.readNoti(alarmId);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, noti));
+    }
+
+    @PatchMapping("/all")
+    @Operation(summary = "알림 전체 읽음 API", description = "사용자가 읽지 않은 모든 알림을 읽음 처리합니다.")
+    public ResponseEntity<? extends BaseResponseBody> readNotiAll(Authentication authentication){
+        // 현재 사용자의 식별 ID 조회
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+        log.info("User ID : {}", user.getUserId());
+
+        // 모든 알림에 대해 읽음 처리
+        int count = notiService.readNotiAll(user.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, count));
     }
 }
