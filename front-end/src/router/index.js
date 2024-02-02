@@ -89,11 +89,6 @@ const router = createRouter({
           component: Signup,
         },
         {
-          path:'/user/email',
-          name:'email',
-          component: Email,
-        },
-        {
           path:'/user/signup/email',
           name:'search-password1',
           component: SearchPassword1,
