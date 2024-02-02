@@ -1,6 +1,6 @@
 <template>
   <v-container class="pa-0">
-    <v-row class="d-flex align-center justify-start ma-3">
+    <v-row class="d-flex align-center justify-start ma-2">
       <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
       <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
       <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
@@ -20,9 +20,9 @@
       <v-col v-for="i in weekday" class="day"  style="flex-grow: 0;" :class="week[i]['type']" >
           <div >
               {{ week[i]['date'] }}
-              <v-btn @click="clicksomething(week[i]['date'])" class="ma-0 pa-0">
+              <!-- <v-btn @click="clicksomething(week[i]['date'])" class="ma-0 pa-0">
               일정잇음?
-              </v-btn>
+              </v-btn> -->
           </div>
       </v-col>
     </v-row>

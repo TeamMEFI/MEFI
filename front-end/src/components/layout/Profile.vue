@@ -1,7 +1,7 @@
 <template>
-  <v-infinite-scroll class="sidebar w-100 h-100 d-flex flex-column aling-center pa-3">
+  <v-infinite-scroll class="w-100 h-100 d-flex flex-column aling-center pa-3">
     <div class="d-flex mb-4 align-center">
-      <div class="w-25">
+      <div class="">
         <img
           class="rounded-circle"
           width="50px"
@@ -10,7 +10,7 @@
           alt="profile-image"
         />
       </div>
-      <div class="w-75 pl-2">
+      <div class="pl-2">
         <p>박병조</p>
         <p>구미 2반 204조</p>
       </div>
