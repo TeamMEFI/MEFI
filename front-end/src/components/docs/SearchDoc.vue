@@ -15,10 +15,18 @@
     <!-- 파일 업로드 -->
     <input type="file" ref="file" class="file-upload-input" @change="onFileChange" multiple />
     <!-- 업로드된 리스트 -->
-    <div class="d-flex file-upload-list" v-for="file in fileList" :key="file.fileName">
-      <a>{{ file.fileName }}</a>
-      <v-btn @click="saveFile(file.fileName)">다운</v-btn>
-      <v-btn @click="eraseFile(file.fileName)">삭제</v-btn>
+    <div
+      class="d-flex justify-space-between file-upload-list"
+      v-for="file in fileList"
+      :key="file.fileName"
+    >
+      <a class="file-name">{{
+        file.fileName
+      }}</a>
+      <div class="d-flex">
+        <v-btn @click="saveFile(file.fileName)">다운</v-btn>
+        <v-btn @click="eraseFile(file.fileName)">삭제</v-btn>
+      </div>
     </div>
     <!-- 업로드할 리스트 -->
     <div
@@ -78,7 +86,8 @@ const uploadFile = () => {
   createFile(
     formData,
     (response) => {
-      console.log(response)
+      fetchFiles()
+      addedFileList.value = []
     },
     (error) => {
       console.log(error)
@@ -87,20 +96,29 @@ const uploadFile = () => {
 }
 
 const saveFile = (fileName) => {
+  const originFileName = fileName;
+
   downloadFile(
     {
-      fileName: fileName
+      fileName: originFileName
     },
     546,
     (response) => {
-      const blob = new Blob([response.data], { type: 'application/octet-stream' });
-      const filepath = URL.createObjectURL(blob)
+      // Blob 파일 형식을 URL 객체로 변환
+      const filepath = URL.createObjectURL(response.data)
 
-      var element = document.createElement('a')
+      // 임의의 a 태그 생성 후 href 속성에 URL 객체 할당
+      const element = document.createElement('a')
       element.setAttribute('href', filepath)
+      element.setAttribute('download', originFileName)
       document.body.appendChild(element)
+
+      // 생성한 a 태그 클릭
       element.click()
+
+      // a 태그와 URL 객체 삭제
       document.body.removeChild(element)
+      // URL.revokeObjectUrl(filepath)
     },
     (error) => {
       console.log(error)
@@ -245,5 +263,12 @@ const onFileChange = (event) => {
       }
     }
   }
+}
+
+.file-name {
+  width: 75%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

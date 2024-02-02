@@ -15,6 +15,8 @@ const createFile = async (param, success, fail) => {
 
 const downloadFile = async (param, conferenceId, success, fail) => {
   local.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
+  // 바이너리 데이터를 response로 받기 위한 설정
+  local.defaults['responseType'] = 'blob'
   await local.get(`/file/download/${conferenceId}`, { params: param }).then(success).catch(fail)
 }
 
