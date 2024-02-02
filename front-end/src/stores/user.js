@@ -36,12 +36,13 @@ export const useUserStore = defineStore('user', () => {
         localStorage.setItem("accessToken", response.headers.accesstoken)
         localStorage.setItem("refreshToken", response.headers.refreshtoken)
         isLogin.value = true;
-        router.push({name:'home'})
       },
       (error)=>{
         console.log(error)
       }
-    )
+    ).then(()=>{
+      router.push({name:'home'})
+    })
   }
 
   // 로그아웃 함수
