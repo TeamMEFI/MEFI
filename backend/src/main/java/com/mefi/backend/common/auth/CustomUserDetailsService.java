@@ -1,6 +1,5 @@
 package com.mefi.backend.common.auth;
 
-import com.mefi.backend.db.entity.User;
 import com.mefi.backend.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,14 +18,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         // 회원 조회
-        User user = userRepository.findByEmail(email);
 
         // 회원이 존재하는 경우
-        if(user != null) {
+        if(userRepository.findByEmail(email).isPresent())
 
             // UserDetails 담아 반환
-            return new CustomUserDetails(user);
-        }
+            return new CustomUserDetails(userRepository.findByEmail(email).get());
 
         // 회원이 없는 경우
         return null;

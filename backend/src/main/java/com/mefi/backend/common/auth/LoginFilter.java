@@ -78,7 +78,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // 로그인된 유저 확인 및 유저 엔티티 생성
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        User user = userRepository.findByEmail(userDetails.getUsername());
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
 
         // JWT 발급 (아이디, 직책, 만료 기간)
         // accessToken, refreshToken 생성

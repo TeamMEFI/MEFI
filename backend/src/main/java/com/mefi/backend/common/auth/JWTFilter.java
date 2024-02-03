@@ -1,5 +1,7 @@
 package com.mefi.backend.common.auth;
 
+import com.mefi.backend.common.exception.ErrorCode;
+import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.common.util.JWTUtil;
 import com.mefi.backend.db.entity.User;
 import com.mefi.backend.db.repository.UserRepository;
@@ -62,7 +64,10 @@ public class JWTFilter extends OncePerRequestFilter {
         String position = jwtUtil.getPosition(token);
 
         // user 생성하여 값 초기화
-        User user = userRepository.findByEmail(email);
+        if(!userRepository.findByEmail(email).isPresent())
+            throw new Exceptions(ErrorCode.USER_NOT_EXIST);
+
+        User user = userRepository.findByEmail(email).get();
 
         // UserDetails 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(user);
