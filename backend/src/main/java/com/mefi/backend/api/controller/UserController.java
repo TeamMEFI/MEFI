@@ -1,6 +1,7 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.JoinReqDto;
+import com.mefi.backend.api.request.UserModifyReqDto;
 import com.mefi.backend.api.request.VerifyCodeReqDto;
 import com.mefi.backend.api.request.VerifyEmailReqDto;
 import com.mefi.backend.api.response.MemberResDto;
@@ -16,7 +17,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -105,5 +105,19 @@ public class UserController {
         // 검색어로 회원 조회
         List<MemberResDto> searchResultList = userService.getSearchUsers(keyword);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, searchResultList));
+    }
+    
+    @Operation(summary = "회원 정보 수정", description = "/users/info \n\n 사용자는 자신의 정보를 수정한다.")
+    @PatchMapping("/info")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
+    public ResponseEntity<? extends BaseResponseBody> modifyUserInfo(Authentication authentication,
+                                                                     @RequestBody UserModifyReqDto userModifyReqDto) {
+
+        // 로그인된 유저 정보 조회
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        // 회원 정보 수정
+        userService.modifyUserInfo(userDetails.getUserId(),userModifyReqDto);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 }
