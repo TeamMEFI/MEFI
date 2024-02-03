@@ -78,4 +78,24 @@ public class User {
         this.dept = dept;
         this.position = position;
     }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateDept(String dept) {
+        this.dept = dept;
+    }
+
+    public void updatePosition(String position) {
+        this.position = position;
+    }
+
+    public void updateImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 }
