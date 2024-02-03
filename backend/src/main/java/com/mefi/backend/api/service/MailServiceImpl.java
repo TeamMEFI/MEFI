@@ -6,6 +6,7 @@ import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.common.util.JWTUtil;
 import com.mefi.backend.db.entity.EmailAuth;
 import com.mefi.backend.db.repository.MailRepository;
+import com.mefi.backend.db.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -28,6 +29,7 @@ public class MailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
     private final MailRepository mailRepository;
     private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
 
     // 이메일
     @Value("${spring.mail.username}")
@@ -84,6 +86,10 @@ public class MailServiceImpl implements MailService {
     // 메일 전송
     @Transactional
     public int sendMessage(String email) throws MessagingException, UnsupportedEncodingException {
+
+        // 이메일 중복 검사
+        if(userRepository.findByEmail(email).isPresent())
+            throw new Exceptions(ErrorCode.EMAIL_EXIST);
 
         // 인증 코드 생성
         int authCode = Integer.parseInt(createAuthCode());
