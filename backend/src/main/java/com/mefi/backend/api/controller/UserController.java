@@ -1,9 +1,6 @@
 package com.mefi.backend.api.controller;
 
-import com.mefi.backend.api.request.JoinReqDto;
-import com.mefi.backend.api.request.UserModifyReqDto;
-import com.mefi.backend.api.request.VerifyCodeReqDto;
-import com.mefi.backend.api.request.VerifyEmailReqDto;
+import com.mefi.backend.api.request.*;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.service.MailServiceImpl;
 import com.mefi.backend.api.service.TokenService;
@@ -118,6 +115,16 @@ public class UserController {
 
         // 회원 정보 수정
         userService.modifyUserInfo(userDetails.getUserId(),userModifyReqDto);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
+    }
+
+    @Operation(summary = "비밀번호 수정", description = "/users/pwd \n\n 사용자는 비밀번호를 수정한다.")
+    @PatchMapping("/pwd")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
+    ResponseEntity<? extends BaseResponseBody> modifyUserPassword(@RequestBody UserModifyPasswordReqDto userModifyPasswordReqDto) {
+        
+        // 회원 비밀번호 수정
+        userService.modifyUserPassword(userModifyPasswordReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 }
