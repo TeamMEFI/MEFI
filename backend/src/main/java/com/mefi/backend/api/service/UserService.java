@@ -1,6 +1,7 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.JoinReqDto;
+import com.mefi.backend.api.request.UserModifyPasswordReqDto;
 import com.mefi.backend.api.request.UserModifyReqDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.db.entity.User;
@@ -23,4 +24,7 @@ public interface UserService {
 
     // 회원 정보 수정
     void modifyUserInfo(Long userId, UserModifyReqDto userModifyReqDto);
+
+    // 회원 비밀번호 수정
+    void modifyUserPassword(UserModifyPasswordReqDto userModifyPasswordReqDto);
 }
