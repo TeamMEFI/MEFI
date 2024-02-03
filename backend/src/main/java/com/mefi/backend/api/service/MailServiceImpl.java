@@ -124,20 +124,23 @@ public class MailServiceImpl implements MailService {
     @Override
     public String validateAuthCode(VerifyCodeReqDto verifyCodeReqDto) {
 
-        // 이메일로 은증 엔티티 조회
-        EmailAuth emailAuth = mailRepository.findByEmail(verifyCodeReqDto.getEmail())
-                .orElseThrow(() -> new Exceptions(ErrorCode.EMAIL_NOT_EXIST));
-
         // 인증 코드 유효성 검사
+
+        // 인증하려는 이메일에 인증 메일이 미전송했을 경우
+        if(!mailRepository.findByEmail(verifyCodeReqDto.getEmail()).isPresent())
+            throw new Exceptions(ErrorCode.CODE_NOT_EXIST);
+
+        // 이메일로 인증 엔티티 조회
+        EmailAuth emailAuth = mailRepository.findByEmail(verifyCodeReqDto.getEmail()).get();
 
         // 인증 시간 만료 여부
         if(emailAuth.getCreatedTime().plusMinutes(3)
                 .isBefore(LocalDateTime.now()))
-            return ErrorCode.CODE_TIME_EXPIRED.getErrorCode();
+            throw new Exceptions(ErrorCode.CODE_TIME_EXPIRED);
 
         // 인증 코드 일치 여부
         if(emailAuth.getRandomNum()!=Integer.parseInt(verifyCodeReqDto.getAuthCode()))
-            return CODE_NOT_MATCH.getErrorCode();
+            throw new Exceptions(CODE_NOT_MATCH);
 
         // 토큰 발행
         return jwtUtil.createJwt(emailAuth.getEmail(), "undefined", 60*3*1000L);
