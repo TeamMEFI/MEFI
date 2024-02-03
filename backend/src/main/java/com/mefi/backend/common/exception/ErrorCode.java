@@ -15,6 +15,7 @@ public enum ErrorCode {
     EMAIL_EXIST(HttpStatus.BAD_REQUEST, "U-003", "이미 사용 중인 이메일입니다."),
     CODE_TIME_EXPIRED(HttpStatus.BAD_REQUEST, "U-004", "인증 시간이 초과하였습니다."),
     CODE_NOT_MATCH(HttpStatus.BAD_REQUEST, "U-005", "인증 코드가 일치하지 않습니다."),
+    CODE_NOT_EXIST(HttpStatus.BAD_REQUEST, "U-006", "인증 코드가 유효하지 않습니다."),
 
     // 토큰
     UNEXPECTED_TOKEN(HttpStatus.BAD_REQUEST, "T-001", "만료되었거나 존재하지 않는 토큰입니다.");
