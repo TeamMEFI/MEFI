@@ -7,4 +7,7 @@ async function userLogin(param, success, fail){
 async function userSignup(param, success, fail){
     await local.post(`/users`, param).then(success).catch(fail);
 }
-export { userLogin, userSignup };
+async function userSearch(param, success, fail){
+    await local.get(`/users/search/${param}`, param).then(success).catch(fail);
+}
+export { userLogin, userSignup, userSearch };
