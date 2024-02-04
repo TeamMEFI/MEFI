@@ -11,8 +11,9 @@
         />
       </div>
       <div class="w-75 pl-2">
-        <p>박병조</p>
-        <p>구미 2반 204조</p>
+        <p class="font-weight-black ma-1">{{ username }}</p>
+        <p class="font-weight-black ma-1">{{ userdept }}</p>
+        <p class="font-weight-black ma-1">{{ userposition }}</p>
       </div>
     </div>
 
@@ -46,7 +47,11 @@ import { ref, onMounted } from 'vue'
 import TeamCreateDialog from '@/components/dialog/TeamCreateDialog.vue'
 import { useRouter } from 'vue-router'
 import { teamSelect } from '@/api/team.js'
-
+import { useUserStore } from "@/stores/user"
+const store = useUserStore()
+const username = ref(store.userInfo.name)
+const userdept = ref(store.userInfo.dept)
+const userposition = ref(store.userInfo.position)
 const dialog = ref(false)
 const router = useRouter()
 const teams = ref([])

@@ -94,17 +94,10 @@
                 </v-container>
             </form>
         </v-card-item>
-        <v-card-title class="d-flex h-5 align-center pa-2">
-            <p class="text-h5 font-weight-black">일정 관련 문서</p>
-        </v-card-title>
-        <div class="h-50 pa-3">
-            <SearchDoc/>
-        </div>
     </v-card>
 </template>
 
 <script setup>
-import SearchDoc from '@/components/docs/SearchDoc.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
