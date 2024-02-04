@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long>, UserRepositoryCustom {
 
     // 이메일로 회원 조회
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     // 식별 ID로 회원 조회
     Optional<User> findById(Long id);

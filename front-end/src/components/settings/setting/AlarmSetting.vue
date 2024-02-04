@@ -1,67 +1,79 @@
 <template>
-    <div>
-        <!-- 알림 설정 -->
-        <h2 id="alarm-title">알림 설정</h2>
-        <div>
-            <div id="item">
-                <!-- 알림 설정 -->
-                <div>알림 설정</div>
-                <div id="item-icon">
-                    <!-- 알림 on -->
-                    <font-awesome-icon :icon="['fas', 'toggle-on']" v-if="alarm" @click="toggleAlarm"/>
-                    <!-- 알림 off -->
-                    <font-awesome-icon :icon="['fas', 'toggle-off']" v-else @click="toggleAlarm"/>
-                </div>
-            </div>
-            <div id="item">
-                <!-- 알림 소리 설정 -->
-                <div>알림 소리</div>
-                <div id="item-icon">
-                    <!-- 소리 on -->
-                    <font-awesome-icon :icon="['fas', 'toggle-on']" v-if="sound" @click="toggleSound"/>
-                    <!-- 소리 off -->
-                    <font-awesome-icon :icon="['fas', 'toggle-off']" v-else @click="toggleSound"/>
-                </div>
-            </div>
-        </div>
+  <div id="container">
+    <!-- 알림 설정 -->
+    <h3 id="alarm-title">알림 설정</h3>
+    <div id="alarm-container">
+      <!-- 알림 설정 -->
+      <div class="alarm-items">
+        <p>알림 설정</p>
+        <!-- 알림 on/off -->
+        <font-awesome-icon
+          type="button"
+          style="font-size: 32px"
+          :icon="alarm ? ['fas', 'toggle-on'] : ['fas', 'toggle-off']"
+          @click="toggleAlarm"
+        />
+      </div>
+      <!-- 알림 소리 설정 -->
+      <div class="alarm-items">
+        <p>알림 소리</p>
+        <!-- 소리 on/off -->
+        <font-awesome-icon
+          type="button"
+          :icon="sound ? ['fas', 'toggle-on'] : ['fas', 'toggle-off']"
+          style="font-size: 32px"
+          @click="toggleSound"
+        />
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref } from 'vue'
+import { useSettingStore } from '@/stores/setting';
+
+const store = useSettingStore();
 
 // 알림 on off를 담을 변수
-const alarm = ref(true)
+const alarm = ref(store.alarmPermission)
+
 // 소리 on off를 담을 변수
-const sound = ref(false)
+const sound = ref(store.alarmSound)
 
 // 작동 : 해당 아이콘 클릭 시 toggle됨
 // 기능 : alarm 설정 on off
 const toggleAlarm = () => {
-    alarm.value = !alarm.value
+  alarm.value = !alarm.value
+  store.alarmPermission = !store.alarmPermission
 }
 
 // 작동 : 해당 아이콘 클릭 시 toggle됨
 // 기능 : sound 설정 on off
-const toggleSound = () =>{
-    sound.value = !sound.value
+const toggleSound = () => {
+  sound.value = !sound.value
+  store.alarmSound = !store.alarmSound
 }
 </script>
 
 <style scoped>
-#alarm-title{
-    margin: 10px;
-    padding: 10px;
+#container {
+  padding: 10px;
 }
-#item{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 20px;
-    margin: 20px;
-    border-bottom: 1px solid rgb(169, 169, 169);
+#alarm-title {
+  margin: 10px;
 }
-#item-icon{
-    cursor: pointer;
+#alarm-container {
+  flex-direction: column;
+  min-width: 240px;
+  width: 30vw;
+  min-height: 240px;
+  padding: 0 10px;
+}
+.alarm-items {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
 }
 </style>

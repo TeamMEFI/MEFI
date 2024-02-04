@@ -2,6 +2,7 @@ package com.mefi.backend.db.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "user_team")
 @NoArgsConstructor
+@Getter
 @ToString
 public class UserTeam {
 

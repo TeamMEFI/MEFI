@@ -1,7 +1,9 @@
 /* 대부분의 내부 내용은 vuetify의 커스터 마이징 혹은
 페이지 전처리(width, heith)용이므로 용도를 각 상단에
 주석으로 기입하면 좋음 */
-
+* {
+  font-size: 14px;
+}
 
 /* 페이지 전체화면 처리 */
 html, body {
@@ -119,4 +121,21 @@ html::-webkit-scrollbar {
 /* 글씨 색상 지정용 */
 .text-white {
   color: #ffffff;
+}
+
+/* border 저장용 */
+.border-top {
+  border-top: 1px solid lightgray;
+}
+
+.border-bottom {
+  border-bottom: 1px solid lightgray;
+}
+
+.border-left {
+  border-left: 1px solid lightgray;
+}
+
+.border-right {
+  border-right: 1px solid lightgray;
 }

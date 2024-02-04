@@ -31,30 +31,36 @@
                         <div class="bg-white h-100 elevation-3">
                             <v-toolbar color="#2A4770" >
                                 <v-toolbar-title class="font-weight-bold text-h5">New Join</v-toolbar-title>
- 
                                 <v-text-field
-                                    :loading="loading"
                                     density="compact"
+                                    v-model="searchName"
                                     variant="solo"
                                     append-inner-icon="mdi-magnify"
                                     single-line
                                     hide-details
                                     @click:append-inner="onClick"
+                                    @keyup.enter="onClick"
                                     class="me-3"
                                 ></v-text-field>
                             </v-toolbar>
-                            <v-list :items="searchList"></v-list>
+                            <v-list>
+                                <v-list-item
+                                    v-for="user in searchList"
+                                    :value="user.id"
+                                    @click="clickUser(user)"
+                                    :class="{'selected' : user.isSelect}"
+                                    >
+                                        <p>{{ user.name + ' / ' + user.email }}</p>
+                                </v-list-item>
+                            </v-list>
                         </div>
                     </v-col>
                     <v-col cols="2" class="d-flex justify-space-evenly flex-column align-center">
-                        <v-btn icon>
+                        <v-btn icon @click="addMember">
                             <v-icon>mdi-account-plus</v-icon>
                         </v-btn>
-                        <v-btn icon>
+                        <v-btn icon @click="excludeMember">
                             <v-icon>mdi-account-minus</v-icon>
-                        </v-btn>
-                        <v-btn icon>
-                            <v-icon>mdi-delete-sweep</v-icon>
                         </v-btn>
                     </v-col>
                     <v-col cols="5" class="h-100">
@@ -63,7 +69,15 @@
                                 <v-toolbar-title class="font-weight-bold text-h5">Added</v-toolbar-title>
                                 <v-spacer></v-spacer>
                             </v-toolbar>
-                            <v-list :items="members"></v-list>
+                            <v-list>
+                                <v-list-item
+                                    v-for="selectuser in selectedUsers"
+                                    @click="clickUser(selectuser)"
+                                    :class="{'selected' : selectuser.isSelect}"
+                                    >
+                                        <p>{{ selectuser.name + ' / ' + selectuser.email }}</p>
+                                </v-list-item>
+                            </v-list>
                         </div>
                     </v-col>
                 </v-row>
@@ -90,22 +104,27 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { teamCreate } from '@/api/team.js'
+import { userSearch } from '@/api/user.js'
+import { faL } from '@fortawesome/free-solid-svg-icons';
+import { useUserStore } from '@/stores/user';
+
 
 const emit = defineEmits(['closeDialog'])
 const searchList = ref([])
+const selectedUsers = ref([]);
+const searchName = ref('')
 const leaderId = ref('')
 const teamName = ref('')
 const teamDescription = ref('')
-const members = ref([])
 
 const create = async () => {
     const data = {
         leaderId : leaderId.value,
         teamName : teamName.value,
         teamDescription : teamDescription.value,
-        members : members.value,
+        members : selectedUsers.value.map((user) => user.id),
     }
     await teamCreate(
         data,(response) => {
@@ -118,8 +137,66 @@ const create = async () => {
     )
   }
 
+const onClick = async () => {
+    const data = searchName.value
+    console.log(searchName.value)
+    await userSearch(
+        data, (response) => {
+            searchList.value = [];
+            searchList.value = response.data.dataBody.map((x) => {
+                const newData = {
+                    isSelect :false,
+                    isMember : false,
+                    ...x
+                }
+                return newData
+            })
+        },
+        (error) => {
+            console.log(error)
+        }
+    )
+}
+
+const addMember = () => {
+    const newList = searchList.value.filter((user) => {
+        if (!user.isSelect) {
+            return user; // 선택된 사용자만 반환
+        }
+    });
+
+    const selected = searchList.value.filter((user) => {
+        if (user.isSelect) {
+            user.isSelect = false;
+            user.isMember = true;
+            return user; // 선택된 사용자만 반환
+        }
+    });
+
+    selectedUsers.value = selectedUsers.value.concat(selected);
+    searchList.value = newList
+
+};
+
+const excludeMember = () => {
+    const newList = selectedUsers.value.filter((user) => {
+        if (!user.isSelect) {
+            return user; // 선택된 사용자만 반환
+        }
+    });
+    selectedUsers.value = newList
+}
+
+const clickUser = (user) => {
+    user.isSelect = !user.isSelect
+}
+
+
+
 </script>
 
-<style lang="scss" scoped>
-
+<style scoped>
+.selected {
+    background-color: aqua;
+}
 </style>

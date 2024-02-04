@@ -3,6 +3,8 @@ package com.mefi.backend.api.service;
 import com.mefi.backend.api.request.TeamReqDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.TeamResDto;
+import com.mefi.backend.common.exception.ErrorCode;
+import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Team;
 import com.mefi.backend.db.entity.User;
 import com.mefi.backend.db.entity.UserRole;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -81,5 +84,60 @@ public class TeamServiceImpl implements TeamService{
 
         // 팀 구성원 목록 반환
         return teamUserRepository.getMemberList(teamId);
+    }
+
+    @Override
+    public Boolean checkRole(Long userId, Long teamId) {
+
+        UserTeam userTeam  = teamUserRepository.findByUserIdAndTeamId(userId, teamId);
+
+        if(userTeam == null){
+            throw new Exceptions(ErrorCode.TEAM_ACCESS_DENIED);
+        }
+
+        if(userTeam.getRole() != UserRole.LEADER){
+            return false;
+        }
+
+        log.info("{}", userTeam.getRole());
+
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public void addMember(Long userId, Long teamId, Long memberId) {
+
+        if(checkRole(userId, teamId)){
+            User member = userRepository.findById(memberId).orElseThrow(() -> new Exceptions(ErrorCode.USER_NOT_EXIST));
+            Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_NOT_EXIST));
+
+            UserTeam teamMember = UserTeam.builder()
+                    .user(member)
+                    .team(team)
+                    .role(UserRole.MEMBER)
+                    .build();
+
+            teamUserRepository.save(teamMember);
+
+        }else{
+            throw new Exceptions(ErrorCode.NOT_TEAM_LEADER);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteTeam(Long userId, Long teamId) {
+        Optional<Team> optionalTeam = teamRepository.findById(teamId);
+        Team team = optionalTeam.orElseThrow(() -> new Exceptions(ErrorCode.TEAM_NOT_EXIST));
+
+        // 팀장 권환 확인
+        if(!checkRole(userId, teamId)) throw new Exceptions(ErrorCode.NOT_TEAM_LEADER);
+
+        // 팀 멤버 전원 삭제
+        teamUserRepository.deleteByTeamId(teamId);
+
+        // 팀 삭제
+        teamRepository.delete(team);
     }
 }
