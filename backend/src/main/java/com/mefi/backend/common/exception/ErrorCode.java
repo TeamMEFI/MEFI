@@ -19,7 +19,12 @@ public enum ErrorCode {
     SAME_AS_BEFORE(HttpStatus.BAD_REQUEST, "U-007", "이전 정보와 동일합니다."),
 
     // 토큰
-    UNEXPECTED_TOKEN(HttpStatus.BAD_REQUEST, "T-001", "만료되었거나 존재하지 않는 토큰입니다.");
+    UNEXPECTED_TOKEN(HttpStatus.BAD_REQUEST, "T-001", "만료되었거나 존재하지 않는 토큰입니다."),
+
+    // 팀
+    TEAM_NOT_EXIST(HttpStatus.BAD_REQUEST, "G-001", "존재하지 않는 팀입니다."),
+    TEAM_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "G-002", "해당 팀의 권한이 없습니다."),
+    NOT_TEAM_LEADER(HttpStatus.BAD_REQUEST, "G-003", "팀장만 수정 권한이 있습니다.");
 
     // 상태, 에러 코드, 메시지
     private HttpStatus httpStatus;
