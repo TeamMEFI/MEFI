@@ -101,6 +101,9 @@ public class UserServiceImpl implements UserService {
 
         else if("imgUrl".equals(userModifyReqDto.getCategory()))
             user.updateImgUrl(userModifyReqDto.getContent());
+
+        // 항목이 존재하지 않는 경우
+        else throw new Exceptions(ErrorCode.CATEGORY_NOT_EXIST);
     }
 
     // 회원 비밀번호 수정
