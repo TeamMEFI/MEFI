@@ -30,6 +30,7 @@ public class NotiServiceImpl implements NotiService{
     private final UserRepository userRepository;
     private final Long DEFAULT_TIMEOUT = Long.MAX_VALUE; // SSE 최대 연결 시간
 
+    // SSE 연결 생성
     @Override
     public SseEmitter createSseConnection(Long userId, String lastEventId) {
         // SSE Emitter ID 생성
@@ -59,6 +60,7 @@ public class NotiServiceImpl implements NotiService{
         return sseEmitter;
     }
 
+    // 알림 전송
     @Override
     public void sendNoti(SseEmitter emitter, String eventId, String emitterId, Noti noti) {
         try{
@@ -74,6 +76,7 @@ public class NotiServiceImpl implements NotiService{
         }
     }
 
+    // 특정 유저에게 알림 전송
     @Override
     @Transactional
     public void sendNotiForUser(Long userId, String message) {
@@ -85,12 +88,12 @@ public class NotiServiceImpl implements NotiService{
 
         // DB 저장
         Noti noti = Noti.builder()
-                        .user(user)
-                        .message(message)
-                        .createdTime(LocalDateTime.now())
-                        .status(false)
-                        .build();
-        notiRepository.createNoti(noti);
+                .user(user)
+                .message(message)
+                .createdTime(LocalDateTime.now())
+                .status(false)
+                .build();
+        notiRepository.save(noti);
 
         // 로그인한 특정 사용자에 대한 모든 SSE Emitter 조회 (여러 탭, 디바이스 고려)
         Map<String, SseEmitter> emitters = notiRepository.findSseEmittersById(String.valueOf(userId));
@@ -106,6 +109,7 @@ public class NotiServiceImpl implements NotiService{
 
     }
 
+    // 팀에 소속된 모든 유저에게 알림 전송
     @Override
     public void sendNotiForTeam(Long teamId, String message) {
         // 팀원 목록 조회
@@ -117,11 +121,16 @@ public class NotiServiceImpl implements NotiService{
         }
     }
 
+    // 해당 유저가 읽지 않은 모든 알림 조회
     @Override
     public List<NotiResponseDto> getNotis(Long userId) {
+        // 유저 조회
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
         // 특정 사용자의 알림 전체 조회
-        List<Noti> notis = notiRepository.findNotiByUserId(userId);
+        List<Noti> notis = notiRepository.findNotiByUserAndStatusIsFalse(user);
         log.info("읽어온 Data 개수 : {}", notis.size());
+
         // 엔티티를 DTO로 변환
         List<NotiResponseDto> result = notis.stream()
                 .map(n -> new NotiResponseDto(n))
@@ -130,23 +139,23 @@ public class NotiServiceImpl implements NotiService{
         return result;
     }
 
+    // 특정 알림 읽음 처리
     @Override
     @Transactional
     public NotiResponseDto readNoti(Long alarmId) {
-        // 특정 알림 읽음 처리
-        Noti noti = notiRepository.findNotiById(alarmId);
+        Noti noti = notiRepository.findNotiById(alarmId).orElseThrow(()->new IllegalArgumentException());
         noti.read();
-        NotiResponseDto notiResponseDto = new NotiResponseDto(noti);
-        return notiResponseDto;
+        return new NotiResponseDto(noti);
     }
 
     // 전체 알림 읽음 처리 메소드
     @Transactional
     public int readNotiAll(Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
-        return notiRepository.readNotiAll(user);
+        return notiRepository.readNotiAllByUser(user);
     }
 
+    // 이벤트 ID 생성 메소드
     private String makeTimeIncludeEventId(String userId){
         return userId + "_" + System.currentTimeMillis();
     }
