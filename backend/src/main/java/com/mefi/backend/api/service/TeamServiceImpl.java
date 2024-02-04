@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -122,5 +123,21 @@ public class TeamServiceImpl implements TeamService{
         }else{
             throw new Exceptions(ErrorCode.NOT_TEAM_LEADER);
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteTeam(Long userId, Long teamId) {
+        Optional<Team> optionalTeam = teamRepository.findById(teamId);
+        Team team = optionalTeam.orElseThrow(() -> new Exceptions(ErrorCode.TEAM_NOT_EXIST));
+
+        // 팀장 권환 확인
+        if(!checkRole(userId, teamId)) throw new Exceptions(ErrorCode.NOT_TEAM_LEADER);
+
+        // 팀 멤버 전원 삭제
+        teamUserRepository.deleteByTeamId(teamId);
+
+        // 팀 삭제
+        teamRepository.delete(team);
     }
 }

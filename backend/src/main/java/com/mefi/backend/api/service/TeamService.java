@@ -21,4 +21,7 @@ public interface TeamService {
 
     // 팀원 추가
     void addMember(Long userId, Long teamId, Long memberId);
+
+    // 팀 삭제
+    void deleteTeam(Long userId, Long teamId);
 }
