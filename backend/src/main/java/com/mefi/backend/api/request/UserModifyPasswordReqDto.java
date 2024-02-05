@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class UserModifyPasswordReqDto {
 
-    // 이메일
-    private String email;
+    // 현재 비밀번호
+    private String currentPassword;
 
     // 변경 비밀번호
-    private String password;
+    private String modifyPassword;
 }

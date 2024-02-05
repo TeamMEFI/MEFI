@@ -31,5 +31,5 @@ public interface UserService {
     void modifyUserInfo(Long userId, UserModifyReqDto userModifyReqDto);
 
     // 회원 비밀번호 수정
-    void modifyUserPassword(UserModifyPasswordReqDto userModifyPasswordReqDto);
+    void modifyUserPassword(Long id, UserModifyPasswordReqDto userModifyPasswordReqDto);
 }
