@@ -66,7 +66,7 @@
             <v-btn
             variant="text"
             class="text-h5"
-            @click="emit('closeDialog')"
+            @click="close"
             >
             Close
             </v-btn>
@@ -80,14 +80,12 @@ import { selectTeamMate, addTeamMate, excludeTeamMate } from '@/api/team.js';
 import { userSearch } from '@/api/user.js'
 import { useUserStore } from "@/stores/user"
 
-
-
 const props = defineProps({
   teamId: Number
 });
 
-const addmemberdata = ref(0)
-const excludememberdata = ref(0)
+const addmemberdata = ref(null)
+const excludememberdata = ref(null)
 
 const emit = defineEmits(['closeDialog'])
 
@@ -97,6 +95,7 @@ const members = ref([])
 const store = useUserStore()
 
 const search = async () => {
+    if (searchName.value === '') return;
     const data = searchName.value
     await userSearch(
         data, (response) => {
@@ -125,6 +124,7 @@ const selectmember = async () => {
 }
 
 const addMember = async () => {
+    if (addmemberdata.value === null) return;
     const data = {
         teamid: props.teamId,
         userid: addmemberdata.value
@@ -132,7 +132,8 @@ const addMember = async () => {
     await addTeamMate(
         data,(response) => {
             selectmember();
-            search();
+            searchList.value = searchList.value.filter(member => member.id !== addmemberdata.value);
+            addmemberdata.value = null;
         },
         (error)=>{
             console.log(error)
@@ -141,14 +142,16 @@ const addMember = async () => {
 };
 
 const excludeMember = async () => {
+    if (excludememberdata.value === null) return;
     const data = {
         teamid: props.teamId,
-        userid: addmemberdata.value
+        userid: excludememberdata.value
     }
     await excludeTeamMate(
         data,(response) => {
-            selectmember();
-            search();
+            search()
+            members.value = members.value.filter(member => member.id !== excludememberdata.value);
+            excludememberdata.value = null
         },
         (error)=>{
             console.log(error)
@@ -156,12 +159,14 @@ const excludeMember = async () => {
     )
 };
 
-
-
 // 최초 생성시 팀원 조회
 onMounted(() => {
   selectmember();
 });
+
+const close = () => {
+    emit('closeDialog')
+}
 </script>
 
 <style scoped>
