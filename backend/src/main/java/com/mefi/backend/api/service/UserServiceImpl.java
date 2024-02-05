@@ -144,18 +144,27 @@ public class UserServiceImpl implements UserService {
     // 회원 비밀번호 수정
     @Override
     @Transactional
-    public void modifyUserPassword(UserModifyPasswordReqDto userModifyPasswordReqDto) {
+    public void modifyUserPassword(Long id, UserModifyPasswordReqDto userModifyPasswordReqDto) {
 
         // 유저 조회
-        if(!userRepository.findByEmail(userModifyPasswordReqDto.getEmail()).isPresent())
+        if(!userRepository.findById(id).isPresent())
             throw new Exceptions(ErrorCode.USER_NOT_EXIST);
 
-        User user = userRepository.findByEmail(userModifyPasswordReqDto.getEmail()).get();
+        User user = userRepository.findById(id).get();
 
-        // 이전 비밀번호와 동일한 경우
-        if(user.getPassword().equals(bCryptPasswordEncoder.encode(userModifyPasswordReqDto.getPassword())))
+        // 본인 인증을 위한 현재 비밀번호 확인
+        if(!bCryptPasswordEncoder.matches(
+                userModifyPasswordReqDto.getCurrentPassword(),user.getPassword())) {
+            throw new Exceptions(ErrorCode.CORRECT_NOT_PASSWORD);
+        }
+
+        // 이전 비밀번호와 다른지 확인
+        if(bCryptPasswordEncoder.matches(
+                userModifyPasswordReqDto.getModifyPassword(),user.getPassword())) {
             throw new Exceptions(ErrorCode.SAME_AS_BEFORE);
+        }
         
-        user.updatePassword(bCryptPasswordEncoder.encode(userModifyPasswordReqDto.getPassword()));
+        // 비밀번호 수정
+        user.updatePassword(bCryptPasswordEncoder.encode(userModifyPasswordReqDto.getModifyPassword()));
     }
 }

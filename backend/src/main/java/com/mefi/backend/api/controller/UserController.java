@@ -136,10 +136,14 @@ public class UserController {
     @Operation(summary = "비밀번호 수정", description = "/users/pwd \n\n 사용자는 비밀번호를 수정한다.")
     @PatchMapping("/pwd")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
-    ResponseEntity<? extends BaseResponseBody> modifyUserPassword(@RequestBody UserModifyPasswordReqDto userModifyPasswordReqDto) {
+    ResponseEntity<? extends BaseResponseBody> modifyUserPassword(Authentication authentication,
+                                                                  @RequestBody UserModifyPasswordReqDto userModifyPasswordReqDto) {
+
+        // 로그인된 유저 정보 조회
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         // 회원 비밀번호 수정
-        userService.modifyUserPassword(userModifyPasswordReqDto);
+        userService.modifyUserPassword(userDetails.getUserId(),userModifyPasswordReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 }
