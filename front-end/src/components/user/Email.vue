@@ -43,26 +43,29 @@ const props = defineProps({
 })
 
 // 기능 : 인증번호 확인 api
-// successs : close
+// successs : accessToken 저장 및 모달창 닫기
 // fail : 인증 번호를 다시 확인해주세요
-const vertificate = () => {
+const vertificate = async () => {
     // api : 인증번호 비교
     const param = {
         "email":props.email,
         "authCode":authCode.value,
     }
-    console.log(param)
-    checkEmailCode(param)
-        .then((res)=>{
-            // access Token store
-            // 완료 정보가 전달되어야함
-            emit('close')
-        })
-        .catch((err)=>{console.log(err)})
+    await checkEmailCode(param, 
+    (res)=>{
+        // localStorage.setItem('accessToken', res.data.dataBody)
+        emit('success')
+    },
+    (err)=>{
+        if(err.response.status == 400){
+            alert(err.response.data.dataHeader.resultMessage)
+        }
+        console.log(err)
+    })
 }
 
 // 모달창 닫기
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'success'])
 const close = () => {
     emit('close')
 }

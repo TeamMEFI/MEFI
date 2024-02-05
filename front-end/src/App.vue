@@ -21,15 +21,16 @@ router.beforeEach((to, from)=>{
     updateToken(
       localStorage.getItem('refreshToken'), (response)=>{console.log(response)},
       (err) => {console.log(err)}
-    ).then((res)=>{console.log(res)})
-      .catch((err)=>{console.log(err)})
+    )
   }
+  
   if(localStorage.getItem('accessToken')==null
   && to.name!='login' 
   && to.name!='signup' 
   && to.name!='email' 
   && to.name!='search-password1' 
-  && to.name!='search-password2' ){
+  && to.name!='search-password2'
+  && to.name!='search-password3' ){
     return {name:'login'}
   }
 })

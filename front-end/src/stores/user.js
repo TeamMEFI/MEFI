@@ -14,16 +14,15 @@ export const useUserStore = defineStore('user', () => {
   // user 정보 : email, password, name, position, department
   const signup = async (user) => {
     await userSignup(
-      user,(response)=>{console.log(response)},
+      user,(response)=>{
+        const loginUser = {
+          email:user.email,
+          password:user.password,
+        }
+        login(loginUser)
+      },
       (error)=>{console.log(error)}
     )
-     .then(()=>{
-      const loginUser = {
-        email:user.email,
-        password:user.password,
-      }
-      login(loginUser)
-     })
   }
 
   // 로그인 함수

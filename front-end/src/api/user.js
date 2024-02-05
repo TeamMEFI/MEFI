@@ -8,17 +8,14 @@ async function userLogin(param, success, fail){
     await local.post(`/users/login`, param).then(success).catch(fail);
 }
 async function userSignup(param, success, fail){
+    // local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
     await local.post(`/users`, param).then(success).catch(fail);
 }
 async function sendEmailCode(param, success, fail){
-    console.log('api send email', param)
     await local.post(`/users/join/auth`,param).then(success).catch(fail)
-    console.log('api send email success')
 }
 async function checkEmailCode(param, success, fail){
-    console.log('api checkt email code', param)
     await local.post(`/users/join/auth/check`,param).then(success).catch(fail)
-    console.log('api checkt email code success')
 }
 async function updateToken(param, success, fail){
     local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('refreshToken')}`

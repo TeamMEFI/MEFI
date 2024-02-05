@@ -8,22 +8,26 @@
         <!-- 회원 가입 입력창 -->
         <v-form @submit.prevent="signup" class="d-flex flex-column justify-center">
             <!-- 이메일 입력창 -->
-            <v-text-field
-                label="이메일"
-                v-model="email"
-                variant="outlined"
-                type="email"
-                :rules="rule_email"
-            >
-                <!-- 이메일 인증 모달창 -->
-                <template v-slot:append-inner>    
-                    <v-btn variant="flat" :disabled="email_check"  @click="emailCheck()">인증
-                        <v-dialog v-model="emailDialog">
-                            <Email @close="emailDialog = false" :email="email" ></Email>
-                        </v-dialog>
-                    </v-btn>
-                </template>
-            </v-text-field>
+            <div class="d-flex flex-row justify-center align-center">
+                <v-text-field
+                    label="이메일"
+                    v-model="email"
+                    variant="outlined"
+                    type="email"
+                    :rules="rule_email"
+                >
+                    <!-- 이메일 인증 모달창 -->
+                    <template v-slot:append-inner>    
+                        <v-btn variant="flat" :disabled="email_check"  @click="emailCheck()">인증
+                            <v-dialog v-model="emailDialog">
+                                <Email @close="emailDialog = false" :email="email" @success="emailSuccess"></Email>
+                            </v-dialog>
+                        </v-btn>
+                    </template>
+                </v-text-field>
+
+                <font-awesome-icon :icon="['fas', 'circle-check']" :style="{color: email_success ? '#4CAF50' : '#BDBDBD'}" style="font-size: x-large;"/>
+            </div>
 
             <!-- 비밀 번호 입력창 -->
             <v-text-field
@@ -130,7 +134,7 @@ const regex_email = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 const regex_pass =  /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,16}$/
 
 // 회원 가입 api
-const signup = function(){
+const signup = async function(){
     // 유효성 검사
     if ( !email.value || !regex_email.test(email.value) || 
         !password.value || !regex_pass.test(password.value) ||
@@ -146,24 +150,30 @@ const signup = function(){
             dept:dept.value,
             position:position.value,
         }
-        store.signup(userInfo)
+        await store.signup(userInfo)
     }
 }
 
-const emailCheck = () => {
+const emailCheck = async () => {
     const param = {
         "email": email.value
     }
-    console.log(param)
-    sendEmailCode(param)
-        .then((res)=>{
-            emailDialog.value = true
-        })
-        .catch((err)=>{
-            if(err.response.data.dataHeader.resultCode=="U-003"){
-                alert(err.response.data.dataHeader.resultMessage)
-            }
-        })
+    await sendEmailCode(param, 
+    (res)=>{
+        emailDialog.value = true
+    },(err)=>{
+        if(err.response.data.dataHeader.resultCode=="U-003"){
+            alert(err.response.data.dataHeader.resultMessage)
+        }
+    })
+}
+
+
+const email_success = ref(false)
+const emailSuccess = () => {
+    emailDialog.value = false
+    email_success.value = true
+    email_check.value = true
 }
 </script>
 
