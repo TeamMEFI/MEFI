@@ -17,9 +17,9 @@
             >
                 <!-- 이메일 인증 모달창 -->
                 <template v-slot:append-inner>    
-                    <v-btn variant="flat" :disabled="email_check"  @click="emailDialog = true">인증
+                    <v-btn variant="flat" :disabled="email_check"  @click="emailCheck()">인증
                         <v-dialog v-model="emailDialog">
-                            <Email @close="emailDialog = false"></Email>
+                            <Email @close="emailDialog = false" :email="email" ></Email>
                         </v-dialog>
                     </v-btn>
                 </template>
@@ -75,6 +75,7 @@
 import { useUserStore } from "@/stores/user"
 import { ref, watch } from "vue"
 import Email from "./Email.vue";
+import { sendEmailCode } from "@/api/user"
 
 const store = useUserStore();
 
@@ -147,6 +148,22 @@ const signup = function(){
         }
         store.signup(userInfo)
     }
+}
+
+const emailCheck = () => {
+    const param = {
+        "email": email.value
+    }
+    console.log(param)
+    sendEmailCode(param)
+        .then((res)=>{
+            emailDialog.value = true
+        })
+        .catch((err)=>{
+            if(err.response.data.dataHeader.resultCode=="U-003"){
+                alert(err.response.data.dataHeader.resultMessage)
+            }
+        })
 }
 </script>
 

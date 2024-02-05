@@ -17,7 +17,7 @@
             <!-- 인증 번호 입력창  -->
             <v-text-field
                 label="인증 번호"
-                v-model="email_verification"
+                v-model="authCode"
                 hide-details="auto"
                 type="email"
                 variant="outlined"
@@ -32,22 +32,36 @@
 
 <script setup>
 import { ref } from "vue"
-import { useRouter } from "vue-router"
-const router = useRouter();
+import { checkEmailCode } from "@/api/user"
 
 // 이메일 인증 정보
-const email_verification = ref("")
+const authCode = ref("")
 
-// 기능 : 인증번호 확인 api 던지기
+// api 보낼때 필요한 데이터
+const props = defineProps({
+    email:String,
+})
+
+// 기능 : 인증번호 확인 api
 // successs : close
 // fail : 인증 번호를 다시 확인해주세요
 const vertificate = () => {
     // api : 인증번호 비교
-    // 돌아갔을때 데이터가 유지되어야함
-    router.go(-1);
+    const param = {
+        "email":props.email,
+        "authCode":authCode.value,
+    }
+    console.log(param)
+    checkEmailCode(param)
+        .then((res)=>{
+            // access Token store
+            // 완료 정보가 전달되어야함
+            emit('close')
+        })
+        .catch((err)=>{console.log(err)})
 }
 
-// close 버튼 상위로 전달
+// 모달창 닫기
 const emit = defineEmits(['close'])
 const close = () => {
     emit('close')
