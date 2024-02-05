@@ -27,6 +27,8 @@ public enum ErrorCode {
     TEAM_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "G-002", "해당 팀의 권한이 없습니다."),
     NOT_TEAM_LEADER(HttpStatus.BAD_REQUEST, "G-003", "팀장만 수정 권한이 있습니다.");
 
+
+
     // 상태, 에러 코드, 메시지
     private HttpStatus httpStatus;
     private String errorCode;
