@@ -119,4 +119,23 @@ public class TeamController {
         // 현재 팀의 팀원 목록 반환
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
+
+    @DeleteMapping("/{teamId}/{memberId}")
+    @Operation(summary = "팀원 삭제", description = "팀장이 해당 유저를 삭제한다.")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n 반환값 없음")
+    public ResponseEntity<? extends BaseResponseBody> deleteMember(Authentication authentication,
+                                                                   @PathVariable(name = "teamId") Long teamId,
+                                                                   @PathVariable(name = "memberId") Long memberId){
+
+        // 현재 사용자 식별 ID 가져옴
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        log.info("userId : {}", user.getUserId());
+
+        // 팀원 추가
+        teamService.deleteMember(user.getUserId(), teamId, memberId);
+
+        // 현재 팀의 팀원 목록 반환
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
+    }
 }

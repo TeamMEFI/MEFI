@@ -24,4 +24,6 @@ public interface TeamService {
 
     // 팀 삭제
     void deleteTeam(Long userId, Long teamId);
-}
+
+    // 팀원 삭제
+    void deleteMember(Long userId, Long teamId, Long memberId);}
