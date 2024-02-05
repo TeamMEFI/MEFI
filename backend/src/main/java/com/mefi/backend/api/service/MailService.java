@@ -17,6 +17,9 @@ public interface MailService {
     // 메일 전송
     public void sendMessage(String email) throws MessagingException, UnsupportedEncodingException;
 
+    // 비밀번호 찾기를 위한 메일 전송
+    public void sendPasswordRecoveryMessage(String email) throws MessagingException, UnsupportedEncodingException;
+
     // 인증 코드 확인
     void validateAuthCode(VerifyCodeReqDto verifyCodeReqDto);
 }

@@ -65,7 +65,7 @@ public class MailServiceImpl implements MailService {
 
         // 메일 내용 (SubType HTML 지정)
         String msg =
-                "<h1 style=\"font-size: 30px; padding: 15px 10px;\">MEFI 회원가입 인증 코드 안내드립니다.</h1>"+
+                "<h1 style=\"font-size: 30px; padding: 15px 10px;\">MEFI 인증 코드 안내드립니다.</h1>"+
                         "<p style=\"font-size: 17px; padding: 10px 10px;\">" +
                         "아래 인증 코드를 입력해주세요.</p>"+
                         "<p style=\"font-size: 17px; padding: 10px 10px;\">" +
@@ -90,6 +90,45 @@ public class MailServiceImpl implements MailService {
         // 이메일 중복 검사
         if(userRepository.findByEmail(email).isPresent())
             throw new Exceptions(ErrorCode.EMAIL_EXIST);
+
+        // 인증 코드 생성
+        String authCode = createAuthCode();
+
+        // 메일 내용 객체 생성
+        MimeMessage message = createMessage(email, authCode);
+
+        // 이메일로 인증 엔티티 조회
+        Optional<EmailAuth> auth = mailRepository.findByEmail(email);
+
+        // 이미 인증 코드가 존재하는 경우 (인증 코드 업데이트)
+        if (auth.isPresent()) {
+            auth.get().updateAuthCode(authCode);
+
+            // DB 저장
+            mailRepository.save(auth.get());
+        }
+
+        // 인증 코드가 존재하지 않는 경우 (인증 코드 엔티티 생성)
+        else {
+            EmailAuth emailAuth = EmailAuth.builder()
+                    .email(email)
+                    .randomNum(authCode)
+                    .build();
+
+            // DB 저장
+            mailRepository.save(emailAuth);
+        }
+
+        // 메일 전송
+        javaMailSender.send(message);
+    }
+
+    @Override
+    public void sendPasswordRecoveryMessage(String email) throws MessagingException, UnsupportedEncodingException {
+
+        // 가입된 이메일인지 확인
+        if(!userRepository.findByEmail(email).isPresent())
+            throw new Exceptions(ErrorCode.EMAIL_NOT_EXIST);
 
         // 인증 코드 생성
         String authCode = createAuthCode();
