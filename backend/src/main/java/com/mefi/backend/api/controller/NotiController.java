@@ -31,11 +31,11 @@ public class NotiController {
     public ResponseEntity<SseEmitter> createSseConnection( Authentication authentication,  @RequestParam(name = "lastEventId", required = false) String lastEventId){
 
         // 현재 사용자의 식별 ID 조회
-        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-        log.info("User ID : {}", user.getUserId());
+//        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+//        log.info("User ID : {}", user.getUserId());
 
         // SSE Emitter 생성
-        SseEmitter sseEmitter = notiService.createSseConnection(user.getUserId(), lastEventId);
+        SseEmitter sseEmitter = notiService.createSseConnection(1L, lastEventId);
         log.info("SSE Emitter : {}", sseEmitter);
 
         // NginX 버퍼링 기능 비활성화
