@@ -419,7 +419,7 @@ const createSession = async (sessionId) => {
 const createToken = async (sessionId) => {
   let createdToken
 
-  const response = await makeToken(
+  await makeToken(
     sessionId,
     (reponse) => {
       createdToken = reponse.data

@@ -37,8 +37,8 @@ const ydoc = new Y.Doc()
 
 const provider = new WebsocketProvider(
   // `ws${location.protocol.slice(4)}//${location.host}/ws`,
-  `ws://localhost:1234/ws`,
-  // 'wss://demos.yjs.dev/ws', // use the public ws server
+  // `ws://localhost:1234/ws`,
+  'wss://demos.yjs.dev/ws', // use the public ws server
   `mefi123`,
   ydoc
 )
