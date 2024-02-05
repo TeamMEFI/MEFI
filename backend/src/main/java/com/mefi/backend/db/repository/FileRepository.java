@@ -15,7 +15,7 @@ public interface FileRepository extends JpaRepository<MeetingFile, Long> {
     Optional<MeetingFile> findByFileName(String fileName);
 
     // 파일에 대한 메타 데이터 정보 삭제
-    void deleteFile(MeetingFile meetingFile);
+    void delete(MeetingFile meetingFile);
 
     // 특정 회의와 관련된 파일 메타 데이터 조회
     @Query("select m from MeetingFile m where m.conference.id = :conferenceId")

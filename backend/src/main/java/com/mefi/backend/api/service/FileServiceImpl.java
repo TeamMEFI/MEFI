@@ -83,7 +83,7 @@ public class FileServiceImpl implements FileService {
             amazonS3Client.deleteObject(deleteObjectRequest);
 
             // 로컬 DB에서 파일 메타 데이터 삭제
-            fileRepository.deleteFile(meetingFile);
+            fileRepository.delete(meetingFile);
         }catch(Exception e){
             e.printStackTrace();
         }
