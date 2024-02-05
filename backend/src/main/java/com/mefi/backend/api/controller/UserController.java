@@ -93,8 +93,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 
-    @Operation(summary = "이메일 인증 확인", description = "/users/join/auth/check\n\n 사용자는 이메일 인증 확인을 한다.")
-    @PostMapping("/join/auth/check")
+    @Operation(summary = "이메일 인증 확인", description = "/users/auth/check\n\n 사용자는 이메일 인증 확인을 한다.")
+    @PostMapping("/auth/check")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> verifyEmailCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
 
