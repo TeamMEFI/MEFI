@@ -44,4 +44,12 @@ public class Team {
     public void addUserTeam(UserTeam teamLeader) {
         this.userTeams.add(teamLeader);
     }
+
+    public void changeTeamName(String name) {
+        this.name = name;
+    }
+
+    public void changeTeamDescription(String description) {
+        this.description = description;
+    }
 }

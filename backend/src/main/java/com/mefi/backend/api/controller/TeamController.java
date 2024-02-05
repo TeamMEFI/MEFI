@@ -1,5 +1,6 @@
 package com.mefi.backend.api.controller;
 
+import com.mefi.backend.api.request.TeamModifyReqDto;
 import com.mefi.backend.api.request.TeamReqDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.TeamDetailDto;
@@ -155,4 +156,29 @@ public class TeamController {
         // 사용자가 속한 팀 목록 반환
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,teamDetailDto));
     }
+
+    @PatchMapping("/{teamId}")
+    @Operation(summary = "팀 정보 수정", description = "팀장이 해당 팀의 정보를 수정한다.")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n 반환값 없음")
+    public ResponseEntity<? extends BaseResponseBody> modifyTeam(Authentication authentication,
+                                                                 @PathVariable(name = "teamId") Long teamId,
+                                                                 @RequestBody TeamModifyReqDto teamModifyReqDto){
+
+        // 현재 사용자 식별 ID 가져옴
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        // 파라미터 확인 로그
+        log.info("userId : {}", user.getUserId());
+        log.info("teamId : {}", teamId);
+        log.info("teamName : {}", teamModifyReqDto.getName());
+        log.info("teamDescription : {}", teamModifyReqDto.getDescription());
+
+        // 팀 삭제
+        teamService.modifyTeam(user.getUserId(), teamId, teamModifyReqDto);
+
+        // 현재 팀의 팀원 목록 반환
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
+    }
+
+
 }
