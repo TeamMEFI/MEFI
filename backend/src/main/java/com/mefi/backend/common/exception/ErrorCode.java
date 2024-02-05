@@ -23,6 +23,8 @@ public enum ErrorCode {
 
     // 토큰
     UNEXPECTED_TOKEN(HttpStatus.BAD_REQUEST, "T-001", "토큰이 만료되었습니다."),
+    TOKEN_NOT_EXIST(HttpStatus.BAD_REQUEST, "T-002", "토큰이 존재하지 않습니다."),
+
     // 팀
     TEAM_NOT_EXIST(HttpStatus.BAD_REQUEST, "G-001", "존재하지 않는 팀입니다."),
     TEAM_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "G-002", "해당 팀의 권한이 없습니다."),
