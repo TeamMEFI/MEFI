@@ -29,6 +29,8 @@ public enum ErrorCode {
     LEADER_NOT_DELETEABLE(HttpStatus.BAD_REQUEST, "G-004", "리더는 삭제할 수 없습니다."),
     MEMBER_NOT_EXIST(HttpStatus.BAD_REQUEST, "G-005", "해당 팀원은 존재하지 않습니다.");
 
+
+
     // 상태, 에러 코드, 메시지
     private HttpStatus httpStatus;
     private String errorCode;
