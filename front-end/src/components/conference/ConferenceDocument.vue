@@ -23,12 +23,15 @@ import QuillCursors from 'quill-cursors'
 import MarkdownShortcuts from 'quill-markdown-shortcuts'
 // import { quillEditor } from "vue-quill-editor";
 
-const route = useRoute()
 const router = useRouter()
 const props = defineProps({
   conferenceState: Boolean
 })
 const userStore = useUserStore()
+
+const route = useRoute()
+const teamId = ref(route.params?.teamId)
+const conferenceId = ref(route.params?.conferenceId)
 
 Quill.register('modules/cursors', QuillCursors)
 Quill.register('modules/markdownShortcuts', MarkdownShortcuts)
@@ -37,9 +40,9 @@ const ydoc = new Y.Doc()
 
 const provider = new WebsocketProvider(
   // `ws${location.protocol.slice(4)}//${location.host}/ws`,
-  // `ws://localhost:1234/ws`,
+  // `ws://localhost:5460/ws`,
   'wss://demos.yjs.dev/ws', // use the public ws server
-  `mefi123`,
+  `mefi123-${route.params.conferenceId}`,
   ydoc
 )
 
@@ -50,6 +53,7 @@ const editorContainer = ref(null)
 const binding = ref(null)
 
 onMounted(() => {
+  console.log(provider)
   const editor = new Quill(editorContainer.value, {
     theme: 'snow', // or 'bubble'
     modules: {
@@ -114,6 +118,14 @@ watch(
   }
 )
 
+const deleteContent = () => {
+  let target = editorContainer.value.firstChild;
+
+  while (target.firstChild) {
+    target.removeChild(target.firstChild)
+  }
+}
+
 // 공동 작업 문서 PDF 파일로 변환하여 저장
 const createPDF = () => {
   // editorContainer을 canvas객체로 변환
@@ -171,8 +183,7 @@ const createPDF = () => {
     createFile(
       formData,
       (response) => {
-        fetchFiles()
-        addedFileList.value = []
+        console.log(response.data)
       },
       (error) => {
         console.log(error)

@@ -23,13 +23,13 @@ onMounted(() => {
 })
 
 const clientData = computed(() => {
-  const { clientData } = getConnectionData()
+  const clientData = getConnectionData()
   return clientData
 })
 
 const getConnectionData = () => {
   const { connection } = props.streamManager.stream
-  return JSON.parse(connection.data)
+  return connection.data.split('"')[3]
 }
 
 const handleMouseOver = () => {
@@ -55,7 +55,6 @@ const handleMouseOut = () => {
   position: relative;
   left: 5px;
   top: 5px;
-  width: 0px;
   height: 0px;
   color: white;
   font-size: 12px;

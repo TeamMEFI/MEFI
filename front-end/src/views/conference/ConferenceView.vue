@@ -44,7 +44,7 @@
           <font-awesome-icon :icon="['fas', 'share']" style="color: #ffffff" />
           <p class="text-overline">화면공유</p>
         </v-list-item>
-        <v-list-item id="layout-activator" type="button" class="text-center" @click="menu">
+        <v-list-item id="layout-activator" type="button" class="text-center">
           <font-awesome-icon :icon="['fas', 'table-cells-large']" style="color: #ffffff" />
           <p class="text-overline">레이아웃</p>
           <v-menu activator="#layout-activator">

@@ -68,7 +68,6 @@
     <!-- 내 카메라 아직 켜지지 않았으면 로딩 스피너 출력 -->
     <div v-else class="loading bg-grey-darken-4">
       <v-progress-circular indeterminate size="64" width="6"></v-progress-circular>
-      <v-btn @click="joinSession" class="my-2" rounded="sm" size="large">Join session</v-btn>
     </div>
   </div>
 </template>
@@ -83,12 +82,15 @@ import { useUserStore } from '@/stores/user'
 
 import UserVideo from './UserVideo.vue'
 
-const route = useRoute()
 const router = useRouter()
 const props = defineProps({
   videoStatus: Object
 })
 const userStore = useUserStore()
+
+const route = useRoute()
+const teamId = ref(route.params?.teamId)
+const conferenceId = ref(route.params?.conferenceId)
 
 // 1, 2번 layout은 true | 3번 layout은 false
 const isSide = ref(true)
@@ -118,8 +120,9 @@ const publisherScreen = ref(null)
 const subscribers = ref([])
 
 // Join form
-const sessionId = ref(`meficonference-${route.params.conferenceId}`)
-const userName = ref(userStore.userInfo?.name)
+const sessionId = ref('ascs')
+const createdSessionId = ref('')
+const userName = ref(userStore?.userInfo.name)
 
 onMounted(() => {
   joinSession()
@@ -221,6 +224,7 @@ const sendChat = (content) => {
 
 // 세션 참가
 const joinSession = () => {
+  console.log(userName.value)
   OVCamera.value = new OpenVidu()
   OVScreen.value = new OpenVidu()
 
@@ -292,7 +296,7 @@ const joinSession = () => {
   // 미디어 서버와 카메라 세션을 연결
   getToken(sessionId.value).then((token) => {
     sessionCamera.value
-      .connect(token, { clientData: userName.value })
+      .connect(token, JSON.stringify({ 'clientData': userName.value }))
       .then(() => {
         const newPublisher = OVCamera.value.initPublisher(undefined, {
           audioSource: undefined,
@@ -319,7 +323,7 @@ const joinSession = () => {
   getToken(sessionId.value).then((tokenScreen) => {
     // Create a token for screen share
     sessionScreen.value
-      .connect(tokenScreen, { clientData: userName.value })
+      .connect(tokenScreen, JSON.stringify({ clientData: userName.value }))
       .then(() => {
         console.log('Session screen connected')
       })
@@ -396,33 +400,32 @@ const publishScreenShare = () => {
 }
 
 const getToken = async (sessionId) => {
-  const createdSessionId = await createSession(sessionId)
-  return await createToken(createdSessionId)
+  await createSession(sessionId)
+  return await createToken(createdSessionId.value)
 }
 
 const createSession = async (sessionId) => {
-  let createdSessionId
-
   await makeSession(
     { customSessionId: sessionId },
     (response) => {
-      createdSessionId = response.data
+      console.log(response)
+      console.log(createdSessionId.value)
+      createdSessionId.value = response.data.dataBody
     },
     (error) => {
       console.error(error)
     }
   )
-
-  return createdSessionId
 }
 
 const createToken = async (sessionId) => {
-  let createdToken
+  let createdToken;
 
   await makeToken(
     sessionId,
-    (reponse) => {
-      createdToken = reponse.data
+    (response) => {
+      console.log(response)
+      createdToken = response.data.dataBody
     },
     (error) => {
       console.error(error)
@@ -434,13 +437,13 @@ const createToken = async (sessionId) => {
 
 // 회의가 종료되었는지 확인하는 메서드
 // response.status가 200이면 회의 진행 중
-// response.status가 204이면 회의 종료
+// response.status가 503이면 회의 종료
 const checkConferenceDone = async (sessionId) => {
   checkDone(
-    sessionId,
+    createdSessionId.value,
     (response) => {
       // 회의 종료 시 상위 컴포넌트에 알림
-      if (response.status == 204) {
+      if (response.status === 204) {
         emit('endConference')
       } else {
         router.push({ name: 'home' })

@@ -1,14 +1,16 @@
-import axios from "axios";
+import axios from 'axios'
 
-const VUE_APP_API_URL = "http://localhost:9000";
+const VITE_APP_API_URL = import.meta.env.VITE_APP_API_URL
 
 const localAxios = () => {
-    const instance = axios.create({
-        baseURL: VUE_APP_API_URL,
-        headers: {
-            "Content-Type": "application/json;charset=utf-8"
-        }
-    })
-    return instance;
+  const instance = axios.create({
+    baseURL: VITE_APP_API_URL,
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    }
+  })
+  
+  return instance
 }
-export {localAxios};
+
+export { localAxios }
