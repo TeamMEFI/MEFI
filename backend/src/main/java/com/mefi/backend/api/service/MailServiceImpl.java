@@ -3,7 +3,6 @@ package com.mefi.backend.api.service;
 import com.mefi.backend.api.request.VerifyCodeReqDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
-import com.mefi.backend.common.util.JWTUtil;
 import com.mefi.backend.db.entity.EmailAuth;
 import com.mefi.backend.db.repository.MailRepository;
 import com.mefi.backend.db.repository.UserRepository;
@@ -12,6 +11,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,7 @@ import java.util.Random;
 
 import static com.mefi.backend.common.exception.ErrorCode.CODE_NOT_MATCH;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MailServiceImpl implements MailService {
@@ -51,7 +52,7 @@ public class MailServiceImpl implements MailService {
     }
 
     // 메일 내용 생성
-    public MimeMessage createMessage(String receiver, int authCode) throws MessagingException, UnsupportedEncodingException {
+    public MimeMessage createMessage(String receiver, String authCode) throws MessagingException, UnsupportedEncodingException {
 
         // 메일 내용 객체 생성
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -84,14 +85,14 @@ public class MailServiceImpl implements MailService {
 
     // 메일 전송
     @Transactional
-    public int sendMessage(String email) throws MessagingException, UnsupportedEncodingException {
+    public void sendMessage(String email) throws MessagingException, UnsupportedEncodingException {
 
         // 이메일 중복 검사
         if(userRepository.findByEmail(email).isPresent())
             throw new Exceptions(ErrorCode.EMAIL_EXIST);
 
         // 인증 코드 생성
-        int authCode = Integer.parseInt(createAuthCode());
+        String authCode = createAuthCode();
 
         // 메일 내용 객체 생성
         MimeMessage message = createMessage(email, authCode);
@@ -120,9 +121,6 @@ public class MailServiceImpl implements MailService {
 
         // 메일 전송
         javaMailSender.send(message);
-
-        // 인증 코드 반환
-        return authCode;
     }
 
     // 인증 코드 확인
@@ -144,7 +142,7 @@ public class MailServiceImpl implements MailService {
             throw new Exceptions(ErrorCode.CODE_TIME_EXPIRED);
 
         // 인증 코드 일치 여부
-        if(emailAuth.getRandomNum()!=Integer.parseInt(verifyCodeReqDto.getAuthCode()))
+        if(!emailAuth.getRandomNum().equals(verifyCodeReqDto.getAuthCode()))
             throw new Exceptions(CODE_NOT_MATCH);
 
         // 토큰 발행 (주석 이유 : 추가 로직 필요!)
