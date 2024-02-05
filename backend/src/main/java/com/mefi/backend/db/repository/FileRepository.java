@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface FileRepository extends JpaRepository<MeetingFile, Long> {
 
     // 파일명으로 메타 데이터 조회
-    Optional<MeetingFile> findByName(String fileName);
+    Optional<MeetingFile> findByFileName(String fileName);
 
     // 파일에 대한 메타 데이터 정보 삭제
     void deleteFile(MeetingFile meetingFile);

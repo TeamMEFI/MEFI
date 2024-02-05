@@ -72,7 +72,7 @@ public class FileServiceImpl implements FileService {
     public void deleteFile(String fileName, Long conferenceId){
         try{
             // 삭제하고자 하는 파일 메타 데이터 조회
-            MeetingFile meetingFile = fileRepository.findByName(fileName).orElseThrow(()-> new Exceptions(ErrorCode.FILE_NOT_EXIST));
+            MeetingFile meetingFile = fileRepository.findByFileName(fileName).orElseThrow(()-> new Exceptions(ErrorCode.FILE_NOT_EXIST));
 
             // DeleteObjectRequest 생성
             String key = DIRECTORY + "/" + conferenceId  + "/" + fileName;
