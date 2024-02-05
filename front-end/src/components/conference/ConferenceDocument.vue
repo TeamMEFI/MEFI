@@ -5,9 +5,11 @@
 </template>
 
 <script setup>
-import axios from 'axios'
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+
+import { createFile } from '@/api/file'
+import { useUserStore } from '@/stores/user'
 
 // yjs 사용하기
 import * as Y from 'yjs'
@@ -26,6 +28,7 @@ const router = useRouter()
 const props = defineProps({
   conferenceState: Boolean
 })
+const userStore = useUserStore()
 
 Quill.register('modules/cursors', QuillCursors)
 Quill.register('modules/markdownShortcuts', MarkdownShortcuts)
@@ -34,15 +37,16 @@ const ydoc = new Y.Doc()
 
 const provider = new WebsocketProvider(
   // `ws${location.protocol.slice(4)}//${location.host}/ws`,
-  'wss://demos.yjs.dev/ws', // use the public ws server
-  `mefi${route.params.id}`,
+  `ws://localhost:1234/ws`,
+  // 'wss://demos.yjs.dev/ws', // use the public ws server
+  `mefi123`,
   ydoc
 )
 
 // Yjs + Quill 연동
 const ytext = ydoc.getText('quill')
 const editorContainer = ref(null)
-                             
+
 const binding = ref(null)
 
 onMounted(() => {
@@ -73,14 +77,14 @@ onMounted(() => {
     placeholder: '회의 문서를 작성해 주세요...!'
   })
 
-  binding.value = new QuillBinding(ytext, editor, provider.awareness)
-
   // 문서 작성 중인 이름 및 색상 설정
   provider.awareness.setLocalStateField('user', {
-    name: 'Typing User',
+    name: `${userStore.userInfo.name}`,
     // 색깔 랜덤 할당
     color: `#${Math.floor(Math.random() * 16777215).toString(16)}`
   })
+
+  binding.value = new QuillBinding(ytext, editor, provider.awareness)
 })
 
 onBeforeUnmount(() => {
@@ -123,7 +127,7 @@ const createPDF = () => {
 
     let position = 0
     let heightLeft = imgHeight
-                                  
+
     // 첫 페이지 생성
     doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
     heightLeft -= pageHeight
@@ -149,23 +153,33 @@ const createPDF = () => {
     const formData = new FormData()
     const file = doc.output('blob', filename)
 
+    const fileRequestDto = new Blob(
+      [
+        JSON.stringify({
+          teamId: teamId.value,
+          conferenceId: conferenceId.value,
+          fileName: filename,
+          type: 'DOCUMENT'
+        })
+      ],
+      { type: 'application/json' }
+    )
+
     formData.append('file', file)
+    formData.append('fileRequestDto', fileRequestDto)
 
-    console.log(...formData)
-
-    axios({
-      url: 'http://localhost:5000/document',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/form-data'
+    createFile(
+      formData,
+      (response) => {
+        fetchFiles()
+        addedFileList.value = []
       },
-      data: formData
+      (error) => {
+        console.log(error)
+      }
+    ).then(() => {
+      router.push({ name: 'home' })
     })
-      .then((res) => {
-        console.log(res.data)
-        router.push({ name: 'home' })
-      })
-      .catch((err) => console.error(err))
   })
 }
 </script>

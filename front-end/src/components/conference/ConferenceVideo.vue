@@ -1,9 +1,6 @@
 <template>
   <div>
-    <v-btn
-      v-if="selectedVideo"
-      class="cancleButton bg-grey-darken-4"
-      @click="cancleExpand"
+    <v-btn v-if="selectedVideo" class="cancleButton bg-grey-darken-4" @click="cancleExpand"
       ><font-awesome-icon :icon="['fas', 'xmark']" style="color: #ffffff" />
     </v-btn>
     <!-- 내 카메라가 켜졌을 때 화상회의 열기 -->
@@ -38,10 +35,17 @@
         />
       </div>
       <v-overlay persistent :model-value="chatOverlay" class="bg-transparent align-end justify-end">
-        <v-btn size="small" @click="exitChatBox" style="position: absolute; right: 0;"
+        <v-btn size="small" @click="exitChatBox" style="position: absolute; right: 0"
           ><font-awesome-icon :icon="['fas', 'xmark']" style="color: #000000" />
         </v-btn>
-        <v-infinite-scroll load id="chatBox" class="bg-white px-4 rounded-lg" width="50vw" height="50vh">
+        <v-infinite-scroll
+          load
+          id="chatBox"
+          ref="chatBox"
+          class="bg-white px-4 rounded-lg"
+          width="50vw"
+          height="50vh"
+        >
           <template v-for="chat in chats">
             <div>{{ chat }}</div>
           </template>
@@ -49,7 +53,14 @@
         </v-infinite-scroll>
         <v-divider :thickness="1"></v-divider>
         <div class="d-flex bg-white px-4 align-center rounded-lg">
-          <v-textarea class="bg-white mt-4 mr-2" auto-grow rows="1" row-height="1" v-model="chatInput" @keydown.ctrl.enter="sendChat(chatInput)" ></v-textarea>
+          <v-textarea
+            class="bg-white mt-4 mr-2"
+            auto-grow
+            rows="1"
+            row-height="1"
+            v-model="chatInput"
+            @keydown.ctrl.enter="sendChat(chatInput)"
+          ></v-textarea>
           <v-btn @click="sendChat(chatInput)" rounded="sm">send</v-btn>
         </div>
       </v-overlay>
@@ -63,20 +74,21 @@
 </template>
 
 <script setup>
-import axios from 'axios'
-import { ref, onBeforeUnmount, onMounted, defineProps, onUpdated, watch } from 'vue'
 import { OpenVidu } from 'openvidu-browser'
+import { ref, onBeforeUnmount, onMounted, defineProps, onUpdated, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+import { checkDone, makeToken, makeSession } from '@/api/video'
+import { useUserStore } from '@/stores/user'
+
 import UserVideo from './UserVideo.vue'
-import { useRouter } from 'vue-router'
 
-axios.defaults.headers.post['Content-Type'] = 'application/json'
-
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000/'
-
+const route = useRoute()
 const router = useRouter()
 const props = defineProps({
   videoStatus: Object
 })
+const userStore = useUserStore()
 
 // 1, 2번 layout은 true | 3번 layout은 false
 const isSide = ref(true)
@@ -92,6 +104,7 @@ const chats = ref([])
 
 const selectedVideo = ref('')
 const chatOverlay = ref(false)
+const chatBox = ref(null)
 
 const OVCamera = ref(null)
 const OVScreen = ref(null)
@@ -105,8 +118,8 @@ const publisherScreen = ref(null)
 const subscribers = ref([])
 
 // Join form
-const mySessionId = ref('Sessios')
-const myUserName = ref('Participant' + Math.floor(Math.random() * 100))
+const sessionId = ref(`meficonference-${route.params.conferenceId}`)
+const userName = ref(userStore.userInfo?.name)
 
 onMounted(() => {
   joinSession()
@@ -128,10 +141,6 @@ const cancleExpand = () => {
   selectedVideo.value = ''
 }
 
-const test = () => {
-  publisher.value.publishVideo(false);
-}
-
 // 레이아웃에 따라 ref 변수 변경
 const changeOverlay = () => {
   if (props.videoStatus.layoutType.slice(-1) === '3') {
@@ -145,7 +154,7 @@ const changeOverlay = () => {
 watch(
   () => props.videoStatus.cameraStatus,
   () => {
-    publisher.value.publishVideo(props.videoStatus.cameraStatus);
+    publisher.value.publishVideo(props.videoStatus.cameraStatus)
   }
 )
 
@@ -153,7 +162,7 @@ watch(
 watch(
   () => props.videoStatus.voiceStatus,
   () => {
-    publisher.value.publishAudio(props.videoStatus.voiceStatus);
+    publisher.value.publishAudio(props.videoStatus.voiceStatus)
   }
 )
 
@@ -198,13 +207,12 @@ const sendChat = (content) => {
   // 세션 내의 참가자에게 'chat' 타입의 시그널을 임의의 데이터와 보냄
   sessionCamera.value
     .signal({
-      data: `${myUserName.value}: ${content}`,
+      data: `${userName.value}: ${content}`,
       to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
       type: 'chat' // The type of message (optional)
     })
     .then(() => {
-      chatInput.value = '';
-      console.log('Message successfully sent')
+      chatInput.value = ''
     })
     .catch((error) => {
       console.error(error)
@@ -282,9 +290,9 @@ const joinSession = () => {
   })
 
   // 미디어 서버와 카메라 세션을 연결
-  getToken(mySessionId.value).then((token) => {
+  getToken(sessionId.value).then((token) => {
     sessionCamera.value
-      .connect(token, { clientData: myUserName.value })
+      .connect(token, { clientData: userName.value })
       .then(() => {
         const newPublisher = OVCamera.value.initPublisher(undefined, {
           audioSource: undefined,
@@ -308,10 +316,10 @@ const joinSession = () => {
   })
 
   // 미디어 서버와 화면 공유 세션을 연결
-  getToken(mySessionId.value).then((tokenScreen) => {
+  getToken(sessionId.value).then((tokenScreen) => {
     // Create a token for screen share
     sessionScreen.value
-      .connect(tokenScreen, { clientData: myUserName.value })
+      .connect(tokenScreen, { clientData: userName.value })
       .then(() => {
         console.log('Session screen connected')
       })
@@ -329,13 +337,8 @@ const joinSession = () => {
     chats.value.push(event.data)
 
     // 새로운 채팅이 들어오면 스크롤을 가장 아래로 당김
-    const chatBox = document.querySelector("#chatBox")
+    const chatBox = document.querySelector('#chatBox')
     chatBox.scrollTo(0, chatBox.scrollHeight)
-
-    console.log(chatBox)
-    console.log(event.data)
-    console.log(event.from)
-    console.log(event.type)
   })
 
   window.addEventListener('beforeunload', leaveSession)
@@ -354,7 +357,7 @@ const leaveSession = async () => {
   subscribers.value = []
   OVCamera.value = null
 
-  checkConferenceDone(mySessionId.value)
+  checkConferenceDone(sessionId.value)
 }
 
 // 화면 공유
@@ -392,58 +395,64 @@ const publishScreenShare = () => {
   })
 }
 
-const updateMainVideoStreamManager = (stream) => {
-  if (mainStreamManager.value === stream) return (mainStreamManager.value = stream)
-}
-
 const getToken = async (sessionId) => {
   const createdSessionId = await createSession(sessionId)
   return await createToken(createdSessionId)
 }
 
 const createSession = async (sessionId) => {
-  const response = await axios.post(
-    APPLICATION_SERVER_URL + 'api/sessions',
+  let createdSessionId
+
+  await makeSession(
     { customSessionId: sessionId },
-    {
-      headers: { 'Content-Type': 'application/json' }
+    (response) => {
+      createdSessionId = response.data
+    },
+    (error) => {
+      console.error(error)
     }
   )
-  return response.data
+
+  return createdSessionId
 }
 
 const createToken = async (sessionId) => {
-  const response = await axios.post(
-    APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-    {},
-    {
-      headers: { 'Content-Type': 'application/json' }
+  let createdToken
+
+  const response = await makeToken(
+    sessionId,
+    (reponse) => {
+      createdToken = reponse.data
+    },
+    (error) => {
+      console.error(error)
     }
   )
-  return response.data
-}
 
-const emit = defineEmits(['endConference', 'exitChatBox'])
+  return createdToken
+}
 
 // 회의가 종료되었는지 확인하는 메서드
 // response.status가 200이면 회의 진행 중
 // response.status가 204이면 회의 종료
 const checkConferenceDone = async (sessionId) => {
-  const response = await axios.post(
-    APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/',
-    {},
-    {
-      headers: { 'Content-Type': 'application/json' }
+  checkDone(
+    sessionId,
+    (response) => {
+      // 회의 종료 시 상위 컴포넌트에 알림
+      if (response.status == 204) {
+        emit('endConference')
+      } else {
+        router.push({ name: 'home' })
+      }
+    },
+    (error) => {
+      console.error(error)
     }
   )
-
-  // 회의 종료 시 상위 컴포넌트에 알림
-  if (response.status == 204) {
-    emit('endConference')
-  } else {
-    router.push({ name: 'home' })
-  }
 }
+
+const emit = defineEmits(['endConference', 'exitChatBox'])
 
 const exitChatBox = () => {
   emit('exitChatBox')
@@ -452,6 +461,10 @@ const exitChatBox = () => {
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', leaveSession)
 })
+
+// const updateMainVideoStreamManager = (stream) => {
+//   if (mainStreamManager.value === stream) return (mainStreamManager.value = stream)
+// }
 </script>
 
 <style scoped>
