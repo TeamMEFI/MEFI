@@ -1,46 +1,28 @@
 package com.mefi.backend.db.repository;
 
-import com.mefi.backend.api.response.FileListResponseDto;
 import com.mefi.backend.db.entity.Conference;
 import com.mefi.backend.db.entity.MeetingFile;
-import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-@RequiredArgsConstructor
-public class FileRepository {
+public interface FileRepository extends JpaRepository<MeetingFile, Long> {
 
-    private final EntityManager em;
-
-    // 로컬 DB에 파일에 대한 메타 데이터 정보 저장
-    public void upload(MeetingFile meetingFile){
-        em.persist(meetingFile);
-    }
-
-    // 파일 명으로 메타 데이터 조회
-    public MeetingFile findByName(String fileName){
-        return (MeetingFile) em.createQuery("select m from MeetingFile m where m.fileName=:fileName")
-                .setParameter("fileName", fileName)
-                .getSingleResult();
-    }
-
-    // 특정 회의와 관련된 파일들의 메타 데이터 조회
-    public List<MeetingFile> getFileList(Long conferenceId){
-        return em.createQuery("select m from MeetingFile m join m.conference c where c.id=:conferenceId")
-                .setParameter("conferenceId", conferenceId)
-                .getResultList();
-    }
-
-    // TODO : CONFERENCE API 완성되면 사라질 메소드
-    public Conference findById(Long conferenceId){
-        return em.find(Conference.class, conferenceId);
-    }
+    // 파일명으로 메타 데이터 조회
+    Optional<MeetingFile> findByName(String fileName);
 
     // 파일에 대한 메타 데이터 정보 삭제
-    public void deleteFile(MeetingFile file){
-        em.remove(file);
-    }
+    void deleteFile(MeetingFile meetingFile);
+
+    // 특정 회의와 관련된 파일 메타 데이터 조회
+    @Query("select m from MeetingFile m where m.conference.id = :conferenceId")
+    List<MeetingFile> findByConferenceId(@Param("conferenceId") Long conferenceId);
+
+//    // 회의 조회
+//    // TODO : Conference 기능 구현 후 사라져야 하는 메소드
+//    @Query("select c from Conference c where c.id = : conferenceId")
+//    Conference findConference(@Param("conferenceId") Long conferenceId);
 }
