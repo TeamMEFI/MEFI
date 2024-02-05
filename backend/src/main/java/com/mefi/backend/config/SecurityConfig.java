@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
 
                         // 작성된 경로 모든 사용자 접근 허용
-                        .requestMatchers("/", "/users", "/users/login", "/users/**", "/openvidu/**").permitAll()
+                        .requestMatchers("/", "/users", "/users/login", "/users/**").permitAll()
                         // Swagger 접근 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
