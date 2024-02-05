@@ -7,9 +7,10 @@
                 label="현재 비밀번호"
                 variant="outlined"
                 type="password"
+                v-model="password"
             ></v-text-field>
             <div class="d-flex flex-row justify-center alien-center">
-                <v-btn @click="userDelete()" color="#45566F" variant="flat">예</v-btn>
+                <v-btn @click="Delete()" color="#45566F" variant="flat">예</v-btn>
                 <v-btn @click="goOut()" variant="outlined">아니오</v-btn>
             </div>
         </div>
@@ -17,9 +18,20 @@
 </template>
 
 <script setup>
+import { userDelete } from '@/api/user';
+import { ref } from 'vue';
+
+const password = ref('')
+
 // 회원 탈퇴하는 함수
-const userDelete = () => {
+const Delete = async () => {
     // api
+    const param = {
+        "currentPassword" : password.value
+    }
+    await userDelete(param,
+    (res)=>{console.log(res)},
+    (err)=>{console.log(err)})
 }
 
 // 목적 : 상위 컴포넌트로 전달
