@@ -2,6 +2,8 @@ package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.NotiResponseDto;
+import com.mefi.backend.common.exception.ErrorCode;
+import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Noti;
 import com.mefi.backend.db.entity.User;
 import com.mefi.backend.db.repository.NotiRepository;
@@ -28,7 +30,7 @@ public class NotiServiceImpl implements NotiService{
     private final NotiRepository notiRepository;
     private final TeamUserRepository teamUserRepository;
     private final UserRepository userRepository;
-    private final Long DEFAULT_TIMEOUT = Long.MAX_VALUE; // SSE 최대 연결 시간
+    private static final Long DEFAULT_TIMEOUT = Long.MAX_VALUE; // SSE 최대 연결 시간
 
     // SSE 연결 생성
     @Override
@@ -42,7 +44,7 @@ public class NotiServiceImpl implements NotiService{
         // SSE 콜백 함수 지정
         sseEmitter.onCompletion(()->notiRepository.deleteEmitterById(emitterId));  // 비동기 처리 완료
         sseEmitter.onTimeout(()->notiRepository.deleteEmitterById(emitterId));  // 타임 아웃
-        sseEmitter.onError((e)->notiRepository.deleteEmitterById(emitterId)); // 오류
+        sseEmitter.onError(e->notiRepository.deleteEmitterById(emitterId)); // 오류
 
         // 503 에러 방지를 위해 더미 이벤트 전송
         String eventId = userId + "_" + System.currentTimeMillis();
@@ -84,7 +86,7 @@ public class NotiServiceImpl implements NotiService{
         String eventId = makeTimeIncludeEventId(String.valueOf(userId));
 
         // 해당 유저 조회
-        User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("Member not found"));
+        User user = userRepository.findById(userId).orElseThrow(()-> new Exceptions(ErrorCode.USER_NOT_EXIST));
 
         // DB 저장
         Noti noti = Noti.builder()
@@ -111,6 +113,7 @@ public class NotiServiceImpl implements NotiService{
 
     // 팀에 소속된 모든 유저에게 알림 전송
     @Override
+    @Transactional
     public void sendNotiForTeam(Long teamId, String message) {
         // 팀원 목록 조회
         List<MemberResDto> users = teamUserRepository.getMemberList(teamId);
@@ -125,25 +128,23 @@ public class NotiServiceImpl implements NotiService{
     @Override
     public List<NotiResponseDto> getNotis(Long userId) {
         // 유저 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new Exceptions(ErrorCode.USER_NOT_EXIST));
 
         // 특정 사용자의 알림 전체 조회
         List<Noti> notis = notiRepository.findNotiByUserAndStatusIsFalse(user);
         log.info("읽어온 Data 개수 : {}", notis.size());
 
-        // 엔티티를 DTO로 변환
-        List<NotiResponseDto> result = notis.stream()
+        // 엔티티를 DTO로 변환하여 리턴
+       return notis.stream()
                 .map(n -> new NotiResponseDto(n))
                 .collect(Collectors.toList());
-
-        return result;
     }
 
     // 특정 알림 읽음 처리
     @Override
     @Transactional
     public NotiResponseDto readNoti(Long alarmId) {
-        Noti noti = notiRepository.findNotiById(alarmId).orElseThrow(()->new IllegalArgumentException());
+        Noti noti = notiRepository.findNotiById(alarmId).orElseThrow(()->new Exceptions(ErrorCode.USER_NOT_EXIST));
         noti.read();
         return new NotiResponseDto(noti);
     }

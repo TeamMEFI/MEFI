@@ -2,6 +2,7 @@ package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.TeamReqDto;
 import com.mefi.backend.api.response.MemberResDto;
+import com.mefi.backend.api.response.TeamDetailDto;
 import com.mefi.backend.api.response.TeamResDto;
 import com.mefi.backend.api.service.TeamService;
 import com.mefi.backend.common.auth.CustomUserDetails;
@@ -118,5 +119,40 @@ public class TeamController {
 
         // 현재 팀의 팀원 목록 반환
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
+    }
+
+    @DeleteMapping("/{teamId}/{memberId}")
+    @Operation(summary = "팀원 삭제", description = "팀장이 해당 유저를 삭제한다.")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n 반환값 없음")
+    public ResponseEntity<? extends BaseResponseBody> deleteMember(Authentication authentication,
+                                                                   @PathVariable(name = "teamId") Long teamId,
+                                                                   @PathVariable(name = "memberId") Long memberId){
+
+        // 현재 사용자 식별 ID 가져옴
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        log.info("userId : {}", user.getUserId());
+
+        // 팀원 추가
+        teamService.deleteMember(user.getUserId(), teamId, memberId);
+
+        // 현재 팀의 팀원 목록 반환
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
+    }
+
+    @GetMapping("/detail/{teamId}")
+    @Operation(summary = "팀 상세 조회", description = "팀원이 속한 팀의 상세 정보를 본다")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n 팀 상세 정보 반환")
+    public ResponseEntity<? extends BaseResponseBody> getTeamDetail(Authentication authentication,
+                                                                    @PathVariable Long teamId){
+
+        // 현재 사용자 식별 ID 가져옴
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        // 사용자 ID로 자신이 속한 팀 목록 조회 로직 호출
+        TeamDetailDto teamDetailDto = teamService.getTeamDetail(teamId);
+
+        // 사용자가 속한 팀 목록 반환
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,teamDetailDto));
     }
 }
