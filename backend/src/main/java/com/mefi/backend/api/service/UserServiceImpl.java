@@ -1,10 +1,6 @@
 package com.mefi.backend.api.service;
 
-import com.mefi.backend.api.request.JoinReqDto;
-import com.mefi.backend.api.request.UserModifyAllReqDto;
-import com.mefi.backend.api.request.UserModifyPasswordReqDto;
-import com.mefi.backend.api.request.UserModifyReqDto;
-import com.mefi.backend.api.request.UserWithdrawReqDto;
+import com.mefi.backend.api.request.*;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.UserModifyAllResDto;
 import com.mefi.backend.common.exception.ErrorCode;
@@ -148,7 +144,7 @@ public class UserServiceImpl implements UserService {
         else throw new Exceptions(ErrorCode.CATEGORY_NOT_EXIST);
     }
 
-    // 회원 비밀번호 수정
+    // 회원 기본 비밀번호 수정
     @Override
     @Transactional
     public void modifyUserPassword(Long id, UserModifyPasswordReqDto userModifyPasswordReqDto) {
@@ -173,5 +169,26 @@ public class UserServiceImpl implements UserService {
         
         // 비밀번호 수정
         user.updatePassword(bCryptPasswordEncoder.encode(userModifyPasswordReqDto.getModifyPassword()));
+    }
+
+    // 찾기 인증 후 비밀번호 수정
+    @Override
+    @Transactional
+    public void recoveryUserPassword(UserPasswordRecoveryReqDto userPasswordRecoveryReqDto) {
+
+        // 유저 조회
+        if(!userRepository.findByEmail(userPasswordRecoveryReqDto.getEmail()).isPresent())
+            throw new Exceptions(ErrorCode.USER_NOT_EXIST);
+
+        User user = userRepository.findByEmail(userPasswordRecoveryReqDto.getEmail()).get();
+
+        // 이전 비밀번호와 다른지 확인
+        if(bCryptPasswordEncoder.matches(
+                userPasswordRecoveryReqDto.getModifyPassword(),user.getPassword())) {
+            throw new Exceptions(ErrorCode.SAME_AS_BEFORE);
+        }
+
+        // 비밀번호 수정
+        user.updatePassword(bCryptPasswordEncoder.encode(userPasswordRecoveryReqDto.getModifyPassword()));
     }
 }

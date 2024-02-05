@@ -144,7 +144,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 
-    @Operation(summary = "비밀번호 수정", description = "/users/pwd \n\n 사용자는 비밀번호를 수정한다.")
+    @Operation(summary = "기본 비밀번호 수정", description = "/users/pwd \n\n 사용자는 마이페이지에서 비밀번호를 수정한다.")
     @PatchMapping("/pwd")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     ResponseEntity<? extends BaseResponseBody> modifyUserPassword(Authentication authentication,
@@ -155,6 +155,16 @@ public class UserController {
 
         // 회원 비밀번호 수정
         userService.modifyUserPassword(userDetails.getUserId(),userModifyPasswordReqDto);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
+    }
+
+    @Operation(summary = "찾기 인증 후 비밀번호 수정", description = "/users/pwd/recovery \n\n 사용자는 비밀번호 찾기 인증 후 비밀번호를 수정한다.")
+    @PatchMapping("/pwd/recovery")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
+    ResponseEntity<? extends BaseResponseBody> recoveryUserPassword(@RequestBody UserPasswordRecoveryReqDto userPasswordRecoveryReqDto) {
+
+        // 회원 비밀번호 수정
+        userService.recoveryUserPassword(userPasswordRecoveryReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 }
