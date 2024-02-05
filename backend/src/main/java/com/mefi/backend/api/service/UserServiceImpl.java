@@ -1,6 +1,7 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.JoinReqDto;
+import com.mefi.backend.api.request.UserModifyAllReqDto;
 import com.mefi.backend.api.request.UserModifyPasswordReqDto;
 import com.mefi.backend.api.request.UserModifyReqDto;
 import com.mefi.backend.api.response.MemberResDto;
@@ -68,7 +69,25 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByKeyWord(keyword);
     }
 
-    // 회원 정보 수정
+    // 회원 정보 전체 수정
+    @Override
+    @Transactional
+    public void modifyUserInfoAll(Long id, UserModifyAllReqDto userModifyAllReqDto) {
+
+        // 유저 조회
+        if (!userRepository.findById(id).isPresent())
+            throw new Exceptions(ErrorCode.USER_NOT_EXIST);
+
+        User user = userRepository.findById(id).get();
+
+        // 전체 수정
+        user.updateAll(userModifyAllReqDto.getName(),
+                userModifyAllReqDto.getDept(),
+                userModifyAllReqDto.getPosition(),
+                userModifyAllReqDto.getImgUrl());
+    }
+
+    // 회원 정보 부분 수정
     @Override
     @Transactional
     public void modifyUserInfo(Long id, UserModifyReqDto userModifyReqDto) {
