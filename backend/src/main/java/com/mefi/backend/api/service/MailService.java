@@ -14,8 +14,8 @@ public interface MailService {
     // 메일 내용 생성
     public MimeMessage createMessage(String receiver, String authCode) throws MessagingException, UnsupportedEncodingException;
 
-    // 메일 전송
-    public void sendMessage(String email) throws MessagingException, UnsupportedEncodingException;
+    // 회원가입을 위한 메일 전송
+    public void sendJoinMessage(String email) throws MessagingException, UnsupportedEncodingException;
 
     // 비밀번호 찾기를 위한 메일 전송
     public void sendPasswordRecoveryMessage(String email) throws MessagingException, UnsupportedEncodingException;

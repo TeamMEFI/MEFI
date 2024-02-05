@@ -73,13 +73,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 
-    @Operation(summary = "이메일 인증", description = "/users/join/auth\n\n 사용자는 이메일 인증을 한다.")
+    @Operation(summary = "회원가입을 위한 이메일 인증", description = "/users/join/auth\n\n 사용자는 회원가입을 위해 이메일 인증을 한다.")
     @PostMapping("/join/auth")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
-    public ResponseEntity<? extends BaseResponseBody> verifyEmail(@RequestBody VerifyEmailReqDto verifyEmailReqDto) throws Exception {
+    public ResponseEntity<? extends BaseResponseBody> verifyJoinEmail(@RequestBody VerifyEmailReqDto verifyEmailReqDto) throws Exception {
 
         // 메일 전송 후 코드 받기
-        mailService.sendMessage(verifyEmailReqDto.getEmail());
+        mailService.sendJoinMessage(verifyEmailReqDto.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 

@@ -83,9 +83,9 @@ public class MailServiceImpl implements MailService {
         return message;
     }
 
-    // 메일 전송
+    // 회원가입을 위한 메일 전송
     @Transactional
-    public void sendMessage(String email) throws MessagingException, UnsupportedEncodingException {
+    public void sendJoinMessage(String email) throws MessagingException, UnsupportedEncodingException {
 
         // 이메일 중복 검사
         if(userRepository.findByEmail(email).isPresent())
@@ -123,6 +123,7 @@ public class MailServiceImpl implements MailService {
         javaMailSender.send(message);
     }
 
+    // 비밀번호를 찾기 위한 메일 전송
     @Override
     public void sendPasswordRecoveryMessage(String email) throws MessagingException, UnsupportedEncodingException {
 
