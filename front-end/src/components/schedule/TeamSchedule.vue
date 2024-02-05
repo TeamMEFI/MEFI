@@ -2,9 +2,6 @@
     <div class="bg-white w-100 h-100 elevation-3 ma-0 pa-0">
         <v-toolbar color="#2A4770" class="elevation-1" >
             <v-toolbar-title class="font-weight-bold text-h5">Team's Schedule</v-toolbar-title>
-            <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
         </v-toolbar>
         <v-list>
           <v-list-item

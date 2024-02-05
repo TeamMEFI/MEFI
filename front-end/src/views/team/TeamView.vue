@@ -16,12 +16,12 @@
           <v-container class="w-100 h-100 d-flex flex-column">
             <v-row class="w-100 h-60">
               <v-col cols="12" class="w-100 ma-0">
-                <Schedule v-bind:team-id="props.id"/>
+                <Schedule v-bind:team-id="Number(props.id)"/>
               </v-col>
             </v-row>
             <v-row class="w-100 h-40">
               <v-col cols="12" class="w-100 ma-0">
-                <SearchDoc/>
+                <TeamMateList :team-id="Number(props.id)"/>
               </v-col>
             </v-row>
           </v-container>
@@ -33,12 +33,12 @@
 <script setup>
 import TeamCalendarVue from '@/components/calendar/TeamCalendar.vue';
 import Schedule from '@/components/schedule/TeamSchedule.vue';
-import SearchDoc from '@/components/docs/SearchDoc.vue';
+import TeamMateList from '@/components/team/TeamMateList.vue';
 
 const props = defineProps({
   id: Number
 });
-console.log(props.id)
+
 </script>
 <style>
 

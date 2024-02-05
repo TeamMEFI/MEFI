@@ -98,4 +98,11 @@ public class User {
     public void updateImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
+
+    public void updateAll(String name, String dept, String position, String imgUrl) {
+        this.name = name;
+        this.dept = dept;
+        this.position = position;
+        this.imgUrl = imgUrl;
+    }
 }
