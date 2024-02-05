@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.mefi.backend.api.response.FileListResponseDto;
+import com.mefi.backend.common.exception.ErrorCode;
+import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Conference;
 import com.mefi.backend.db.entity.MeetingFile;
 import com.mefi.backend.db.entity.MeetingFileType;
@@ -55,11 +57,11 @@ public class FileServiceImpl implements FileService {
             amazonS3Client.putObject(bucket, key, multipartFile.getInputStream(), objectMetadata);
 
             // 파일 엔티티 생성 및 저장
+            // TODO : 컨퍼런스 객체 전달하는 부분 반드시 수정해야 한다
             String fileUrl = amazonS3Client.getUrl(bucket, key).toString();
-            Conference conference = fileRepository.findById(conferenceId);
-            System.out.println(fileUrl);
-            MeetingFile meetingFile = new MeetingFile(fileName, fileUrl, type, conference);
-            fileRepository.upload(meetingFile);
+//            Conference conference = fileRepository.findConference(conferenceId);
+//            MeetingFile meetingFile = new MeetingFile(fileName, fileUrl, type, conference);
+//            fileRepository.save(meetingFile);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -70,7 +72,7 @@ public class FileServiceImpl implements FileService {
     public void deleteFile(String fileName, Long conferenceId){
         try{
             // 삭제하고자 하는 파일 메타 데이터 조회
-            MeetingFile meetingFile = fileRepository.findByName(fileName);
+            MeetingFile meetingFile = fileRepository.findByName(fileName).orElseThrow(()-> new Exceptions(ErrorCode.FILE_NOT_EXIST));
 
             // DeleteObjectRequest 생성
             String key = DIRECTORY + "/" + conferenceId  + "/" + fileName;
@@ -78,7 +80,7 @@ public class FileServiceImpl implements FileService {
             DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
 
             // AWS S3에서 해당되는 파일 객체 삭제
-            amazonS3Client.deleteObject(bucket, key);
+            amazonS3Client.deleteObject(deleteObjectRequest);
 
             // 로컬 DB에서 파일 메타 데이터 삭제
             fileRepository.deleteFile(meetingFile);
@@ -92,7 +94,6 @@ public class FileServiceImpl implements FileService {
         try{
             // GetObjectRequest 생성
             String key = DIRECTORY + "/" + conferenceId + "/" + fileName;
-            System.out.println(key);
             GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
 
             // AWS S3에서 해당되는 파일 다운로드
@@ -111,7 +112,9 @@ public class FileServiceImpl implements FileService {
     // 특정 회의와 관련된 회의록 및 첨부파일 리스트 조회
     public List<FileListResponseDto> getFiles(Long conferenceId){
         // 회의와 관련된 파일 목록을 조회
-        List<MeetingFile> files = fileRepository.getFileList(conferenceId);
+        List<MeetingFile> files = fileRepository.findByConferenceId(conferenceId);
+
+
         // 파일 엔티티를 DTO로 변환
         List<FileListResponseDto> result  = files.stream()
                 .map(f -> new FileListResponseDto((f)))
@@ -121,43 +124,44 @@ public class FileServiceImpl implements FileService {
 
     // 프로필 이미지를 업로드
     public String createProfile(MultipartFile profileImage) throws IOException {
+        // 파일 메타 데이터 설정
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentEncoding(profileImage.getContentType());
+        objectMetadata.setContentLength(profileImage.getSize());
+
+        // S3에 저장될 파일명 생성
+        String fileName = profileImage.getOriginalFilename();
+        int index = fileName.lastIndexOf(".");
+        String ext = fileName.substring(index+1);
+        String storeFileName = UUID.randomUUID() + "." + ext;
+        String key = "PROFILE/" + storeFileName;
+
         try{
-            // 파일 메타 데이터 설정
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentEncoding(profileImage.getContentType());
-            objectMetadata.setContentLength(profileImage.getSize());
-
-            // S3에 저장될 파일명 생성
-            String fileName = profileImage.getOriginalFilename();
-            int index = fileName.lastIndexOf(".");
-            String ext = fileName.substring(index+1);
-            String storeFileName = UUID.randomUUID() + "." + ext;
-            String key = "PROFILE/" + storeFileName;
-
             // S3에 프로필 이미지 저장
             amazonS3Client.putObject(bucket, key, profileImage.getInputStream(), objectMetadata);
-
-            // S3에 저장된 프로필 이미지의 URL 반환
-            String fileUrl = amazonS3Client.getUrl(bucket, key).toString();
-            return fileUrl;
         }catch(Exception e){
             e.printStackTrace();
-            throw new IOException("fail to upload profile image", e);
+            throw new IOException("파일 업로드를 실패하였습니다.", e);
         }
+
+        // S3에 저장된 프로필 이미지의 URL 반환
+        String fileUrl = amazonS3Client.getUrl(bucket, key).toString();
+        return fileUrl;
     }
 
     // 프로필 이미지를 삭제
-    public void deleteProfile(String imageUrl){
-       try{
-           // DeleteObjectRequest 생성
-           int idx = imageUrl.indexOf("PROFILE");
-           String key = imageUrl.substring(idx);
-           DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
+    public void deleteProfile(String imageUrl) throws IOException {
+       // DeleteObjectRequest 생성
+       int idx = imageUrl.indexOf("PROFILE");
+       String key = imageUrl.substring(idx);
+       DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
 
+       try{
            // AWS S3에서 해당되는 파일 객체 삭제
            amazonS3Client.deleteObject(bucket, key);
        }catch(Exception e){
            e.printStackTrace();
+           throw new IOException("프로필 이미지 삭제가 실패하였습니다.", e);
        }
     }
 

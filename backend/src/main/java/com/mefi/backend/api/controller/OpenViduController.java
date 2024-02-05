@@ -100,7 +100,7 @@ public class OpenViduController {
             session.fetch();
             return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Proceeding"));
         } catch (OpenViduHttpException e) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(BaseResponseBody.of(1, "Done"));
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(BaseResponseBody.of(1, "Done"));
         }
     }
 }
