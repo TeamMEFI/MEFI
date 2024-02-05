@@ -4,26 +4,30 @@ import com.mefi.backend.api.request.JoinReqDto;
 import com.mefi.backend.api.request.UserModifyAllReqDto;
 import com.mefi.backend.api.request.UserModifyPasswordReqDto;
 import com.mefi.backend.api.request.UserModifyReqDto;
+import com.mefi.backend.api.request.UserWithdrawReqDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Token;
 import com.mefi.backend.db.entity.User;
+import com.mefi.backend.db.repository.TokenRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final TokenService tokenService;
+    private final TokenRepository tokenRepository;
 
     // 회원가입
     @Override
@@ -46,11 +50,23 @@ public class UserServiceImpl implements UserService {
     // 회원탈퇴
     @Override
     @Transactional
-    public void withdraw(User user) {
+    public void withdraw(User user, UserWithdrawReqDto userWithdrawReqDto) {
+        
+        // 본인 인증을 위한 현재 비밀번호 확인
+        if(!bCryptPasswordEncoder.matches(
+                userWithdrawReqDto.getCurrentPassword(),user.getPassword())) {
+            throw new Exceptions(ErrorCode.CORRECT_NOT_PASSWORD);
+        }
 
         // 유저 토큰 삭제
-        Token token = tokenService.findByUserId(user.getId());
-        tokenService.deleteRefreshToken(token);
+        
+        // 유저 토큰 조회
+        if(!tokenRepository.findByUserId(user.getId()).isPresent()) {
+            throw new Exceptions(ErrorCode.TOKEN_NOT_EXIST);
+        }
+
+        Token token = tokenRepository.findByUserId(user.getId()).get();
+        tokenRepository.delete(token);
 
         // 유저 삭제
         userRepository.delete(user);

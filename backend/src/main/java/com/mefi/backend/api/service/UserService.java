@@ -4,6 +4,7 @@ import com.mefi.backend.api.request.JoinReqDto;
 import com.mefi.backend.api.request.UserModifyAllReqDto;
 import com.mefi.backend.api.request.UserModifyPasswordReqDto;
 import com.mefi.backend.api.request.UserModifyReqDto;
+import com.mefi.backend.api.request.UserWithdrawReqDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.db.entity.User;
 
@@ -15,7 +16,7 @@ public interface UserService {
     void join(JoinReqDto joinReqDto);
 
     // 회원탈퇴
-    void withdraw(User user);
+    void withdraw(User user, UserWithdrawReqDto userWithdrawReqDto);
 
     // 식별 ID로 유저 조회
     User findById(Long id);

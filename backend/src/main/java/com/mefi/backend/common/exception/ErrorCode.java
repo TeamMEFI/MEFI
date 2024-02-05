@@ -18,9 +18,12 @@ public enum ErrorCode {
     CODE_NOT_EXIST(HttpStatus.BAD_REQUEST, "U-006", "인증 코드가 유효하지 않습니다."),
     SAME_AS_BEFORE(HttpStatus.BAD_REQUEST, "U-007", "이전 정보와 동일합니다."),
     CATEGORY_NOT_EXIST(HttpStatus.BAD_REQUEST, "U-008", "존재하지 않는 항목입니다."),
+    DIFFERENT_FROM_BEFORE(HttpStatus.BAD_REQUEST, "U-009", "이전 정보와 다릅니다."),
+    CORRECT_NOT_PASSWORD(HttpStatus.BAD_REQUEST, "U-010", "비밀번호가 올바르지 않습니다."),
 
     // 토큰
-    UNEXPECTED_TOKEN(HttpStatus.BAD_REQUEST, "T-001", "만료되었거나 존재하지 않는 토큰입니다."),
+    UNEXPECTED_TOKEN(HttpStatus.BAD_REQUEST, "T-001", "토큰이 만료되었습니다."),
+    TOKEN_NOT_EXIST(HttpStatus.BAD_REQUEST, "T-002", "토큰이 존재하지 않습니다."),
 
     // 팀
     TEAM_NOT_EXIST(HttpStatus.BAD_REQUEST, "G-001", "존재하지 않는 팀입니다."),
