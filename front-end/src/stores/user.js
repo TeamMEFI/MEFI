@@ -40,7 +40,7 @@ export const useUserStore = defineStore('user', () => {
         console.log(error)
       }
     ).then(()=>{
-      router.push({name:'home'})
+      router.push({name:'main'})
     })
   }
 

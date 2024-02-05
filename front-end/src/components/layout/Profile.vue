@@ -22,9 +22,9 @@
     </v-btn>
     <div class="d-flex mx-2 my-4 justify-space-between align-center">
       <p style="font-weight: bold">팀 목록</p>
-      <font-awesome-icon :icon="['fas', 'plus']" />
-      <v-dialog activator="parent" v-model="dialog" persistent width="70%" height="70%">
-        <TeamCreateDialog @close-dialog="dialog = false" />
+      <font-awesome-icon :icon="['fas', 'plus']" @click="dialog=true"/>
+      <v-dialog v-model="dialog" persistent width="70%" height="70%">
+        <TeamCreateDialog @close-dialog="dialog = false"/>
       </v-dialog>
     </div>
     <div>
@@ -44,9 +44,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import TeamCreateDialog from '@/components/dialog/TeamCreateDialog.vue'
+import TeamCreateDialog from '@/components/team/TeamCreateDialog.vue'
 import { useRouter } from 'vue-router'
-import { teamSelect } from '@/api/team.js'
+import { selectTeam } from '@/api/team.js'
 import { useUserStore } from "@/stores/user"
 const store = useUserStore()
 const username = ref(store.userInfo.name)
@@ -57,9 +57,10 @@ const router = useRouter()
 const teams = ref([])
 
 const select = async () => {
-    await teamSelect(
-        '',(response) => {
+    await selectTeam(
+        (response) => {
             teams.value = response.data.dataBody
+            console.log(response.data.dataBody)
         },
         (error)=>{
             console.log(error)
