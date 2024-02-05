@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <v-card class="bgcolor-setting w-100 h-100">
         <v-card-title class="ma-0 pa-0">
             <v-toolbar color="#2A4770" >
@@ -104,12 +104,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { teamCreate } from '@/api/team.js'
 import { userSearch } from '@/api/user.js'
-import { faL } from '@fortawesome/free-solid-svg-icons';
-import { useUserStore } from '@/stores/user';
-
 
 const emit = defineEmits(['closeDialog'])
 const searchList = ref([])
@@ -199,4 +196,4 @@ const clickUser = (user) => {
 .selected {
     background-color: aqua;
 }
-</style>
+</style> -->
