@@ -86,20 +86,20 @@ public class TeamServiceImpl implements TeamService{
         return teamUserRepository.getMemberList(teamId);
     }
 
+    /**
+     * @return 리더가 아니면 예외 처리
+     */
     @Override
     public Boolean checkRole(Long userId, Long teamId) {
+        log.info("checkRole()");
 
-        UserTeam userTeam  = teamUserRepository.findByUserIdAndTeamId(userId, teamId);
+        UserTeam userTeam  = teamUserRepository.findByUserIdAndTeamId(userId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
 
-        if(userTeam == null){
-            throw new Exceptions(ErrorCode.TEAM_ACCESS_DENIED);
-        }
+        log.info("해당 유저의 권한 : {}", userTeam.getRole());
 
         if(userTeam.getRole() != UserRole.LEADER){
-            return false;
+            throw new Exceptions(ErrorCode.NOT_TEAM_LEADER);
         }
-
-        log.info("{}", userTeam.getRole());
 
         return true;
     }
@@ -140,4 +140,22 @@ public class TeamServiceImpl implements TeamService{
         // 팀 삭제
         teamRepository.delete(team);
     }
+
+    @Override
+    @Transactional
+    public void deleteMember(Long userId, Long teamId, Long memberId) {
+        log.info("deleteMember()");
+        // 해당 팀의 리더가 아니라면 예외 발생
+        checkRole(userId, teamId);
+
+        // 만약 리더를 삭제하려 한다면 예외 발생
+        UserTeam userTeam  = teamUserRepository.findByUserIdAndTeamId(memberId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.MEMBER_NOT_EXIST));
+        if(userTeam.getRole() == UserRole.LEADER){throw new Exceptions(ErrorCode.LEADER_NOT_DELETEABLE);}
+
+        // 삭제하려는 멤버가 해당 팀에 없다면 예외 발생
+        teamUserRepository.findByUserIdAndTeamId(memberId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
+
+        teamUserRepository.deleteByUserIdAndTeamId(memberId, teamId);
+    }
+
 }
