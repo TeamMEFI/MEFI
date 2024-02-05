@@ -6,6 +6,7 @@ import com.mefi.backend.api.request.UserModifyPasswordReqDto;
 import com.mefi.backend.api.request.UserModifyReqDto;
 import com.mefi.backend.api.request.UserWithdrawReqDto;
 import com.mefi.backend.api.response.MemberResDto;
+import com.mefi.backend.api.response.UserModifyAllResDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Token;
@@ -88,7 +89,7 @@ public class UserServiceImpl implements UserService {
     // 회원 정보 전체 수정
     @Override
     @Transactional
-    public void modifyUserInfoAll(Long id, UserModifyAllReqDto userModifyAllReqDto) {
+    public UserModifyAllResDto modifyUserInfoAll(Long id, UserModifyAllReqDto userModifyAllReqDto) {
 
         // 유저 조회
         if (!userRepository.findById(id).isPresent())
@@ -101,6 +102,12 @@ public class UserServiceImpl implements UserService {
                 userModifyAllReqDto.getDept(),
                 userModifyAllReqDto.getPosition(),
                 userModifyAllReqDto.getImgUrl());
+
+        // 변경된 유저 정보 Dto에 담기
+        UserModifyAllResDto userModifyAllResDto = new UserModifyAllResDto(
+                user.getEmail(),user.getName(),user.getDept(),user.getPosition(),user.getImgUrl());
+
+        return userModifyAllResDto;
     }
 
     // 회원 정보 부분 수정

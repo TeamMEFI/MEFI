@@ -1,8 +1,10 @@
 package com.mefi.backend.api.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class UserModifyAllResDto {
 
     // 이메일

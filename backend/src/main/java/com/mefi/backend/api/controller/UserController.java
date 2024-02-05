@@ -2,6 +2,7 @@ package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.*;
 import com.mefi.backend.api.response.MemberResDto;
+import com.mefi.backend.api.response.UserModifyAllResDto;
 import com.mefi.backend.api.service.MailServiceImpl;
 import com.mefi.backend.api.service.TokenService;
 import com.mefi.backend.api.service.UserService;
@@ -115,8 +116,8 @@ public class UserController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         // 회원 정보 전체 수정
-        userService.modifyUserInfoAll(userDetails.getUserId(),userModifyAllReqDto);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
+        UserModifyAllResDto userModifyAllResDto = userService.modifyUserInfoAll(userDetails.getUserId(),userModifyAllReqDto);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, userModifyAllResDto));
     }
     
     @Operation(summary = "회원 정보 부분 수정", description = "/users/info \n\n 사용자는 자신의 정보를 부분적으로 수정한다.")

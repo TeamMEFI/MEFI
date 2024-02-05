@@ -6,6 +6,7 @@ import com.mefi.backend.api.request.UserModifyPasswordReqDto;
 import com.mefi.backend.api.request.UserModifyReqDto;
 import com.mefi.backend.api.request.UserWithdrawReqDto;
 import com.mefi.backend.api.response.MemberResDto;
+import com.mefi.backend.api.response.UserModifyAllResDto;
 import com.mefi.backend.db.entity.User;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface UserService {
     List<MemberResDto> getSearchUsers(String keyword);
 
     // 회원 정보 전체 수정
-    void modifyUserInfoAll(Long userId, UserModifyAllReqDto userModifyAllReqDto);
+    UserModifyAllResDto modifyUserInfoAll(Long userId, UserModifyAllReqDto userModifyAllReqDto);
     
     // 회원 정보 부분 수정
     void modifyUserInfo(Long userId, UserModifyReqDto userModifyReqDto);
