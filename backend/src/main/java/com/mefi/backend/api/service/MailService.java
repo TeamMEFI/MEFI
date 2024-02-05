@@ -12,10 +12,13 @@ public interface MailService {
     public String createAuthCode();
 
     // 메일 내용 생성
-    public MimeMessage createMessage(String receiver, int authCode) throws MessagingException, UnsupportedEncodingException;
+    public MimeMessage createMessage(String receiver, String authCode) throws MessagingException, UnsupportedEncodingException;
 
-    // 메일 전송
-    public int sendMessage(String email) throws MessagingException, UnsupportedEncodingException;
+    // 회원가입을 위한 메일 전송
+    public void sendJoinMessage(String email) throws MessagingException, UnsupportedEncodingException;
+
+    // 비밀번호 찾기를 위한 메일 전송
+    public void sendPasswordRecoveryMessage(String email) throws MessagingException, UnsupportedEncodingException;
 
     // 인증 코드 확인
     void validateAuthCode(VerifyCodeReqDto verifyCodeReqDto);

@@ -21,19 +21,19 @@ public class EmailAuth {
     private String email;
 
     // 인증번호
-    private int randomNum;
+    private String randomNum;
 
     // 생성시간
     private LocalDateTime createdTime;
 
     @Builder
-    public EmailAuth(String email, int randomNum) {
+    public EmailAuth(String email, String randomNum) {
         this.email = email;
         this.randomNum = randomNum;
         this.createdTime = LocalDateTime.now();
     }
 
-    public void updateAuthCode(int randomNum) {
+    public void updateAuthCode(String randomNum) {
         this.randomNum = randomNum;
         this.createdTime = LocalDateTime.now();
     }

@@ -5,7 +5,7 @@
       <v-btn icon @click="dialog=true">
           <v-icon>mdi-account-plus-outline</v-icon>
           <v-dialog v-model="dialog" persistent width="50%" height="70%">
-            <TeamMateDialog @close-dialog="dialog = false" :team-id="props.teamId" />
+            <TeamMateDialog @close-dialog="close" :team-id="props.teamId" />
           </v-dialog>
       </v-btn>
     </v-toolbar>
@@ -55,6 +55,10 @@ watchEffect((props, (newValue) => {
   selectmember();
 }))
 
+const close = () => {
+  selectmember();
+  dialog.value = false;
+}
 
 </script>
 

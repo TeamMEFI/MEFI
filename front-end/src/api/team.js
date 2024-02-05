@@ -1,4 +1,5 @@
 import { localAxios } from "@/util/http-commons";
+
 const local = localAxios();
 
 async function setHeaders() {
@@ -35,4 +36,10 @@ async function excludeTeamMate(param, success, fail){
     await local.delete(`/team/${param.teamid}/${param.userid}`).then(success).catch(fail);
 }
 
-export { selectTeam, createTeam, selectTeamMate, addTeamMate, excludeTeamMate };
+// 리더 위임
+async function changeLeader(param, success, fail){
+    await setHeaders();
+    await local.patch(`/team/${param.teamid}/${param.userid}`).then(success).catch(fail);
+}
+
+export { selectTeam, createTeam, selectTeamMate, addTeamMate, excludeTeamMate, changeLeader };
