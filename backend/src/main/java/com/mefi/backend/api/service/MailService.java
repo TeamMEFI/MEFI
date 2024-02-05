@@ -18,5 +18,5 @@ public interface MailService {
     public int sendMessage(String email) throws MessagingException, UnsupportedEncodingException;
 
     // 인증 코드 확인
-    String validateAuthCode(VerifyCodeReqDto verifyCodeReqDto);
+    void validateAuthCode(VerifyCodeReqDto verifyCodeReqDto);
 }

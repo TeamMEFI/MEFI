@@ -35,4 +35,7 @@ public class UserTeam {
         this.role = role;
     }
 
+    public void changeRole(UserRole role){
+        this.role = role;
+    }
 }

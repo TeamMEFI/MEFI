@@ -1,5 +1,6 @@
 package com.mefi.backend.api.service;
 
+import com.mefi.backend.api.request.TeamModifyReqDto;
 import com.mefi.backend.api.request.TeamReqDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.TeamDetailDto;
@@ -31,4 +32,10 @@ public interface TeamService {
 
     // 팀 상세 정보 조회
     TeamDetailDto getTeamDetail(Long teamId);
+
+    // 팀 정보 수정
+    void modifyTeam(Long userId, Long teamId, TeamModifyReqDto teamModifyReqDto);
+
+    // 팀원 권한 변경
+    void modifyUserRole(Long userId, Long teamId, Long memberId);
 }

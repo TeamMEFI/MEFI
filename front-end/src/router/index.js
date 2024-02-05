@@ -10,6 +10,7 @@ import Signup from "@/components/user/Signup.vue"
 import Email from "@/components/user/Email.vue"
 import SearchPassword1 from "@/components/user/SearchPassword1.vue"
 import SearchPassword2 from "@/components/user/SearchPassword2.vue"
+import SearchPassword3 from "@/components/user/SearchPassword3.vue"
 import TeamView from "@/views/team/TeamView.vue"
 
 import InsertSchedule from "@/views/schedule/InsertSchedule.vue"
@@ -94,9 +95,18 @@ const router = createRouter({
           component: SearchPassword1,
         },
         {
-          path:'/user/signup/search-password',
+          path:'/user/signup/email-code/:email',
           name:'search-password2',
           component: SearchPassword2,
+          props: (route) =>({
+            email:route.params.email
+          })
+        },
+        {
+          path:'/user/signup/password',
+          name:'search-password3',
+          component: SearchPassword3,
+          
         }
       ]
     },

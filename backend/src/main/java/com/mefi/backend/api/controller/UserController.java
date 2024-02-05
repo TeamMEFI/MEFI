@@ -84,12 +84,13 @@ public class UserController {
 
     @Operation(summary = "이메일 인증 확인", description = "/users/join/auth/check\n\n 사용자는 이메일 인증 확인을 한다.")
     @PostMapping("/join/auth/check")
-    @ApiResponse(responseCode = "200", description = "성공 \n\n Token 반환")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> verifyEmailCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
 
-        // 인증 코드 확인 후 토큰 반환
-        String token = mailService.validateAuthCode(verifyCodeReqDto);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, token));
+        // 인증 코드 확인 후 토큰 반환 (주석 이유 : 추가 로직 필요!)
+        // String token = mailService.validateAuthCode(verifyCodeReqDto);
+        mailService.validateAuthCode(verifyCodeReqDto);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 
     @Operation(summary = "회원 검색", description = "/users/search/{keyword} \n\n 사용자는 회원을 검색한다.")

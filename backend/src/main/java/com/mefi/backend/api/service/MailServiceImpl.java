@@ -28,7 +28,6 @@ import static com.mefi.backend.common.exception.ErrorCode.CODE_NOT_MATCH;
 public class MailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
     private final MailRepository mailRepository;
-    private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
 
     // 이메일
@@ -128,7 +127,7 @@ public class MailServiceImpl implements MailService {
 
     // 인증 코드 확인
     @Override
-    public String validateAuthCode(VerifyCodeReqDto verifyCodeReqDto) {
+    public void validateAuthCode(VerifyCodeReqDto verifyCodeReqDto) {
 
         // 인증 코드 유효성 검사
 
@@ -148,7 +147,7 @@ public class MailServiceImpl implements MailService {
         if(emailAuth.getRandomNum()!=Integer.parseInt(verifyCodeReqDto.getAuthCode()))
             throw new Exceptions(CODE_NOT_MATCH);
 
-        // 토큰 발행
-        return jwtUtil.createJwt(emailAuth.getEmail(), "undefined", 60*3*1000L);
+        // 토큰 발행 (주석 이유 : 추가 로직 필요!)
+        // return jwtUtil.createJwt(emailAuth.getEmail(), "undefined", 60*3*1000L);
     }
 }

@@ -23,6 +23,7 @@
 <script setup>
 import { ref, watch } from "vue"
 import { useRouter } from "vue-router"
+import { sendEmailCode } from "@/api/user"
 const router = useRouter()
 
 // 입력받은 이메일
@@ -49,8 +50,22 @@ const regex_email = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 // 기능 : password 변경 페이지로 이동
 // 해당 이메일을 가진 회원의 비밀번호 변경
-const goSearchPassword = () => {
-    router.push({name:"search-password2"})
+const goSearchPassword = async () => {
+    // 이메일 인증 번호 던지는 api 연결
+    const param = {
+        "email":email.value,
+    }
+    // await sendEmailCode(param, (res)=>{
+    //     consolo.log(res)
+    //     router.push({name:"search-password2"})
+
+    // },(err)=>{
+    //     console.log(err)
+    //     if (err.response.request.status==400){
+    //         alert(err.response.data.dataHeader.resultMessage)
+    //     }
+    // })
+    router.push({name:"search-password2", params:{email:email.value}})
 }
 </script>
 

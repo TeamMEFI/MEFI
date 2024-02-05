@@ -1,5 +1,6 @@
 package com.mefi.backend.api.service;
 
+import com.mefi.backend.api.request.TeamModifyReqDto;
 import com.mefi.backend.api.request.TeamReqDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.TeamDetailDto;
@@ -164,5 +165,34 @@ public class TeamServiceImpl implements TeamService{
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_NOT_EXIST));
 
         return new TeamDetailDto(team.getId(), team.getName(), team.getDescription(), team.getCreatedTime());
+    }
+
+    @Override
+    @Transactional
+    public void modifyTeam(Long userId, Long teamId, TeamModifyReqDto teamModifyReqDto) {
+
+        // 팀 엔티티 DB에 불러옴 -> 해당 팀이 없다면 예외 처리
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_NOT_EXIST));
+
+        // 해당 팀의 리더가 아니라면 예외 발생
+        checkRole(userId, teamId);
+
+        // 엔티티 수정
+        team.changeTeamName(teamModifyReqDto.getName());
+        team.changeTeamDescription(teamModifyReqDto.getDescription());
+    }
+
+    @Override
+    @Transactional
+    public void modifyUserRole(Long userId, Long teamId, Long memberId) {
+        // 리더가 아니면 예외 처리
+        checkRole(userId, teamId);
+
+        // 받은 유저가 팀의 멤버가 아니면 예외 처리
+        UserTeam leader = teamUserRepository.findByUserIdAndTeamId(userId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
+        UserTeam member = teamUserRepository.findByUserIdAndTeamId(memberId,teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));;
+
+        leader.changeRole(UserRole.MEMBER);
+        member.changeRole(UserRole.LEADER);
     }
 }
