@@ -17,7 +17,7 @@ async function sendEmailCode(param, success, fail){
 async function checkEmailCode(param, success, fail){
     await local.post(`/users/join/auth/check`,param).then(success).catch(fail)
 }
-async function updateToken(param, success, fail){
+async function updateToken(success, fail){
     local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('refreshToken')}`
     await local.post(`/token`).then(success).catch(fail)
 }

@@ -1,16 +1,19 @@
 <template>
     <!-- 회원 탈퇴 창 -->
-    <div id="delete-container">
-        <div id="delete-main">
-            <p id="body-title">회원 탈퇴 하시겠습니까?</p>
-            <!-- 예 : 회원 탈퇴함 -->
-            <!-- 아니오 : 회원 탈퇴하지 않고 해당 모달 창이 닫힘 -->
-            <div id="body-button">
-                <v-btn @click="userDelete" style="background-color: #E53935; color: white;">예</v-btn>
-                <v-btn @click="goOut" style="background-color: #BDBDBD; color: white;">아니오</v-btn>
+    <v-sheet class="pa-5" min-height="300">
+        <div class="d-flex flex-column justify-center alien-center pa-3">
+            <span class="text-center my-10">회원 탈퇴 하시겠습니까?</span>
+            <v-text-field
+                label="현재 비밀번호"
+                variant="outlined"
+                type="password"
+            ></v-text-field>
+            <div class="d-flex flex-row justify-center alien-center">
+                <v-btn @click="userDelete()" color="#45566F" variant="flat">예</v-btn>
+                <v-btn @click="goOut()" variant="outlined">아니오</v-btn>
             </div>
         </div>
-    </div>
+    </v-sheet>
 </template>
 
 <script setup>
@@ -28,13 +31,4 @@ const goOut = () => {
 </script>
 
 <style scoped>
-#delete-container{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-content: center;
-}
-#delete-main{
-    margin: 150px auto;
-}
 </style>

@@ -49,7 +49,7 @@ export const useUserStore = defineStore('user', () => {
     isLogin.value = false
     userInfo.value = null
     localStorage.clear()
-    router.push({name:'main'})
+    router.push({name:'login'})
   }
 
   return { isLogin, signup, login, logout, userInfo }

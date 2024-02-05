@@ -3,20 +3,24 @@
     <v-menu location="button" activator="parent">
         <v-list class="overflow-hidden ma-0">
             <!-- green -->
-            <v-list-item @click="changeStatus('green')">
+            <v-list-item @click="changeStatus('green')" class="d-flex flex-row justify-space-between">
                 <font-awesome-icon :icon="['fas', 'circle']" style="color: green;"/>
+                <span>온라인</span>
             </v-list-item>
             <!-- white -->
-            <v-list-item @click="changeStatus('white')">
+            <v-list-item @click="changeStatus('white')" class="d-flex flex-row justify-space-between">
                 <font-awesome-icon :icon="['fas', 'circle']" style="color: white; border: 1px solid rgb(186, 186, 186); border-radius: 50%;"/>
+                <span>오프라인</span>
             </v-list-item>
             <!-- red -->
-            <v-list-item @click="changeStatus('red')">
+            <v-list-item @click="changeStatus('red')" class="d-flex flex-row justify-space-between">
                 <font-awesome-icon :icon="['fas', 'circle']" style="color: red;"/>
+                <span>방해 금지</span>
             </v-list-item>
             <!-- yellow -->
-            <v-list-item @click="changeStatus('yellow')">
+            <v-list-item @click="changeStatus('yellow')" class="d-flex flex-row justify-space-between">
                 <font-awesome-icon :icon="['fas', 'circle']" style="color: yellow;"/>
+                <span>다른 용무 중</span>
             </v-list-item>
         </v-list>
     </v-menu>

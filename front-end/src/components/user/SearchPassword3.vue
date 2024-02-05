@@ -8,6 +8,7 @@
                 :rules="rule_pass"
                 variant="outlined"
                 type="password"
+                hide-details="auto"
             ></v-text-field>
 
             <!-- 새 비밀번호 확인 입력창 -->
@@ -17,6 +18,7 @@
                 :rules="rule_pass_check"
                 variant="outlined"
                 type="password"
+                hide-details="auto"
             ></v-text-field>
 
             <!-- submit 버튼 -->

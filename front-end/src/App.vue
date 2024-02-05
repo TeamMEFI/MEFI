@@ -19,19 +19,37 @@ const store = useUserStore()
 router.beforeEach((to, from)=>{
   if (localStorage.getItem('refreshToken') !== null){
     updateToken(
-      localStorage.getItem('refreshToken'), (response)=>{console.log(response)},
-      (err) => {console.log(err)}
+      localStorage.getItem('refreshToken'), 
+      (res)=>{
+        // token 재발급 과정에서 refresh token 만료되었을 시 에러 처리
+        if( to.name!='login' 
+          && to.name!='signup' 
+          && to.name!='email' 
+          && to.name!='search-password1' 
+          && to.name!='search-password2'
+          && to.name!='search-password3' ){
+          return {name:'login'}
+        }
+      },
+      (err) => {
+        // interceptor ?
+        console.log('token err ', err.response.status)
+        if (err.response.status==403){
+          localstorage.clear();
+        }
+        router.push({name:'home'})
+      }
     )
   }
-  
-  if(localStorage.getItem('accessToken')==null
-  && to.name!='login' 
-  && to.name!='signup' 
-  && to.name!='email' 
-  && to.name!='search-password1' 
-  && to.name!='search-password2'
-  && to.name!='search-password3' ){
-    return {name:'login'}
+  else{
+    if( to.name!='login' 
+      && to.name!='signup' 
+      && to.name!='email' 
+      && to.name!='search-password1' 
+      && to.name!='search-password2'
+      && to.name!='search-password3' ){
+      return {name:'login'}
+    }
   }
 })
 </script>

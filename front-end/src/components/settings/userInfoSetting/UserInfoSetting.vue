@@ -1,22 +1,21 @@
 <template>
-    <div>
+    <v-sheet min-width="500">
         <!-- 헤더 -->
-        <HeaderVue id="setting-header" :option="option" @close="close"></HeaderVue>
-        <div id="setting-body">
+        <HeaderVue :option="option" @close="close" class="d-flex flex-row justify-space-between pa-3"></HeaderVue>
+        <v-row no-gutters>
             <!-- 선택지 -->
-            
-            <OptionsVue id="body-option" @change-option="optionChange"></OptionsVue>
-            <!-- 선택지에 따른 컴포넌트 -->
-            <div id="body-content">
+            <v-col cols="3"><OptionsVue @change-option="optionChange"></OptionsVue></v-col>
+            <v-col style="border-left: 1px solid #c4c4c4">
+                <!-- 선택지에 따른 컴포넌트 -->
                 <!-- 회원 정보 조회 및 수정 -->
                 <UserInfoVue v-if="option===1"></UserInfoVue>
                 <!-- 비밀번호 변경 -->
                 <ChangePwdVue v-if="option===2"></ChangePwdVue>
                 <!-- 회원 탈퇴 -->
                 <UserDelete v-if="option===3" @close="close"></UserDelete>
-            </div>
-        </div>
-    </div>
+            </v-col>
+        </v-row>
+    </v-sheet>
 </template>
 
 <script setup>
@@ -38,22 +37,4 @@ const close = () => {
 </script>
 
 <style scoped>
-#setting-header{
-    height: 30px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 10px;
-}
-#setting-body{
-    display: grid;
-    grid-template-columns: 2fr 8fr
-}
-#body-option{
-    background-color: rgb(96, 106, 121);
-    color: white;
-}
-#body-content{
-    min-height: 400px;
-}
 </style>
