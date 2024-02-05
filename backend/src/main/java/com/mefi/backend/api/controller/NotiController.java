@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,7 +37,9 @@ public class NotiController {
         // SSE Emitter 생성
         SseEmitter sseEmitter = notiService.createSseConnection(user.getUserId(), lastEventId);
         log.info("SSE Emitter : {}", sseEmitter);
-        return ResponseEntity.status(HttpStatus.CREATED).body(sseEmitter);
+
+        // NginX 버퍼링 기능 비활성화
+        return ResponseEntity.status(HttpStatus.CREATED).header("X-Accel-Buffering", "no").body(sseEmitter);
     }
 
     @GetMapping("/all")
