@@ -2,6 +2,7 @@ package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.TeamReqDto;
 import com.mefi.backend.api.response.MemberResDto;
+import com.mefi.backend.api.response.TeamDetailDto;
 import com.mefi.backend.api.response.TeamResDto;
 
 import java.util.List;
@@ -26,4 +27,8 @@ public interface TeamService {
     void deleteTeam(Long userId, Long teamId);
 
     // 팀원 삭제
-    void deleteMember(Long userId, Long teamId, Long memberId);}
+    void deleteMember(Long userId, Long teamId, Long memberId);
+
+    // 팀 상세 정보 조회
+    TeamDetailDto getTeamDetail(Long teamId);
+}

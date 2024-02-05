@@ -2,6 +2,7 @@ package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.TeamReqDto;
 import com.mefi.backend.api.response.MemberResDto;
+import com.mefi.backend.api.response.TeamDetailDto;
 import com.mefi.backend.api.response.TeamResDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
@@ -158,4 +159,10 @@ public class TeamServiceImpl implements TeamService{
         teamUserRepository.deleteByUserIdAndTeamId(memberId, teamId);
     }
 
+    @Override
+    public TeamDetailDto getTeamDetail(Long teamId) {
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_NOT_EXIST));
+
+        return new TeamDetailDto(team.getId(), team.getName(), team.getDescription(), team.getCreatedTime());
+    }
 }
