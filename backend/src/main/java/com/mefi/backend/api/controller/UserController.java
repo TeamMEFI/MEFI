@@ -44,7 +44,8 @@ public class UserController {
     @Operation(summary = "회원탈퇴", description = "/users\n\n 사용자는 회원탈퇴를 한다.")
     @DeleteMapping("")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
-    public ResponseEntity<? extends BaseResponseBody> withdraw(Authentication authentication) {
+    public ResponseEntity<? extends BaseResponseBody> withdraw(Authentication authentication,
+                                                               @RequestBody UserWithdrawReqDto userWithdrawReqDto) {
 
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -53,8 +54,7 @@ public class UserController {
         User user = userService.findById(userDetails.getUserId());
 
         // 유저 제거
-        userService.withdraw(user);
-
+        userService.withdraw(user, userWithdrawReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 
@@ -104,8 +104,22 @@ public class UserController {
         List<MemberResDto> searchResultList = userService.getSearchUsers(keyword);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, searchResultList));
     }
+
+    @Operation(summary = "회원 정보 전체 수정", description = "/users/info \n\n 사용자는 자신의 정보를 전체 수정한다.")
+    @PutMapping("/info")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
+    public ResponseEntity<? extends BaseResponseBody> modifyUserInfoAll(Authentication authentication,
+                                                                     @RequestBody UserModifyAllReqDto userModifyAllReqDto) {
+
+        // 로그인된 유저 정보 조회
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        // 회원 정보 전체 수정
+        userService.modifyUserInfoAll(userDetails.getUserId(),userModifyAllReqDto);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
+    }
     
-    @Operation(summary = "회원 정보 수정", description = "/users/info \n\n 사용자는 자신의 정보를 수정한다.")
+    @Operation(summary = "회원 정보 부분 수정", description = "/users/info \n\n 사용자는 자신의 정보를 부분적으로 수정한다.")
     @PatchMapping("/info")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> modifyUserInfo(Authentication authentication,
@@ -114,7 +128,7 @@ public class UserController {
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        // 회원 정보 수정
+        // 회원 정보 부분 수정
         userService.modifyUserInfo(userDetails.getUserId(),userModifyReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
@@ -123,7 +137,7 @@ public class UserController {
     @PatchMapping("/pwd")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     ResponseEntity<? extends BaseResponseBody> modifyUserPassword(@RequestBody UserModifyPasswordReqDto userModifyPasswordReqDto) {
-        
+
         // 회원 비밀번호 수정
         userService.modifyUserPassword(userModifyPasswordReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));

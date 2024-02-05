@@ -18,17 +18,22 @@ public enum ErrorCode {
     CODE_NOT_EXIST(HttpStatus.BAD_REQUEST, "U-006", "인증 코드가 유효하지 않습니다."),
     SAME_AS_BEFORE(HttpStatus.BAD_REQUEST, "U-007", "이전 정보와 동일합니다."),
     CATEGORY_NOT_EXIST(HttpStatus.BAD_REQUEST, "U-008", "존재하지 않는 항목입니다."),
+    DIFFERENT_FROM_BEFORE(HttpStatus.BAD_REQUEST, "U-009", "이전 정보와 다릅니다."),
+    CORRECT_NOT_PASSWORD(HttpStatus.BAD_REQUEST, "U-010", "비밀번호가 올바르지 않습니다."),
 
     // 토큰
-    UNEXPECTED_TOKEN(HttpStatus.BAD_REQUEST, "T-001", "만료되었거나 존재하지 않는 토큰입니다."),
+    UNEXPECTED_TOKEN(HttpStatus.BAD_REQUEST, "T-001", "토큰이 만료되었습니다."),
+    TOKEN_NOT_EXIST(HttpStatus.BAD_REQUEST, "T-002", "토큰이 존재하지 않습니다."),
 
     // 팀
     TEAM_NOT_EXIST(HttpStatus.BAD_REQUEST, "G-001", "존재하지 않는 팀입니다."),
     TEAM_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "G-002", "해당 팀에 권한이 없습니다."),
     NOT_TEAM_LEADER(HttpStatus.BAD_REQUEST, "G-003", "팀장만 수정 권한이 있습니다."),
     LEADER_NOT_DELETEABLE(HttpStatus.BAD_REQUEST, "G-004", "리더는 삭제할 수 없습니다."),
-    MEMBER_NOT_EXIST(HttpStatus.BAD_REQUEST, "G-005", "해당 팀원은 존재하지 않습니다.");
+    MEMBER_NOT_EXIST(HttpStatus.BAD_REQUEST, "G-005", "해당 팀원은 존재하지 않습니다."),
 
+    // 파일
+    FILE_NOT_EXIST(HttpStatus.BAD_REQUEST, "F-001", "파일이 존재하지 않습니다.");
 
 
     // 상태, 에러 코드, 메시지

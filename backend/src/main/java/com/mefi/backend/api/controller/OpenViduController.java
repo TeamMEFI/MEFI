@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
+import org.yaml.snakeyaml.representer.BaseRepresenter;
 
 import java.util.Map;
 
@@ -37,10 +38,10 @@ public class OpenViduController {
     @PostMapping("/sessions")
     @Operation(summary = "OpenVidu Session 생성", description = "OpenVidu Deployment에 Session 생성을 요청합니다")
     @ApiResponse(responseCode = "200", description = "Session 생성 성공, 세션 ID를 반환합니다. ")
-    public ResponseEntity<? extends BaseResponseBody> createSession() {
+    public ResponseEntity<? extends BaseResponseBody> createSession(@RequestBody(required = false) Map<String, Object> params) {
         try {
             // Session 설정 및 생성
-            SessionProperties properties = new SessionProperties.Builder().build();
+            SessionProperties properties = SessionProperties.fromJson(params).build();
             Session session = openVidu.createSession(properties);
             log.info("SessionProperties : {}", properties);
             log.info("Session : {}", session.getSessionId());
@@ -100,7 +101,8 @@ public class OpenViduController {
             session.fetch();
             return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Proceeding"));
         } catch (OpenViduHttpException e) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(BaseResponseBody.of(1, "Done"));
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(BaseResponseBody.of(1, "Done"));
         }
     }
+
 }

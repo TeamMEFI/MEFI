@@ -39,7 +39,7 @@ const router = createRouter({
           name: 'team',
           component: TeamView,
           props: (route) =>({
-            id: route.params.id,
+            id: Number(route.params.id),
           })
         },
         {
@@ -52,7 +52,7 @@ const router = createRouter({
           name: 'insertconference',
           component: InsertConference,
           props: (route) =>({
-            teamid: route.params.teamid,
+            teamid: Number(route.params.teamid),
           })
         },
         {
@@ -60,7 +60,7 @@ const router = createRouter({
           name: 'detailschedule',
           component: DetailSchedule,
           props: (route) =>({
-            scheduleid: route.params.scheduleid,
+            scheduleid: Number(route.params.scheduleid),
           })
         },
         {
@@ -68,8 +68,8 @@ const router = createRouter({
           name: 'detailconference',
           component: DetailConference,
           props: (route) =>({
-            teamid: route.params.teamid,
-            conferenceid: route.params.conferenceid,
+            teamid: Number(route.params.teamid),
+            conferenceid: Number(route.params.conferenceid),
           })
         },
       ]

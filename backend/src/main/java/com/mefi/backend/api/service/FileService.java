@@ -25,5 +25,5 @@ public interface FileService {
     public String createProfile(MultipartFile profileImage) throws IOException;
 
     // 프로필 이미지를 삭제
-    public void deleteProfile(String imageUrl);
+    public void deleteProfile(String imageUrl) throws IOException;
 }

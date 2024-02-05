@@ -1,28 +1,33 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.JoinReqDto;
+import com.mefi.backend.api.request.UserModifyAllReqDto;
 import com.mefi.backend.api.request.UserModifyPasswordReqDto;
 import com.mefi.backend.api.request.UserModifyReqDto;
+import com.mefi.backend.api.request.UserWithdrawReqDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Token;
 import com.mefi.backend.db.entity.User;
+import com.mefi.backend.db.repository.TokenRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final TokenService tokenService;
+    private final TokenRepository tokenRepository;
 
     // 회원가입
     @Override
@@ -45,11 +50,23 @@ public class UserServiceImpl implements UserService {
     // 회원탈퇴
     @Override
     @Transactional
-    public void withdraw(User user) {
+    public void withdraw(User user, UserWithdrawReqDto userWithdrawReqDto) {
+        
+        // 본인 인증을 위한 현재 비밀번호 확인
+        if(!bCryptPasswordEncoder.matches(
+                userWithdrawReqDto.getCurrentPassword(),user.getPassword())) {
+            throw new Exceptions(ErrorCode.CORRECT_NOT_PASSWORD);
+        }
 
         // 유저 토큰 삭제
-        Token token = tokenService.findByUserId(user.getId());
-        tokenService.deleteRefreshToken(token);
+        
+        // 유저 토큰 조회
+        if(!tokenRepository.findByUserId(user.getId()).isPresent()) {
+            throw new Exceptions(ErrorCode.TOKEN_NOT_EXIST);
+        }
+
+        Token token = tokenRepository.findByUserId(user.getId()).get();
+        tokenRepository.delete(token);
 
         // 유저 삭제
         userRepository.delete(user);
@@ -68,7 +85,25 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByKeyWord(keyword);
     }
 
-    // 회원 정보 수정
+    // 회원 정보 전체 수정
+    @Override
+    @Transactional
+    public void modifyUserInfoAll(Long id, UserModifyAllReqDto userModifyAllReqDto) {
+
+        // 유저 조회
+        if (!userRepository.findById(id).isPresent())
+            throw new Exceptions(ErrorCode.USER_NOT_EXIST);
+
+        User user = userRepository.findById(id).get();
+
+        // 전체 수정
+        user.updateAll(userModifyAllReqDto.getName(),
+                userModifyAllReqDto.getDept(),
+                userModifyAllReqDto.getPosition(),
+                userModifyAllReqDto.getImgUrl());
+    }
+
+    // 회원 정보 부분 수정
     @Override
     @Transactional
     public void modifyUserInfo(Long id, UserModifyReqDto userModifyReqDto) {
