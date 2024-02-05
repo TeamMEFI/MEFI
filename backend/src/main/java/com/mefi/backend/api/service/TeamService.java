@@ -35,4 +35,7 @@ public interface TeamService {
 
     // 팀 정보 수정
     void modifyTeam(Long userId, Long teamId, TeamModifyReqDto teamModifyReqDto);
+
+    // 팀원 권한 변경
+    void modifyUserRole(Long userId, Long teamId, Long memberId);
 }

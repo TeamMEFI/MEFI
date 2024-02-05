@@ -181,4 +181,18 @@ public class TeamServiceImpl implements TeamService{
         team.changeTeamName(teamModifyReqDto.getName());
         team.changeTeamDescription(teamModifyReqDto.getDescription());
     }
+
+    @Override
+    @Transactional
+    public void modifyUserRole(Long userId, Long teamId, Long memberId) {
+        // 리더가 아니면 예외 처리
+        checkRole(userId, teamId);
+
+        // 받은 유저가 팀의 멤버가 아니면 예외 처리
+        UserTeam leader = teamUserRepository.findByUserIdAndTeamId(userId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
+        UserTeam member = teamUserRepository.findByUserIdAndTeamId(memberId,teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));;
+
+        leader.changeRole(UserRole.MEMBER);
+        member.changeRole(UserRole.LEADER);
+    }
 }

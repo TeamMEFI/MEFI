@@ -180,5 +180,19 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 
+    @PatchMapping("/{teamId}/{memberId}")
+    @Operation(summary = "리더 권한 변경", description = "팀장이 다른 팀원에게 리더를 양도한다.")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n 반환 없음")
+    public ResponseEntity<? extends BaseResponseBody> modifyUserRole(Authentication authentication,
+                                                                     @PathVariable Long teamId,
+                                                                     @PathVariable Long memberId){
 
+        // 현재 사용자 식별 ID 가져옴
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        // 리더 권한 변경
+        teamService.modifyUserRole(user.getUserId(), teamId, memberId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,"Success"));
+    }
 }
