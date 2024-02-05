@@ -54,7 +54,42 @@
                         </div>
                     </v-col>
                     <v-col cols="2" class="d-flex flex-column justify-start align-center h-100">
-                        <v-btn width="100" class="ma-3">팀장 위임</v-btn>
+                        <v-dialog
+                            v-model="dialog"
+                            persistent
+                            width="auto"
+                            >
+                            <template v-slot:activator="{ props }">
+                                <v-btn
+                                color="primary"
+                                v-bind="props"
+                                >
+                                팀장 위임
+                                </v-btn>
+                            </template>
+                            <v-card>
+                                <v-card-text>팀장을 위임할 경우, 해당 팀에 대해 다시 위임받기 전까진 일반 멤버로 머물게 됩니다. 진행하시겠습니까?</v-card-text>
+                                <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    width="100" class="ma-3"
+                                    color="green-darken-1"
+                                    variant="text"
+                                    @click="dialog = false"
+                                >
+                                    취소
+                                </v-btn>
+                                <v-btn
+                                    color="green-darken-1"
+                                    variant="text"
+                                    @click="change"
+                                >
+                                    진행
+                                </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                            </v-dialog>
+                        <!-- <v-btn width="100" class="ma-3" @click="change">팀장 위임</v-btn> -->
                         <v-btn width="100" class="ma-3" @click="addMember">팀 초대</v-btn>
                         <v-btn width="100" class="ma-3" @click="excludeMember">팀 추방</v-btn>
                     </v-col>
@@ -76,9 +111,10 @@
 
 <script setup>
 import { ref, onMounted, watchEffect } from 'vue';
-import { selectTeamMate, addTeamMate, excludeTeamMate } from '@/api/team.js';
+import { selectTeamMate, addTeamMate, excludeTeamMate, changeLeader } from '@/api/team.js';
 import { userSearch } from '@/api/user.js'
 import { useUserStore } from "@/stores/user"
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 const props = defineProps({
   teamId: Number
@@ -93,7 +129,7 @@ const searchList = ref([])
 const searchName = ref('')
 const members = ref([])
 const store = useUserStore()
-
+const dialog = ref(false)
 const search = async () => {
     if (searchName.value === '') return;
     const data = searchName.value
@@ -158,6 +194,26 @@ const excludeMember = async () => {
         }
     )
 };
+
+const change = async () => {
+    if (excludememberdata.value === null) {
+        alert('위임받을 팀원을 선택하세요.');
+        return;
+    }
+    const data = {
+        teamid: props.teamId,
+        userid: excludememberdata.value
+    }
+    await changeLeader(
+        data,(response) => {
+            dialog.value = false;
+            close();
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
+}
 
 // 최초 생성시 팀원 조회
 onMounted(() => {
