@@ -19,7 +19,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter()
 const props = defineProps({
-  teamId: Number
+  teamId: Number,
 });
 // 검색어
 

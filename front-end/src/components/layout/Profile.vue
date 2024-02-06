@@ -60,7 +60,7 @@ const select = async () => {
     await selectTeam(
         (response) => {
             teams.value = response.data.dataBody
-            console.log(response.data.dataBody)
+            console.log(teams.value)
         },
         (error)=>{
             console.log(error)
