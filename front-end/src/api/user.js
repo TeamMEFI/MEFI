@@ -28,9 +28,9 @@ async function userModify(param, success, fail){
     await interceptor.put(`/users/info`,param).then(success).catch(fail)
 }
 
-async function userDelete(success, fail){
+async function userDelete(param, success, fail){
     local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
-    await interceptor.delete(`/users`).then(success).catch(fail)
+    await interceptor.delete(`/users`, {params: param}).then(success).catch(fail)
 }
 export { 
     userLogin, 

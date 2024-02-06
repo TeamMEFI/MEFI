@@ -2,16 +2,16 @@
     <!-- 회원 탈퇴 창 -->
     <v-sheet class="pa-5" min-height="300">
         <div class="d-flex flex-column justify-center alien-center pa-3">
-            <span class="text-center my-10">회원 탈퇴 하시겠습니까?</span>
+            <span class="text-center my-10" style="font-weight: bold;">회원 탈퇴 하시겠습니까?</span>
             <v-text-field
                 label="현재 비밀번호"
                 variant="outlined"
                 type="password"
                 v-model="password"
             ></v-text-field>
-            <div class="d-flex flex-row justify-center alien-center">
-                <v-btn @click="Delete()" color="#45566F" variant="flat">예</v-btn>
-                <v-btn @click="goOut()" variant="outlined">아니오</v-btn>
+            <div class="d-flex flex-row justify-space-around alien-center">
+                <v-btn @click="Delete()" color="#45566F" variant="flat" class="w-40" rounded="lg">예</v-btn>
+                <v-btn @click="goOut()" variant="outlined" class="w-40" rounded="lg">아니오</v-btn>
             </div>
         </div>
     </v-sheet>
@@ -27,7 +27,7 @@ const password = ref('')
 const Delete = async () => {
     // api
     const param = {
-        "currentPassword" : password.value
+        currentPassword : password.value
     }
     await userDelete(param,
     (res)=>{console.log(res)},
