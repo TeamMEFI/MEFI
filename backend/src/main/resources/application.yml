@@ -13,6 +13,7 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true;
+    open-in-view: false
   # encoding
   http:
     encoding:
@@ -62,5 +63,6 @@ cloud:
 # OPENVIDU
 OPENVIDU_URL: ENC(/JNrRlfJxD6r56rgRs+bT9fSGwVzr+y8OnOhMQtNekbsi8F4La34drl9fgdsqLq9)
 OPENVIDU_SECRET: ENC(hwb45ywSah0r1wahddgmpFSSC1etSbImoUoje/sScb8=)
+
 logging.level:
   org.hibernate.SQL: debug  # logger로 Hibernate 실행 SQL을 남긴다.
