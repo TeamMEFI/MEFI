@@ -1,8 +1,16 @@
 /* 대부분의 내부 내용은 vuetify의 커스터 마이징 혹은
 페이지 전처리(width, heith)용이므로 용도를 각 상단에
 주석으로 기입하면 좋음 */
+@font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
 * {
   font-size: 14px;
+  font-family: 'Pretendard-Regular';
 }
 
 /* 페이지 전체화면 처리 */

@@ -47,8 +47,8 @@ import { useRoute } from 'vue-router'
 import { getFiles, createFile, downloadFile, deleteFile } from '@/api/file.js'
 
 const route = useRoute()
-const teamId = ref(route.params?.teamId)
-const conferenceId = ref(route.params?.conferenceId)
+const teamId = ref(route.params?.teamid)
+const conferenceId = ref(route.params?.conferenceid)
 
 // API 호출 함수
 const file = ref(null)
