@@ -25,14 +25,14 @@ public class ScheduleController {
 
     @PostMapping
     @Operation(summary = "개인 일정 등록", description = "새로운 개인 일정 정보를 받아 DB에 저장한다.")
-    @ApiResponse(responseCode = "201", description = "성공 시 상태 코드 201을 반환한다")
+    @ApiResponse(responseCode = "201", description = "성공 시 상태 코드 201와 SUCCESS 반환")
     public ResponseEntity<? extends BaseResponseBody> createSchedule(Authentication authentication, @RequestBody ScheduleReqDto scheduleReqDto){
-        // 사용자 식별 ID 조회
+        // 로그인 된 유저 정보 조회
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
         log.info("User ID : {}", user.getUserId());
 
         // 일정 등록
-        scheduleService.createSchedule(1L, scheduleReqDto);
+        scheduleService.createSchedule(user.getUserId(), scheduleReqDto);
         log.info("Schedule Summary : {}", scheduleReqDto.getSummary());
 
         // 반환
