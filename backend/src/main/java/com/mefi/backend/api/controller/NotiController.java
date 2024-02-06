@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.List;
 
 @RestController
-@RequestMapping("/alarm")
+@RequestMapping("/api/alarm")
 @RequiredArgsConstructor
 @Tag(name = "알림 API", description = "SSE 방식을 이용해 사용자에게 필요한 알림을 전송하는 컨트롤러")
 @Slf4j

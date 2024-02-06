@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 @Slf4j
 @RestController
-@RequestMapping("/token")
+@RequestMapping("/api/token")
 @RequiredArgsConstructor
 @Tag(name = "2.TOKEN", description = "TOKEN API")
 public class TokenController {
