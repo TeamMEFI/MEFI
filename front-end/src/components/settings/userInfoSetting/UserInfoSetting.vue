@@ -10,7 +10,7 @@
                 <!-- 회원 정보 조회 및 수정 -->
                 <UserInfoVue v-if="option===1"></UserInfoVue>
                 <!-- 비밀번호 변경 -->
-                <ChangePwdVue v-if="option===2"></ChangePwdVue>
+                <ChangePwdVue v-if="option===2" @close="close"></ChangePwdVue>
                 <!-- 회원 탈퇴 -->
                 <UserDelete v-if="option===3" @close="close"></UserDelete>
             </v-col>
