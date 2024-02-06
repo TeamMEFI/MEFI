@@ -42,4 +42,22 @@ async function changeLeader(param, success, fail){
     await local.patch(`/team/${param.teamid}/${param.userid}`).then(success).catch(fail);
 }
 
-export { selectTeam, createTeam, selectTeamMate, addTeamMate, excludeTeamMate, changeLeader };
+// 팀상세조회
+async function detailTeam(param, success, fail){
+    await setHeaders();
+    await local.get(`/team/detail/${param}`).then(success).catch(fail);
+}
+
+// 팀상세정보수정
+async function modifyTeam(param, success, fail){
+    await setHeaders();
+    await local.patch(`/team/${param.teamId}`, param.data).then(success).catch(fail);
+}
+
+// 팀삭제
+async function deleteTeam(param, success, fail){
+    await setHeaders();
+    await local.delete(`/team/${param}`).then(success).catch(fail);
+}
+
+export { selectTeam, createTeam, selectTeamMate, addTeamMate, excludeTeamMate, changeLeader, detailTeam, modifyTeam, deleteTeam };

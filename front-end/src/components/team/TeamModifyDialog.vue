@@ -1,153 +1,181 @@
-<!-- <template>
-    <v-card class="bgcolor-setting w-100 h-100">
+<template>
+    <v-card class="bgcolor-setting w-100 h-100 rounded-lg">
         <v-card-title class="ma-0 pa-0">
-            <v-toolbar color="#2A4770" >
-                <v-toolbar-title class="font-weight-bold text-h5">Team Create</v-toolbar-title>
+            <v-toolbar>
+                <v-toolbar-title class="font-weight-bold text-h5">팀 정보 수정</v-toolbar-title>
                 <v-spacer></v-spacer>
             </v-toolbar>
         </v-card-title>
-        <v-card-text>
-            <v-container class="h-85">
-                <v-row>
-                    <v-col cols="5">
-                        <v-text-field
-                        v-model="teamName"
-                        label="Team Name"
-                        variant="solo"
-                        required
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="7">
-                        <v-text-field
-                        v-model="teamDescription"
-                        label="Team Description"
-                        variant="solo"
-                        required
-                        ></v-text-field>
-                    </v-col>
-                </v-row>
-                <v-row class="h-100">
-                    <v-col cols="5" class="h-100">
-                        <div class="bg-white h-100 elevation-3">
-                            <v-toolbar color="#2A4770" >
-                                <v-toolbar-title class="font-weight-bold text-h5">New Join</v-toolbar-title>
-                                <v-text-field
-                                    density="compact"
-                                    v-model="searchName"
-                                    variant="solo"
-                                    append-inner-icon="mdi-magnify"
-                                    single-line
-                                    hide-details
-                                    @click:append-inner="onClick"
-                                    @keyup.enter="onClick"
-                                    class="me-3"
-                                ></v-text-field>
-                            </v-toolbar>
+        <v-card-text class="h-75">
+            <v-row class="h-100 ma-0">
+                <v-col cols="5" class="h-100">
+                    <v-text-field
+                    v-model="teamName"
+                    label="Team Name"
+                    variant="outlined"
+                    required
+                    hide-details
+                    ></v-text-field>
+                    <div class="h-80 w-100 elevation-1 rounded-lg mt-5">
+                        <v-toolbar class="rounded-t-lg" height="50">
+                            <v-toolbar-title class="font-weight-bold text-h5">팀원 목록</v-toolbar-title>
+                        </v-toolbar>
+                        <div class="w-100 h-cal auto-scroll">
                             <v-list>
                                 <v-list-item
-                                    v-for="user in searchList"
+                                    v-for="user in members"
+                                    :title="user.name + ' / ' + user.email"
                                     :value="user.id"
-                                    @click="clickUser(user)"
-                                    :class="{'selected' : user.isSelect}"
+                                    max-height="30"
+                                    @click="excludememberdata = user.id"
                                     >
-                                        <p>{{ user.name + ' / ' + user.email }}</p>
                                 </v-list-item>
                             </v-list>
                         </div>
-                    </v-col>
-                    <v-col cols="2" class="d-flex justify-space-evenly flex-column align-center">
-                        <v-btn icon @click="addMember">
-                            <v-icon>mdi-account-plus</v-icon>
-                        </v-btn>
-                        <v-btn icon @click="excludeMember">
-                            <v-icon>mdi-account-minus</v-icon>
-                        </v-btn>
-                    </v-col>
-                    <v-col cols="5" class="h-100">
-                        <div class="bg-white h-100 elevation-3">
-                            <v-toolbar color="#2A4770" >
-                                <v-toolbar-title class="font-weight-bold text-h5">Added</v-toolbar-title>
-                                <v-spacer></v-spacer>
-                            </v-toolbar>
+                    </div>
+                </v-col>
+                <v-col cols="5">
+                    <v-text-field
+                    v-model="teamDescription"
+                    label="Team Description"
+                    variant="outlined"
+                    required
+                    hide-details
+                    ></v-text-field>
+                    <div class="h-80 w-100 elevation-1 rounded-lg mt-5">
+                        <v-toolbar class="rounded-t-lg" height="50">
+                            <v-toolbar-title class="font-weight-bold text-h5">검색 목록</v-toolbar-title>
+                            <v-text-field
+                            density="compact"
+                                variant="outlined"
+                                v-model="searchName"
+                                append-inner-icon="mdi-magnify"
+                                single-line
+                                hide-details
+                                class="me-3 bg-white"
+                                @click:append-inner="search"
+                                @keyup.enter="search"
+                            ></v-text-field>
+                        </v-toolbar>
+                        <div class="w-100 h-cal auto-scroll">
                             <v-list>
-                                <v-list-item
-                                    v-for="selectuser in selectedUsers"
-                                    @click="clickUser(selectuser)"
-                                    :class="{'selected' : selectuser.isSelect}"
-                                    >
-                                        <p>{{ selectuser.name + ' / ' + selectuser.email }}</p>
-                                </v-list-item>
-                            </v-list>
+                            <v-list-item
+                                v-for="user in searchList"
+                                :title="user.name + ' / ' + user.email"
+                                :value="user.id"
+                                @click="addmemberdata = user.id"
+                                >
+                            </v-list-item>
+                        </v-list>
                         </div>
-                    </v-col>
-                </v-row>
-            </v-container>
+                    </div>
+                </v-col>
+                <v-col cols="2" class="d-flex flex-column justify-start align-center h-100">
+                    <v-btn width="100" class="ma-3" @click="updateTeam">팀 정보 수정</v-btn>
+                    <v-dialog
+                        v-model="dialog"
+                        persistent
+                        width="auto"
+                        >
+                        <template v-slot:activator="{ props }">
+                            <v-btn
+                            color="primary"
+                            v-bind="props"
+                            width="100" 
+                            class="ma-3"
+                            >
+                            팀장 위임
+                            </v-btn>
+                        </template>
+                        <v-card>
+                            <v-card-text>팀장을 위임할 경우, 해당 팀에 대해 다시 위임받기 전까진 일반 멤버로 머물게 됩니다. 진행하시겠습니까?</v-card-text>
+                            <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                                width="100" class="ma-3"
+                                color="green-darken-1"
+                                variant="text"
+                                @click="dialog = false"
+                            >
+                                취소
+                            </v-btn>
+                            <v-btn
+                                color="green-darken-1"
+                                variant="text"
+                                @click="change"
+                            >
+                                진행
+                            </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                        </v-dialog>
+                    <!-- <v-btn width="100" class="ma-3" @click="change">팀장 위임</v-btn> -->
+                    <v-btn width="100" class="ma-3" @click="addMember">팀 초대</v-btn>
+                    <v-btn width="100" class="ma-3" @click="excludeMember">팀 추방</v-btn>
+                    <v-btn width="100" class="ma-3" color="red-darken-2" @click="removeTeam">팀 삭제</v-btn>
+                </v-col>
+            </v-row>
         </v-card-text>
         <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
             variant="text"
             class="text-h5"
-            @click="emit('closeDialog')"
+            @click="close"
             >
             Close
-            </v-btn>
-            <v-btn
-            variant="text"
-            class="text-h5"
-            @click="create"
-            >
-            Save
             </v-btn>
         </v-card-actions>
     </v-card>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { teamCreate } from '@/api/team.js'
+import { ref, onMounted, watchEffect } from 'vue';
+import { selectTeamMate, addTeamMate, excludeTeamMate, changeLeader, detailTeam, deleteTeam, modifyTeam } from '@/api/team.js';
 import { userSearch } from '@/api/user.js'
+import { useUserStore } from "@/stores/user"
 
-const emit = defineEmits(['closeDialog'])
-const searchList = ref([])
-const selectedUsers = ref([]);
-const searchName = ref('')
-const leaderId = ref('')
+const props = defineProps({
+  teamId: Number
+});
+
+const addmemberdata = ref(null)
+const excludememberdata = ref(null)
 const teamName = ref('')
 const teamDescription = ref('')
+const emit = defineEmits(['closeDialog'])
 
-const create = async () => {
-    const data = {
-        leaderId : leaderId.value,
-        teamName : teamName.value,
-        teamDescription : teamDescription.value,
-        members : selectedUsers.value.map((user) => user.id),
-    }
-    await teamCreate(
-        data,(response) => {
-            console.log(response)
-            emit('closeDialog')
+const searchList = ref([])
+const searchName = ref('')
+const members = ref([])
+const store = useUserStore()
+const dialog = ref(false)
+
+
+// 팀원 조회
+const selectmember = async () => {
+    await selectTeamMate(
+        props.teamId,(response) => {
+            members.value = response.data.dataBody.filter(member => {
+                if (member.email !== store.userInfo.email)
+                    return member
+            })
         },
         (error)=>{
             console.log(error)
         }
     )
-  }
+}
 
-const onClick = async () => {
+// 사용자검색
+const search = async () => {
+    if (searchName.value === '') return;
     const data = searchName.value
-    console.log(searchName.value)
     await userSearch(
         data, (response) => {
-            searchList.value = [];
-            searchList.value = response.data.dataBody.map((x) => {
-                const newData = {
-                    isSelect :false,
-                    isMember : false,
-                    ...x
-                }
-                return newData
-            })
+            searchList.value = response.data.dataBody.filter(member => {
+                return !members.value.some(selectedMember => selectedMember.email === member.email) && member.email !== store.userInfo.email;
+            });
         },
         (error) => {
             console.log(error)
@@ -155,45 +183,122 @@ const onClick = async () => {
     )
 }
 
-const addMember = () => {
-    const newList = searchList.value.filter((user) => {
-        if (!user.isSelect) {
-            return user; // 선택된 사용자만 반환
+// 멤버추가
+const addMember = async () => {
+    if (addmemberdata.value === null) return;
+    const data = {
+        teamid: props.teamId,
+        userid: addmemberdata.value
+    }
+    await addTeamMate(
+        data,(response) => {
+            selectmember();
+            searchList.value = searchList.value.filter(member => member.id !== addmemberdata.value);
+            addmemberdata.value = null;
+        },
+        (error)=>{
+            console.log(error)
         }
-    });
-
-    const selected = searchList.value.filter((user) => {
-        if (user.isSelect) {
-            user.isSelect = false;
-            user.isMember = true;
-            return user; // 선택된 사용자만 반환
-        }
-    });
-
-    selectedUsers.value = selectedUsers.value.concat(selected);
-    searchList.value = newList
-
+    )
 };
 
-const excludeMember = () => {
-    const newList = selectedUsers.value.filter((user) => {
-        if (!user.isSelect) {
-            return user; // 선택된 사용자만 반환
+// 멤버추방
+const excludeMember = async () => {
+    if (excludememberdata.value === null) return;
+    const data = {
+        teamid: props.teamId,
+        userid: excludememberdata.value
+    }
+    await excludeTeamMate(
+        data,(response) => {
+            search()
+            members.value = members.value.filter(member => member.id !== excludememberdata.value);
+            excludememberdata.value = null
+        },
+        (error)=>{
+            console.log(error)
         }
-    });
-    selectedUsers.value = newList
+    )
+};
+
+// 리더위임
+const change = async () => {
+    if (excludememberdata.value === null) {
+        alert('위임받을 팀원을 선택하세요.');
+        return;
+    }
+    const data = {
+        teamid: props.teamId,
+        userid: excludememberdata.value
+    }
+    await changeLeader(
+        data,(response) => {
+            dialog.value = false;
+            close();
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
 }
 
-const clickUser = (user) => {
-    user.isSelect = !user.isSelect
+// 팀 상세정보 조회
+const selectTeamDetail= async () => {
+    await detailTeam(
+        props.teamId,(response) => {
+            teamName.value = response.data.dataBody.teamName
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
+}
+// 팀 정보 수정
+const updateTeam = async () => {
+    console.log(teamName.value, teamDescription.value)
+    const param = {
+        teamId : props.teamId,
+        data : {
+            name : teamName.value,
+            description : teamDescription.value,
+        }
+    }
+    await modifyTeam(
+        param,(response) => {
+            console.log('modify', response.data.dataBody)
+            close();
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
+}
+// 팀 삭제
+const removeTeam = async () => {
+    await deleteTeam(
+        props.teamId,(response) => {
+            console.log('delete', response.data.dataBody)
+            close();
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
 }
 
+// 최초 생성시 팀원 조회
+onMounted(() => {
+    selectmember();
+    selectTeamDetail();
+});
 
-
+const close = () => {
+    emit('closeDialog')
+}
 </script>
 
 <style scoped>
 .selected {
     background-color: aqua;
 }
-</style> -->
+</style>

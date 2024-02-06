@@ -1,10 +1,26 @@
 <template>
   <v-container class="pa-0">
     <v-row class="d-flex align-center justify-start ma-3">
-      <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
-      <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
-      <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
+      <v-col cols="4">
+        <v-row>
+          <v-col cols="3" class="d-flex justify-center align-center">
+            <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
+          </v-col>
+          <v-col cols="6" class="d-flex justify-center align-center">
+            <p> {{ year }} {{ listofmonthword[month] }}</p>
+          </v-col>
+          <v-col cols="3" class="d-flex justify-center align-center">
+            <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
       <v-spacer></v-spacer>
+      <v-btn :disabled="role === 'MEMBER'" class="me-3" @click="dialog=true">
+        <p class="font-weight-black text-h6">팀 관리</p>
+      </v-btn>
+      <v-dialog v-model="dialog" persistent width="70%" height="70%">
+        <TeamModifyDialog @close-dialog="dialog = false" :team-id="props.teamId"/>
+      </v-dialog>  
       <v-btn @click="router.push({ name: 'insertconference', params: { teamid : props.teamId } })">
         <p class="font-weight-black text-h6">회의 예약</p>
       </v-btn>
@@ -30,13 +46,40 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
+import { selectTeam } from '@/api/team.js';
+import TeamModifyDialog from '../team/TeamModifyDialog.vue';
+
 const router = useRouter()
 
 const props = defineProps({
-  teamId: Number
+  teamId: Number,
 });
+const dialog = ref(false);
+const role = ref('');
+
+const select = async () => {
+    const dummy = props.teamId
+    await selectTeam(
+        (response) => {
+            role.value = response.data.dataBody.find(data => data.teamId == props.teamId).role
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
+}
+
+onMounted(() => {
+  select();
+})
+
+// 팀 전환시 팀원 조회
+watchEffect((props, (newValue) => {
+  select();
+}))
+
 
 // 셀렉터 옵션 및 캘린더 옵션들
 const weekday = ref([0, 1, 2, 3, 4, 5, 6])
