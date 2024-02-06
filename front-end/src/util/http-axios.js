@@ -5,7 +5,7 @@ const VUE_APP_API_URL = "http://localhost:8080";
 // accessToken 담아서 던지는 API
 const InterceptorAxios = () => {
     const axiosInstance = axios.create({
-        baseURL: VUE_APP_API_URL,
+        baseURL: `${VUE_APP_API_URL}/api`,
         headers:{
             "Content-Type": "application/json;charset=utf-8"
         }
