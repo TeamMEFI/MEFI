@@ -34,6 +34,7 @@
 import { ref } from "vue"
 import { checkEmailCode } from "@/api/user"
 import { useRoute, useRouter } from "vue-router"
+
 const route = useRoute()
 const router = useRouter()
 // 이메일 인증 정보
@@ -43,20 +44,19 @@ const authCode = ref("")
 const email = route.params.email
 
 // 기능 : 인증코드 확인 api
-// successs : 비밀번호 변경창으로 이동
-// fail : 인증 번호를 다시 확인해주세요
 const vertificate = async () => {
     const param = {
         "email":email,
         "authCode":authCode.value,
     }
-    console.log(param)
-    router.push({name:'search-password3'})
-    // await checkEmailCode(param, (res)=>{
-    //     console.log(res)
-    // },(err)=>{
-    //     console.log(err)
-    // })
+    await checkEmailCode(param, 
+    (res)=>{
+        console.log(email)
+        router.push({name:"search-password3", params:{email:email}})
+    },
+    (err)=>{
+        alert('다시 인증 코드를 입력해주세요')
+    })
 }
 </script>
 

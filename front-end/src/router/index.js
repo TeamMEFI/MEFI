@@ -103,10 +103,12 @@ const router = createRouter({
           })
         },
         {
-          path:'/user/signup/password',
+          path:'/user/signup/password/:email',
           name:'search-password3',
           component: SearchPassword3,
-          
+          props: (route) =>({
+            email:route.params.email
+          })
         }
       ]
     },

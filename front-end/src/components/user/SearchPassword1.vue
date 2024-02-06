@@ -23,12 +23,12 @@
 <script setup>
 import { ref, watch } from "vue"
 import { useRouter } from "vue-router"
-import { sendEmailCode } from "@/api/user"
+import { sendemailcode } from "@/api/user"
+
 const router = useRouter()
 
 // 입력받은 이메일
 const email = ref("")
-
 
 // 버튼 : 이메일 형식이 맞으면 인증 버튼 활성화
 const email_check = ref(true)
@@ -48,24 +48,20 @@ const rule_email = [
 ]
 const regex_email = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
-// 기능 : password 변경 페이지로 이동
-// 해당 이메일을 가진 회원의 비밀번호 변경
+// 기능 : 이메일 인증 코드 보내는 api
+// 기능 : 이메일 인증 코드 입력하는 컴포넌트로 이동
 const goSearchPassword = async () => {
-    // 이메일 인증 번호 던지는 api 연결
     const param = {
         "email":email.value,
     }
-    // await sendEmailCode(param, (res)=>{
-    //     consolo.log(res)
-    //     router.push({name:"search-password2"})
-
-    // },(err)=>{
-    //     console.log(err)
-    //     if (err.response.request.status==400){
-    //         alert(err.response.data.dataHeader.resultMessage)
-    //     }
-    // })
-    router.push({name:"search-password2", params:{email:email.value}})
+    await sendemailcode(param
+    ,(res)=>{
+        router.push({name:"search-password2", params:{email:email.value}})}
+    ,(err)=>{
+        if (err.response.request.status==400){
+            alert(err.response.data.dataHeader.resultMessage)
+        }
+    })
 }
 </script>
 
