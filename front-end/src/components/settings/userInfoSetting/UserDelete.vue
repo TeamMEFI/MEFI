@@ -20,17 +20,17 @@
 <script setup>
 import { userDelete } from '@/api/user';
 import { ref } from 'vue';
-
+import { useRouter } from 'vue-router';
+const router = useRouter()
 const password = ref('')
 
 // 회원 탈퇴하는 함수
 const Delete = async () => {
-    // api
     const param = {
-        currentPassword : password.value
+        "currentPassword" : password.value
     }
     await userDelete(param,
-    (res)=>{console.log(res)},
+    (res)=>{router.push({name:"login"})},
     (err)=>{console.log(err)})
 }
 

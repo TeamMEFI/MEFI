@@ -19,7 +19,6 @@ const store = useUserStore()
 router.beforeEach((to, from)=>{
   if (localStorage.getItem('refreshToken') !== null){
     updateToken(
-      localStorage.getItem('refreshToken'), 
       (res)=>{
         // token 재발급 과정에서 refresh token 만료되었을 시 에러 처리
         if( to.name!='login' 
@@ -32,9 +31,8 @@ router.beforeEach((to, from)=>{
         }
       },
       (err) => {
-        console.log('token err ', err.response.status)
         if (err.response.status==403){
-          localstorage.clear();
+          localStorage.clear();
         }
         router.push({name:'home'})
       }

@@ -36,7 +36,12 @@ export const useUserStore = defineStore('user', () => {
         isLogin.value = true;
       },
       (error)=>{
-        console.log(error)
+        if (error.response.status===401){
+          alert('아이디와 비밀번호를 확인하여 주세요')
+        }
+        else{
+          console.log(error)
+        }
       }
     ).then(()=>{
       router.push({name:'main'})
