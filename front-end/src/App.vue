@@ -32,7 +32,6 @@ router.beforeEach((to, from)=>{
         }
       },
       (err) => {
-        // interceptor ?
         console.log('token err ', err.response.status)
         if (err.response.status==403){
           localstorage.clear();

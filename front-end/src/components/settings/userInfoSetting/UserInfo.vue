@@ -14,6 +14,7 @@
             <v-text-field
                 label="email"
                 :model-value="email"
+                v-model="email"
                 variant="outlined"
                 disabled="true"
             ></v-text-field>
@@ -21,30 +22,33 @@
             <v-text-field 
                 label="name"
                 :model-value="name"
+                v-model="name"
                 variant="outlined"
             ></v-text-field>
 
             <v-text-field 
                 label="position"
                 :model-value="position"
+                v-model="position"
                 variant="outlined"
             ></v-text-field>
 
             <v-text-field 
                 label="department"
                 :model-value="department"
+                v-model="department"
                 variant="outlined"
             ></v-text-field>
             
             <!-- 수정하기 : 누르면 입력창이 활성화 됨 -->
-            <div v-if="disable" >
-                <v-btn @click="toggleDisable" color="#45566F" variant="flat">수정하기</v-btn>
+            <div v-if="disable">
+                <v-btn @click="toggleDisable" class="w-100" color="#45566F" variant="flat" >수정하기</v-btn>
             </div>
             <!-- 저장 : 입력된 정보 저장됨 -->
             <!-- 취소 : 유저 정보는 변경되지 않음. 입력창이 비활성화됨 -->
-            <div v-else>
-                <v-btn @click="updateUserInfo" color="#45566F" variant="flat">저장</v-btn>
-                <v-btn @click="toggleDisable" color="#45566F" variant="outlined">취소</v-btn>
+            <div v-else class="d-flex flex-row justify-space-around">
+                <v-btn @click="updateUserinfo" color="#45566F" variant="flat" class="w-40">저장</v-btn>
+                <v-btn @click="toggleDisable" color="#45566F" variant="outlined" class="w-40">취소</v-btn>
             </div>
         </v-form>
     </v-sheet>
@@ -53,14 +57,20 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useUserStore } from "../../../stores/user";
+import { userModify } from "../../../api/user"
 const store = useUserStore()
+
+// 기능 : 변수 할당 후 렌더링 되도록
 const rendering = ref(false)
+
+// 수정될 정보
 const email = ref("")
 const name = ref("")
 const position = ref("")
 const department = ref("")
 const img = ref("")
 
+// 변수 선언 및 값 저장
 onMounted(()=>{
     email.value = store.userInfo.email
     name.value = store.userInfo.name
@@ -79,26 +89,33 @@ onMounted(()=>{
     rendering.value = true
 })
 
+// 기능 : v-form 비활성화 토글
 const disable = ref(true)
-
-// 수정될 정보
-
-
-// 입력창 활성화 비활성화를 토글하는 함수
 const toggleDisable = () => {
     disable.value = !disable.value
 }
+
 // 회원 정보를 수정하는 rest api
 // 유효성 검사 후 api
-const updateUserInfo = () => {
+const updateUserinfo = async () => {
     if (window.confirm('회원 정보를 수정하시겠습니까?')){
-        user.value = {
-            email:email.value,
+        const user = {
             name:name.value,
             position:position.value,
-            department:department.value,
+            dept:department.value,
+            imgUrl:img.value,
         }
-        // api user info update
+        await userModify(user,(res)=>{
+            console.log(res)
+            // res userinfo store
+            store.userInfo.name = name.value
+            store.userInfo.position = position.value
+            store.userInfo.dept = department.value
+            store.userInfo.imgUrl = img.value
+            disable.value = false
+        },(err)=>{
+            console.log(err)
+        })
     }
 }
 </script>
