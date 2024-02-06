@@ -1,6 +1,7 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ScheduleResDto;
 import com.mefi.backend.api.service.ScheduleService;
 import com.mefi.backend.common.auth.CustomUserDetails;
 import com.mefi.backend.common.model.BaseResponseBody;
@@ -15,7 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/schedule")
+@RequestMapping("api/schedule")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "개인 일정 API", description = "각 팀원은 개인적인 일정을 추가, 수정, 삭제할 수 있다.")
@@ -39,4 +40,17 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0, "SUCCESS"));
     }
 
+    @DeleteMapping("/{scheduleId}")
+    @Operation(summary = "개인 일정 삭제", description = "개인 일정을 DB에서 삭제한다")
+    @ApiResponse(responseCode = "204", description = "")
+    public ResponseEntity<? extends BaseResponseBody> deleteSchedule(Authentication authentication, @PathVariable("scheduleId") Long scheduleId){
+        // 로그인 된 유저 정보 조회
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        // 일정 삭제
+        ScheduleResDto scheduleResDto = scheduleService.deleteSchedule(user.getUserId(), scheduleId);
+
+        // 반환
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(BaseResponseBody.of(0, "SUCCESS"));
+    }
 }
