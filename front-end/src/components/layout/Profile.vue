@@ -12,8 +12,7 @@
       </div>
       <div class="w-75 pl-2">
         <p class="font-weight-black ma-1">{{ username }}</p>
-        <p class="font-weight-black ma-1">{{ userdept }}</p>
-        <p class="font-weight-black ma-1">{{ userposition }}</p>
+        <p class="font-gray ma-1">{{ userdept }} | {{ userposition }}</p>
       </div>
     </div>
 

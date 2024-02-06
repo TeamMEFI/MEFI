@@ -1,6 +1,7 @@
 import { updateToken } from '@/api/user';
 import axios from 'axios';
-const VUE_APP_API_URL = "http://localhost:8080";
+
+const VUE_APP_API_URL = import.meta.env.VITE_APP_API_URL;
 
 // accessToken 담아서 던지는 API
 const InterceptorAxios = () => {
