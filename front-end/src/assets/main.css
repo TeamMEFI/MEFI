@@ -49,6 +49,10 @@ html::-webkit-scrollbar {
   width: 30% !important;
 }
 
+.w-40 {
+  width: 40% !important;
+}
+
 .w-75 {
   width: 75% !important;
 }
