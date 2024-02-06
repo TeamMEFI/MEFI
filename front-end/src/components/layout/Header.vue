@@ -2,12 +2,19 @@
   <v-toolbar title="MEFI" color="#495464" class="w-100">
     <v-spacer></v-spacer>
     <!-- 알림 -->
-    <v-btn variant="text" size="40"
-      ><font-awesome-icon :icon="['fas', 'bell']" style="font-size: 16px"
-    /></v-btn>
+    <v-btn variant="text" size="40">
+      <v-badge :content="alarmCount" color="#E53935">
+        <font-awesome-icon :icon="['fas', 'bell']" style="font-size: x-large;" @click="openAlarms()"/>
+        <v-dialog>
+          <v-card>
+            {{  }}
+          </v-card>
+        </v-dialog>
+      </v-badge>
+    </v-btn>
     <!-- 설정 -->
     <v-btn variant="text" size="40">
-      <font-awesome-icon :icon="['fas', 'gear']" style="font-size: 16px" />
+      <font-awesome-icon :icon="['fas', 'gear']" style="font-size: 16px"/>
       <v-dialog v-model="setting" activator="parent" width="auto">
         <v-card>
           <Setting @close="settingClose"></Setting>
@@ -52,6 +59,8 @@ import { useUserStore } from '../../stores/user'
 import Setting from '../../components/settings/setting/Setting.vue'
 import UserInfoSettingVue from '../settings/userInfoSetting/UserInfoSetting.vue'
 import UserStateSetting from '../settings/userStateSetting/UserStateSetting.vue'
+import AlarmListVue from '../alarm/AlarmList.vue'
+import {alarmAll} from "@/api/alarm"
 
 const store = useUserStore()
 const setting = ref(false)
@@ -80,13 +89,16 @@ const userInfoClose = () => {
   userInfo.value = false
 }
 
-// 목적 : 하위 컴포넌트에서 보낸 변화 감지
-// 기능 : 회원 상태 변경된 변화를 반영하기
-// 작동 : store에 저장된 회원 정보를 변경 및 color 속성 동적 할당
-// 작동 : 변경 및 해당 모달창 닫기
+// 회원 상태 변화 반영
 const changeStatus = (color) => {
   store.userInfo.status = color
   userStatus.value = false
+}
+
+// 알림
+const alarmCount = ref(0)
+const openAlarms = async () => {
+  alarmAll((res)=>{console.log(res), (err)=>{console.log(err)}})
 }
 </script>
 
