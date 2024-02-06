@@ -120,7 +120,7 @@ const publisherScreen = ref(null)
 const subscribers = ref([])
 
 // Join form
-const sessionId = ref('ascs')
+const sessionId = ref(`meficonference-${teamId.value}-${conferenceId.value}`)
 const createdSessionId = ref('')
 const userName = ref(userStore?.userInfo.name)
 
@@ -224,7 +224,6 @@ const sendChat = (content) => {
 
 // 세션 참가
 const joinSession = () => {
-  console.log(userName.value)
   OVCamera.value = new OpenVidu()
   OVScreen.value = new OpenVidu()
 
@@ -408,7 +407,6 @@ const createSession = async (sessionId) => {
   await makeSession(
     { customSessionId: sessionId },
     (response) => {
-      console.log(response)
       console.log(createdSessionId.value)
       createdSessionId.value = response.data.dataBody
     },
@@ -424,8 +422,7 @@ const createToken = async (sessionId) => {
   await makeToken(
     sessionId,
     (response) => {
-      console.log(response)
-      createdToken = response.data.dataBody
+      createdToken = response.data.dataBody.token
     },
     (error) => {
       console.error(error)

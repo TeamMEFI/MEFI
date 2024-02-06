@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps } from 'vue'
+import { defineProps } from 'vue'
 import OvVideo from './OvVideo.vue'
 
 const props = defineProps({

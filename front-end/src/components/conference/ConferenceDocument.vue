@@ -42,7 +42,7 @@ const provider = new WebsocketProvider(
   // `ws${location.protocol.slice(4)}//${location.host}/ws`,
   // `ws://localhost:5460/ws`,
   'wss://demos.yjs.dev/ws', // use the public ws server
-  `mefi123-${route.params.conferenceId}`,
+  `mefi123-${teamId.value}-${conferenceId.value}`,
   ydoc
 )
 
