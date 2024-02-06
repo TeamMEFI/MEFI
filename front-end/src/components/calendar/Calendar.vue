@@ -1,9 +1,19 @@
 <template>
   <v-container class="pa-0">
     <v-row class="d-flex align-center justify-start ma-2">
-      <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
-      <p class="mx-12"> {{ year }} {{ listofmonthword[month] }}</p>
-      <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
+      <v-col cols="4">
+        <v-row>
+          <v-col cols="3" class="d-flex justify-center align-center">
+            <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
+          </v-col>
+          <v-col cols="6" class="d-flex justify-center align-center">
+            <p> {{ year }} {{ listofmonthword[month] }}</p>
+          </v-col>
+          <v-col cols="3" class="d-flex justify-center align-center">
+            <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
       <v-spacer></v-spacer>
       <v-btn @click="router.push({ name: 'insertschedule' })">
         <p class="font-weight-black text-h6">개인 일정 생성</p>

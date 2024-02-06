@@ -27,9 +27,6 @@ a {
   padding: 3px;
 }
 
-html::-webkit-scrollbar {
-  display: none;
-}
 
 /* 배경색 지정 */
 .bg-white {
@@ -110,6 +107,10 @@ html::-webkit-scrollbar {
   height: 70% !important;
 }
 
+.h-80 {
+  height: 80% !important;
+}
+
 .h-85 {
   height: 85% !important;
 }
@@ -150,4 +151,12 @@ html::-webkit-scrollbar {
 
 .border-right {
   border-right: 1px solid lightgray;
+}
+
+.auto-scroll {
+  overflow-y: auto;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
