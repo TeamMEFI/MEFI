@@ -1,6 +1,7 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ScheduleResDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.PrivateSchedule;
@@ -38,5 +39,21 @@ public class ScheduleServiceImpl implements  ScheduleService{
 
         // 일정 등록
         scheduleRepository.save(privateSchedule);
+    }
+
+    @Override
+    @Transactional
+    public ScheduleResDto deleteSchedule(Long userId, Long alarmId) {
+        // 삭제하려는 일정 조회, 존재하지 않는다면 예외 발생
+        PrivateSchedule schedule = scheduleRepository.findById(alarmId).orElseThrow(()->new Exceptions(ErrorCode.SCHEDULE_NOT_EXIST));
+
+        // 일정을 등록한 유저가 아니라면 예외 발생
+        if(userId != schedule.getUser().getId()){
+            throw new Exceptions(ErrorCode.SCHEDULE_ACCESS_DENIED);
+        }
+
+        // 일정 삭제
+        scheduleRepository.delete(schedule);
+        return new ScheduleResDto(schedule);
     }
 }
