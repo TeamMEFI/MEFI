@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/openvidu/api")
+@RequestMapping("/api/openvidu/api")
 @CrossOrigin(origins = "*")
 public class OpenViduController {
 

@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
 
                         // 작성된 경로 모든 사용자 접근 허용
-                        .requestMatchers("/", "/users", "/users/login", "/users/**").permitAll()
+                        .requestMatchers("/", "/api", "/api/users", "/api/users/login", "/api/users/**").permitAll()
                         // Swagger 접근 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
@@ -97,7 +97,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         // 클라이언트에서 온 요청 중에서 허용할 도메인 설정
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        configuration.setAllowedOrigins(Collections.singletonList("https://i10d204.p.ssafy.io"));
 
                         // 모든 HTTP 메서드 허용 설정
                         configuration.setAllowedMethods(Collections.singletonList("*"));
