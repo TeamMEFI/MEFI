@@ -60,7 +60,7 @@ cloud:
     stack:
       auto: false # EC2의 Spring Cloud 자동 구성 해제
 # OPENVIDU
-OPENVIDU_URL: ENC(cAdKcPlcuC90ofK+D2NywDLSRWYAzxg+U0WcVETNksE=)
-OPENVIDU_SECRET: ENC(uysFfMAdi7gMwmSUIGJWvXEnWq+2w5BWpy+QQl87C7g=)
+OPENVIDU_URL: ENC(/JNrRlfJxD6r56rgRs+bT9fSGwVzr+y8OnOhMQtNekbsi8F4La34drl9fgdsqLq9)
+OPENVIDU_SECRET: ENC(hwb45ywSah0r1wahddgmpFSSC1etSbImoUoje/sScb8=)
 logging.level:
   org.hibernate.SQL: debug  # logger로 Hibernate 실행 SQL을 남긴다.
