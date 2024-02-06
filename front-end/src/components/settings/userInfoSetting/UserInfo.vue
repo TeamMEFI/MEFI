@@ -112,7 +112,7 @@ const updateUserinfo = async () => {
             store.userInfo.position = position.value
             store.userInfo.dept = department.value
             store.userInfo.imgUrl = img.value
-            disable.value = false
+            disable.value = true
         },(err)=>{
             console.log(err)
         })

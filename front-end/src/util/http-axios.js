@@ -1,6 +1,8 @@
 import { updateToken } from '@/api/user';
 import axios from 'axios';
+
 const VUE_APP_API_URL = "http://localhost:8080";
+
 
 // accessToken 담아서 던지는 API
 const InterceptorAxios = () => {
@@ -37,24 +39,22 @@ const InterceptorAxios = () => {
             console.log('axios interceptors response error ',error)
             const originalRequest = error.config
             let refreshToken = localStorage.getItem('refreshToken')
-            if(error.response.status === 403){
-                console.log(error.response)
-                // if (error.response.error_code==='T001'){}
+            if (refreshToken === null || error.response.status === 403){
+                navigator('/users/login')
+            }
+            else if (error.response.status === 400) {
                 updateToken(
                     (res)=>{
-                        console.log(res.data.dataBody.accessToken)
                         localStorage.setItem('accessToken', res.data.dataBody.accessToken)
                         originalRequest.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
                         return axiosInstance(originalRequest)
                     },(err)=>{
                         console.log(err)
-                        console.log('에세스토큰 재발급 API error', err)
-                        // router.push({name:'home'})
-                        // return Promise.reject(err)
                     })
-            }else{
+            }
+            else{
                 console.log('error response 400 아님')
-                // router.push({name:'login'})
+                navigator('/users/login')
             }
         }
     )

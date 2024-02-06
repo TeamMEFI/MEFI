@@ -14,7 +14,7 @@ async function sendEmailCode(param, success, fail){
     await local.post(`/users/join/auth`,param).then(success).catch(fail)
 }
 async function checkEmailCode(param, success, fail){
-    await local.post(`/users/join/auth/check`,param).then(success).catch(fail)
+    await local.post(`/users/auth/check`,param).then(success).catch(fail)
 }
 async function updateToken(success, fail){
     local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('refreshToken')}`
@@ -24,13 +24,13 @@ async function userSearch(param, success, fail){
     await local.get(`/users/search/${param}`, param).then(success).catch(fail);
 }
 async function userModify(param, success, fail){
-    local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
+    interceptor.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
     await interceptor.put(`/users/info`,param).then(success).catch(fail)
 }
-
 async function userDelete(param, success, fail){
-    local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
-    await interceptor.delete(`/api/users`, {params: param}).then(success).catch(fail)
+    console.log('delete api ', param, localStorage.getItem('accessToken'))
+    interceptor.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
+    await interceptor.delete(`/users`, {data: param}).then(success).catch(fail)
 }
 export { 
     userLogin, 
@@ -40,6 +40,6 @@ export {
     checkEmailCode, 
     userSearch, 
     userModify, 
-    userDelete 
+    userDelete,
 };
 

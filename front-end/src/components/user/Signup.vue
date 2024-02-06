@@ -162,6 +162,7 @@ const emailCheck = async () => {
     (res)=>{
         emailDialog.value = true
     },(err)=>{
+        console.log(err)
         if(err.response.data.dataHeader.resultCode=="U-003"){
             alert(err.response.data.dataHeader.resultMessage)
         }
