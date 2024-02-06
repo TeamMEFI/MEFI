@@ -13,8 +13,15 @@ async function userSignup(param, success, fail){
 async function sendEmailCode(param, success, fail){
     await local.post(`/users/join/auth`,param).then(success).catch(fail)
 }
+async function sendemailcode(param, success, fail){
+    await local.post(`/users/pwd/auth`,param).then(success).catch(fail)
+}
 async function checkEmailCode(param, success, fail){
     await local.post(`/users/auth/check`,param).then(success).catch(fail)
+}
+async function passwordFind(param, success,fail){
+    console.log(param)
+    await local.patch(`/users/pwd/recovery`, param).then(success).catch(fail)
 }
 async function updateToken(success, fail){
     local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('refreshToken')}`
@@ -41,5 +48,7 @@ export {
     userSearch, 
     userModify, 
     userDelete,
+    sendemailcode,
+    passwordFind,
 };
 

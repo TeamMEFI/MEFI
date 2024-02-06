@@ -29,8 +29,12 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { passwordFind } from "@/api/user";
+
 const router = useRouter()
+const route = useRoute()
+const email = route.params.email
 
 // 입력받은 정보
 const password = ref('')
@@ -53,9 +57,20 @@ const rule_pass_check = [
 const regex_pass =  /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,16}$/
 
 // 비밀 번호 변경 api
-const chagnePassword = () => {
-    // api 연결
-    router.push({name:'home'})
+const chagnePassword = async () => {
+    const param = {
+        "email":email,
+        "modifyPassword":password.value,
+    }
+    await passwordFind(param,
+    (res)=>{
+        console.log(res)
+        router.push({name:'login'})
+    },(err)=>{
+        if(err.response.status===400){
+            alert(err.response.data.dataHeader.resultMessage)
+        }
+    })
 }
 </script>
 
