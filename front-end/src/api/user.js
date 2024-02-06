@@ -20,8 +20,11 @@ async function checkEmailCode(param, success, fail){
     await local.post(`/users/auth/check`,param).then(success).catch(fail)
 }
 async function passwordFind(param, success,fail){
-    console.log(param)
     await local.patch(`/users/pwd/recovery`, param).then(success).catch(fail)
+}
+async function passwordChange(param, success,fail){
+    interceptor.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
+    await interceptor.patch(`/users/pwd`, param).then(success).catch(fail)
 }
 async function updateToken(success, fail){
     local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('refreshToken')}`
@@ -50,5 +53,6 @@ export {
     userDelete,
     sendemailcode,
     passwordFind,
+    passwordChange,
 };
 
