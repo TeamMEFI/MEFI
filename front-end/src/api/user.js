@@ -8,7 +8,6 @@ async function userLogin(param, success, fail){
     await local.post(`/users/login`, param).then(success).catch(fail);
 }
 async function userSignup(param, success, fail){
-    // local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
     await local.post(`/users`, param).then(success).catch(fail);
 }
 async function sendEmailCode(param, success, fail){
@@ -24,5 +23,23 @@ async function updateToken(success, fail){
 async function userSearch(param, success, fail){
     await local.get(`/users/search/${param}`, param).then(success).catch(fail);
 }
-export { userLogin, userSignup, updateToken, sendEmailCode, checkEmailCode,userSearch };
+async function userModify(param, success, fail){
+    local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
+    await interceptor.put(`/users/info`,param).then(success).catch(fail)
+}
+
+async function userDelete(param, success, fail){
+    local.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
+    await interceptor.delete(`/api/users`, {params: param}).then(success).catch(fail)
+}
+export { 
+    userLogin, 
+    userSignup, 
+    updateToken, 
+    sendEmailCode, 
+    checkEmailCode, 
+    userSearch, 
+    userModify, 
+    userDelete 
+};
 

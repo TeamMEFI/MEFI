@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
-import { userLogin, userSignup } from '@/api/user.js'
+import { userLogin, userSignup, userModify } from '@/api/user.js'
 
 // user store
 // login, signup, user info, 토큰 관리

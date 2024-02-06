@@ -40,17 +40,17 @@ const InterceptorAxios = () => {
             if(error.response.status === 403){
                 console.log(error.response)
                 // if (error.response.error_code==='T001'){}
-                updateToken()
-                    .then((res)=>{
-                        console.log(res)
-                        localStorage.setItem('accessToken', res.data.accessToken)
-                        originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`
+                updateToken(
+                    (res)=>{
+                        console.log(res.data.dataBody.accessToken)
+                        localStorage.setItem('accessToken', res.data.dataBody.accessToken)
+                        originalRequest.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
                         return axiosInstance(originalRequest)
-                    })
-                    .catch((err)=>{
+                    },(err)=>{
+                        console.log(err)
                         console.log('에세스토큰 재발급 API error', err)
                         // router.push({name:'home'})
-                        return Promise.reject(err)
+                        // return Promise.reject(err)
                     })
             }else{
                 console.log('error response 400 아님')
