@@ -1,6 +1,7 @@
 package com.mefi.backend.db.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ public class Conference {
 
     private Long leaderId; // 팀장ID
 
-    private LocalDateTime callStart; //
+    private LocalDateTime callStart;
 
     private LocalDateTime callEnd;
 
@@ -37,4 +38,18 @@ public class Conference {
 
     @OneToMany(mappedBy = "conference")
     private List<MeetingFile> meetingFiles = new ArrayList<>();
+
+    @Builder
+    public Conference(Long leaderId, String title, String description,
+                      LocalDateTime callStart, LocalDateTime callEnd, Team team, String thumbnailUrl) {
+
+        this.leaderId = leaderId;
+        this.title = title;
+        this.description = description;
+        this.callStart = callStart;
+        this.callEnd = callEnd;
+        this.team = team;
+        this.status = ConferenceStatus.DONE;
+        this.thumbnailUrl = thumbnailUrl;
+    }
 }

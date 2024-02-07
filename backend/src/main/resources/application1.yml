@@ -1,0 +1,81 @@
+spring:
+
+  # database
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mefi?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: root
+
+  # jpa
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true;
+
+  # encoding
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+
+  # secret key
+  jwt:
+    secret: ssafy10gifirstprojectsecretkeysettingvalue202401231254
+    filter: 9s5h0i2n0e9
+
+  # mail smtp
+  mail:
+    # 서버 주소
+    host: smtp.naver.com
+    # 메일 인증 서버 포트 (587, 465 존재, SSL은 465)
+    port: 465
+    # 아이디
+    username: mefi_undefined@naver.com
+    # 비밀번호
+    password: mefiD204
+    #
+    properties:
+      # 메일 디버그 모드 설정 (전송 과정 로그 출력)
+      debug: true
+      mail:
+        smtp:
+          # SMTP 인증 활성화 (활성시 로그인 때 계정 정보 필요)
+          auth: true
+          ssl:
+            # SSL 보안 설정 (전송 과정 데이터 암호화 제공)
+            enable: true
+            # 신뢰할 수 있는 SMTP 서버 호스트 지정
+            trust: smtp.naver.com
+          # STARTTLS 연결을 활성화 (평문 통신 채널에서 암호화 통신 채널로 업그레이드)
+          starttls.enable: true
+
+# AWS S3
+cloud:
+  aws:
+    s3:
+      bucket: mefi-bucket
+      credentials:
+        access-key: AKIAU3CCJCMAM32KSOMW
+        secret-key: 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
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false # EC2의 Spring Cloud 자동 구성 해제
+
+# OPENVIDU
+OPENVIDU_URL : http://localhost:4443/
+OPENVIDU_SECRET : MEFID204FIRSTPROJECT
+
+logging.level:
+  org.hibernate.SQL: debug  # logger로 Hibernate 실행 SQL을 남긴다.
+
+# response encoding
+server:
+  servlet:
+    encoding:
+      force-response: true
