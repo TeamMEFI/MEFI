@@ -82,10 +82,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // JWT 발급 (아이디, 직책, 만료 기간)
         // accessToken, refreshToken 생성
-        // accessToken : 테스트 - 5분, 추후 - Duration.ofHours(1)
-        // refreshToken : 테스트 - 10분, 추후 - Duration.ofHours(6)
-        String accessToken = jwtUtil.createJwt(user.getEmail(), null, 60*5*1000L);
-        String refreshToken = jwtUtil.createJwt(user.getEmail(), null, 60*10*1000L);
+        // accessToken : 테스트 - 1시간, 추후 - Duration.ofHours(1)
+        // refreshToken : 테스트 - 7일, 추후 - Duration.ofHours(6)
+        String accessToken = jwtUtil.createJwt(user.getEmail(), null, 60*60*1000L);
+        String refreshToken = jwtUtil.createJwt(user.getEmail(), null, 7*24*60*60*1000L);
 
         // 유저 식별 아이디로 토큰 조회
         Optional<Token> token = tokenRepository.findByUserId(user.getId());
