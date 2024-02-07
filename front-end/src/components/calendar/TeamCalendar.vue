@@ -106,18 +106,18 @@ const makecalendar = (year, month) => {
   // 이전 달 
   for (let i = startday - 1; i >= 0 ; i--) {
     new_list[i]['type'] = 'not_current' 
-    new_list[i]['date'] = prevenddate--
+    new_list[i]['date'] = String(year) + String(month ? 0 : 12).padStart(2,'0') + String(prevenddate--).padStart(2,'0')
   }
 
   // 현재 달
   for (let j = startday; j < enddate + startday; j++) {
-    new_list[j]['date'] = current++
+    new_list[j]['date'] = String(year) + String(month).padStart(2,'0') + String(current++).padStart(2,'0')
   }
 
   // 다음달
   for (let k = enddate + startday; k < 42; k++) {
     new_list[k]['type'] = 'not_current' 
-    new_list[k]['date'] = next++
+    new_list[k]['date'] = String(year) + String(month).padStart(2,'0') + String(next++).padStart(2,'0')
   }
 
   // 일자 데이터 주차별 나누기
