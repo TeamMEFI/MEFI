@@ -420,7 +420,7 @@ const createSession = async (sessionId) => {
     { customSessionId: sessionId },
     teamId.value,
     (response) => {
-      createdSessionId.value = response.data.dataBody
+      createdSessionId.value = response?.data.dataBody
     },
     (error) => {
       console.error(error)
@@ -432,10 +432,10 @@ const createToken = async (sessionId) => {
   let createdToken;
 
   await makeToken(
-    { sessionId: sessionId },
-    sessionId,
+    { "sessionId": `${sessionId}` },
+    teamId.value,
     (response) => {
-      createdToken = response.data.dataBody.token
+      createdToken = response?.data.dataBody.token
     },
     (error) => {
       console.error(error)

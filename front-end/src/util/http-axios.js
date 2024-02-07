@@ -44,7 +44,7 @@ const InterceptorAxios = () => {
                     (res)=>{
                         localStorage.setItem('accessToken', res.data.dataBody.accessToken)
                         originalRequest.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
-                        return axiosInstance(originalRequest)
+                        // return axiosInstance(originalRequest)
                     },(err)=>{
                         return Promise.reject(err)
                     })
