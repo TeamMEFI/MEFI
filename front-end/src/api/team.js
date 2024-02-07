@@ -1,8 +1,6 @@
 import { InterceptorAxios } from "@/util/http-axios";
 import { localAxios } from "@/util/http-commons";
-import { InterceptorAxios } from '@/util/http-axios'
 
-const interceptor = InterceptorAxios()
 const local = localAxios();
 const interceptor = InterceptorAxios();
 
