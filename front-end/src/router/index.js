@@ -43,9 +43,12 @@ const router = createRouter({
           })
         },
         {
-          path: '/insert/schedule',
+          path: '/insert/schedule/:date',
           name: 'insertschedule',
           component: InsertSchedule,
+          props: (route) => ({
+            date: String(route.params.date)
+          })
         },
         {
           path: '/insert/conference/:teamid',
