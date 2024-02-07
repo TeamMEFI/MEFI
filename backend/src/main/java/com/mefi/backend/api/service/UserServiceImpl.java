@@ -14,7 +14,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.ErrorResponseException;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -25,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TokenRepository tokenRepository;
+    private final FileService fileService;
 
     // 회원가입
     @Override
@@ -85,7 +89,7 @@ public class UserServiceImpl implements UserService {
     // 회원 정보 전체 수정
     @Override
     @Transactional
-    public UserModifyAllResDto modifyUserInfoAll(Long id, UserModifyAllReqDto userModifyAllReqDto) {
+    public UserModifyAllResDto modifyUserInfoAll(Long id, UserModifyAllReqDto userModifyAllReqDto, MultipartFile profileImg) throws IOException {
 
         // 유저 조회
         if (!userRepository.findById(id).isPresent())
@@ -93,11 +97,24 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findById(id).get();
 
+        // 변경할 프로필 이미지 존재하는지 확인
+        String imgUrl = userModifyAllReqDto.getImgUrl();
+        log.info("Updated Profile Image : {}", profileImg.getOriginalFilename());
+
+        if(profileImg!=null){
+            // 기존 이미지 삭제
+            fileService.deleteProfile(user.getImgUrl());
+
+            // 새로운 이미지 업로드
+            imgUrl = fileService.createProfile(profileImg);
+        }
+
+        
         // 전체 수정
         user.updateAll(userModifyAllReqDto.getName(),
                 userModifyAllReqDto.getDept(),
                 userModifyAllReqDto.getPosition(),
-                userModifyAllReqDto.getImgUrl());
+                imgUrl);
 
         // 변경된 유저 정보 Dto에 담기
         UserModifyAllResDto userModifyAllResDto = new UserModifyAllResDto(

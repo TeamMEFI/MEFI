@@ -4,7 +4,9 @@ import com.mefi.backend.api.request.*;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.UserModifyAllResDto;
 import com.mefi.backend.db.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
@@ -22,7 +24,7 @@ public interface UserService {
     List<MemberResDto> getSearchUsers(String keyword);
 
     // 회원 정보 전체 수정
-    UserModifyAllResDto modifyUserInfoAll(Long userId, UserModifyAllReqDto userModifyAllReqDto);
+    UserModifyAllResDto modifyUserInfoAll(Long userId, UserModifyAllReqDto userModifyAllReqDto, MultipartFile profileImg) throws IOException;
     
     // 회원 정보 부분 수정
     void modifyUserInfo(Long userId, UserModifyReqDto userModifyReqDto);
