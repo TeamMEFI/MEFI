@@ -1,7 +1,7 @@
 <template>
-  <v-app class="bg-grey-darken-4">
+  <v-app v-if="userStore.userInfo !== null" class="bg-grey-darken-4">
     <div :class="['conference-view', layoutType]">
-      <v-infinite-scroll id="conference-video" :height="layoutType.slice(-1) === '3' ? '' : '90vh'">
+      <v-infinite-scroll id="conference-video" class="ma-0 pa-0" tag="div" :height="layoutType.slice(-1) === '3' ? '' : '90vh'">
         <ConferenceVideo
           :videoStatus="videoStatus"
           @end-conference="changeConferenceState"
@@ -27,12 +27,20 @@
 
       <v-list class="d-flex justify-space-around px-2 bg-grey-darken-4 rounded-lg">
         <v-list-item type="button" align="center" @click="changeCameraStatus">
-          <font-awesome-icon v-if="videoStatus.cameraStatus" :icon="['fas', 'video']" style="color: #ffffff" />
+          <font-awesome-icon
+            v-if="videoStatus.cameraStatus"
+            :icon="['fas', 'video']"
+            style="color: #ffffff"
+          />
           <font-awesome-icon v-else :icon="['fas', 'video-slash']" style="color: #ffffff" />
           <p class="text-overline">카메라</p>
         </v-list-item>
         <v-list-item type="button" align="center" @click="changeVoiceStatus">
-          <font-awesome-icon v-if="videoStatus.voiceStatus" :icon="['fas', 'microphone']" style="color: #ffffff" />
+          <font-awesome-icon
+            v-if="videoStatus.voiceStatus"
+            :icon="['fas', 'microphone']"
+            style="color: #ffffff"
+          />
           <font-awesome-icon v-else :icon="['fas', 'microphone-slash']" style="color: #ffffff" />
           <p class="text-overline">마이크</p>
         </v-list-item>
@@ -73,20 +81,36 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { useSettingStore } from '@/stores/setting'
+
 import ConferenceVideo from '@/components/conference/ConferenceVideo.vue'
 import ConferenceDocument from '@/components/conference/ConferenceDocument.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { selectTeamMate } from '@/api/team'
 
+const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
+const settingStore = useSettingStore()
+
+const teamId = ref(route.params?.teamid)
+const conferenceId = ref(route.params?.conferenceid)
+
+const teamMembers = ref([])
+
+// bottom sheet 변수
 const sheet = ref(false)
 
 // overlay 설정 변수
-const layoutType = ref('conference-view3')
+const layoutType = ref(settingStore.conferenceLayout)
 
 const conferenceState = ref(true)
 
 const videoStatus = ref({
-  layoutType: 'conference-view3',
+  layoutType: settingStore.conferenceLayout,
   screenShared: false,
   cameraStatus: true,
   voiceStatus: true,
@@ -114,7 +138,35 @@ const changeConferenceState = () => {
 const changeOverlay = (layout) => {
   layoutType.value = layout
   videoStatus.value.layoutType = layout
+  settingStore.conferenceLayout = layout
 }
+
+const selectmember = async () => {
+  await selectTeamMate(
+    teamId.value,
+    (response) => {
+      if (response.data.dataBody !== null) {
+        teamMembers.value = response.data.dataBody
+      }
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
+onMounted(async () => {
+  await selectmember()
+
+  // 이용자가 팀의 멤버가 맞는지 확인하는 메서드
+  const isIncluded = teamMembers.value.filter((teamMember) => {
+    return teamMember.email === userStore.userInfo?.email
+  })
+
+  if (isIncluded.length === 0) {
+    router.replace({ name: 'notFound' })
+  }
+})
 </script>
 
 <style scoped>
