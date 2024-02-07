@@ -22,6 +22,7 @@ public class NotiRepositoryCustomImpl implements NotiRepositoryCustom {
     @Override
     public SseEmitter saveEmitter(String emitterId, SseEmitter emitter) {
         emitters.put(emitterId, emitter);
+        log.info("Emitter Count : {}", emitters.size());
         return emitter;
     }
 

@@ -22,7 +22,7 @@ public class TokenServiceImpl implements TokenService {
     public CreateAccessTokenResDto createAccessToken(User user, String refreshToken) {
 
         // 엑세스 토큰 재발급 및 저장
-        String accessToken = jwtUtil.createJwt(user.getEmail(), user.getPosition(), 60*5*1000L);
+        String accessToken = jwtUtil.createJwt(user.getEmail(), user.getPosition(), 60*60*1000L);
         return new CreateAccessTokenResDto(accessToken);
     }
 
