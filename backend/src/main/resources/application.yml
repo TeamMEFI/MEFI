@@ -60,6 +60,9 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false # EC2의 Spring Cloud 자동 구성 해제
+
+DEFAULT_PROFILE_URL : ENC(Dp06UzclQawgo6UvSMClII7TqN2vwL/wZ6bf5It4nNreW8qGT31HyyH44JumXFcCAs6ZyFZjDRsiV/9q1pOibNk/N4ueEHTK6eSLJPPzpaXA4lIBQDmY2A==)
+
 # OPENVIDU
 OPENVIDU_URL: ENC(/JNrRlfJxD6r56rgRs+bT9fSGwVzr+y8OnOhMQtNekbsi8F4La34drl9fgdsqLq9)
 OPENVIDU_SECRET: ENC(hwb45ywSah0r1wahddgmpFSSC1etSbImoUoje/sScb8=)
