@@ -4,6 +4,7 @@ import com.mefi.backend.db.entity.UserTeam;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -11,7 +12,7 @@ import java.util.Optional;
 public interface TeamUserRepository extends JpaRepository<UserTeam, Long>, TeamUserRepositoryCustom {
 
     @Query("SELECT ut FROM UserTeam ut WHERE ut.user.id = :userId AND ut.team.id = :teamId")
-    Optional<UserTeam> findByUserIdAndTeamId(Long userId, Long teamId);
+    Optional<UserTeam> findByUserIdAndTeamId(@Param("userId") Long userId,@Param("teamId") Long teamId);
 
     @Modifying
     @Query("DELETE FROM UserTeam ut WHERE ut.team.id = :teamId")
