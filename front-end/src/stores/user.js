@@ -8,7 +8,7 @@ import { alarmSubscribe } from '@/api/alarm'
 // login, signup, user info, 토큰 관리
 export const useUserStore = defineStore('user', () => {
   const router = useRouter()
-  const isLogin = ref(true)
+  const isLogin = ref(true) // store.isLogin
   const userInfo = ref(null)
 
   // 회원 가입 함수
@@ -29,12 +29,16 @@ export const useUserStore = defineStore('user', () => {
   // 로그인 함수
   // user 정보 : email, password
   const login = async (user) => {
+    const loginFlage = ref(false)
     await userLogin(
-      user,(response) => {
+      user,
+      (response) => {
         userInfo.value = response.data.dataBody
         localStorage.setItem("accessToken", response.headers.accesstoken)
         localStorage.setItem("refreshToken", response.headers.refreshtoken)
         isLogin.value = true;
+        loginFlage.value = true
+        console.log('login api', localStorage.getItem('accessToken'),)
       },
       (error)=>{
         console.log(error.response)
@@ -45,28 +49,22 @@ export const useUserStore = defineStore('user', () => {
           console.log(error)
         }
       }
-    ).then( async ()=>{
-      // cache 활용해서 저장하기 1. localStorage 2. Cookies 사용 하기
-
-      // 사용할거면 localStorage를 사용해야함. 수동 만료 & 오래 보관함.
-
-      // 근데 logout localStorage 전체 삭제가 아니라, token & userinfo만 삭제
-
-      // 의문? local에 저장해서 사용하는 방식이 과연 안전하고 확실한가
-      // 근데 해당 컴퓨터로 다른 사용자가 이용하면?
-      
-      // sse api lasteventid -> 필수아님, 전체읽음으로 판단.
-      // "lastEventId":""
+    )
+    
+    .then( async ()=>{
+      console.log(loginFlage.value)
       const param = {
-        // 마지막 수신된 데이터 id
         "lastEventId":"",
       }
-      await alarmSubscribe(param,
-        (res)=>{console.log(res),
-        (err)=>{console.log(err)}
-      }).then( async()=>{
-        await router.push({name:'main'})
-      })
+      if(loginFlage.value===true){
+        console.log('sse 연결 api')
+        await alarmSubscribe(param,
+          (res)=>{console.log(res, "성공"),
+          (err)=>{console.log(err, "실패")}
+        }).then( async()=>{
+          await router.push({name:'main'})
+        })  
+      }
     })
   }
 

@@ -33,15 +33,13 @@ const InterceptorAxios = () => {
         },
         function(error){
             const originalRequest = error.config
-            let refreshToken = localStorage.getItem('refreshToken')
             // refresh token -> router push login // access token -> updateToken
-            if (error.response.status === 403 && error.response.data !== "" && (error.response.data.dataHeader.resultCode === "T-001" || error.response.data.dataHeader.resultCode === "T-002")) {
+            if (error.response.status === 403 && error.response.data !== "" && (error.response.data.dataHeader.resultCode === "T-001")) {
                 updateToken(
                     (res)=>{
                         localStorage.setItem('accessToken', res.data.dataBody.accessToken)
                         originalRequest.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
                         console.log(res)
-                        console.log('access token 재발급 성공')
                         return axiosInstance(originalRequest)
                     },(err)=>{
                         console.log(err)
@@ -49,6 +47,7 @@ const InterceptorAxios = () => {
                     })
             }
             else{
+                console.log(error)
                 return Promise.reject(error)
             }
         }
