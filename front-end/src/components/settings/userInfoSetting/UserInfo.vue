@@ -5,7 +5,6 @@
 
             <div class="d-flex flex-row justify-center alien-center my-5">
                 <label for="photo">
-                    <!-- 이미지 src 동적으로 할당하고 싶은데, 왜 반영이 안될까 -->
                     <img class="cursor-pointer" :src="previewPhoto" style="object-fit: cover; margin: 5px; width: 120px; height: 120px; border-radius: 50%;"/>
                 </label>
                 <input :disabled="disable" id="photo" type="file" ref="photo" hidden @change="changePhoto"/>
@@ -70,10 +69,11 @@ const position = ref("")
 const department = ref("")
 const img = ref("")
 
-// 
+// 이미지 미리보기를 위한 변수
 const photo = ref(null)
 const previewPhoto = ref("@/assets/defaultImg.PNG");
 
+// 이미지 선택할 경우 이미지를 URL로 변환 후 previewPhoto 변수에 할당
 const changePhoto = () => {
     const image = photo.value.files[0]
     const imageURL = URL.createObjectURL(image)
