@@ -1,13 +1,14 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
-import { userLogin, userSignup, userModify } from '@/api/user.js'
+import { userLogin, userSignup } from '@/api/user.js'
+import { alarmSubscribe } from '@/api/alarm'
 
 // user store
 // login, signup, user info, 토큰 관리
 export const useUserStore = defineStore('user', () => {
   const router = useRouter()
-  const isLogin = ref(true)
+  const isLogin = ref(true) // store.isLogin
   const userInfo = ref(null)
 
   // 회원 가입 함수
@@ -28,14 +29,19 @@ export const useUserStore = defineStore('user', () => {
   // 로그인 함수
   // user 정보 : email, password
   const login = async (user) => {
+    const loginFlage = ref(false)
     await userLogin(
-      user,(response) => {
+      user,
+      (response) => {
         userInfo.value = response.data.dataBody
         localStorage.setItem("accessToken", response.headers.accesstoken)
         localStorage.setItem("refreshToken", response.headers.refreshtoken)
         isLogin.value = true;
+        loginFlage.value = true
+        console.log('login api', localStorage.getItem('accessToken'),)
       },
       (error)=>{
+        console.log(error.response)
         if (error.response.status===401){
           alert('아이디와 비밀번호를 확인하여 주세요')
         }
@@ -43,8 +49,22 @@ export const useUserStore = defineStore('user', () => {
           console.log(error)
         }
       }
-    ).then(()=>{
-      router.push({name:'main'})
+    )
+    
+    .then( async ()=>{
+      console.log(loginFlage.value)
+      const param = {
+        "lastEventId":"",
+      }
+      if(loginFlage.value===true){
+        console.log('sse 연결 api')
+        await alarmSubscribe(param,
+          (res)=>{console.log(res, "성공"),
+          (err)=>{console.log(err, "실패")}
+        }).then( async()=>{
+          await router.push({name:'main'})
+        })  
+      }
     })
   }
 
