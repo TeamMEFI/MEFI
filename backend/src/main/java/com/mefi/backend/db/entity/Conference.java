@@ -49,7 +49,7 @@ public class Conference {
         this.callStart = callStart;
         this.callEnd = callEnd;
         this.team = team;
-        this.status = ConferenceStatus.DONE;
+        this.status = ConferenceStatus.TODO;
         this.thumbnailUrl = thumbnailUrl;
     }
 }
