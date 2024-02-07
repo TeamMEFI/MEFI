@@ -1,20 +1,23 @@
-import { localAxios } from '@/util/http-commons'
+import { InterceptorAxios } from '@/util/http-axios'
 
-const local = localAxios()
+const interceptor = InterceptorAxios()
 
 const makeSession = async (param, success, fail) => {
-  local.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
-  await local.post(`/openvidu/api/sessions`, param).then(success).catch(fail)
+  interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
+  await interceptor.post(`/openvidu/api/sessions`, param).then(success).catch(fail)
 }
 
 const makeToken = async (sessionId, success, fail) => {
-  local.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
-  await local.post(`/openvidu/api/sessions/${sessionId}/connections`).then(success).catch(fail)
+  interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
+  await interceptor
+    .post(`/openvidu/api/sessions/${sessionId}/connections`)
+    .then(success)
+    .catch(fail)
 }
 
 const checkDone = async (sessionId, success, fail) => {
-  local.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
-  await local.get(`/openvidu/api/sessions/${sessionId}/`, {}).then(success).catch(fail)
+  interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
+  await interceptor.get(`/openvidu/api/sessions/${sessionId}/`, {}).then(success).catch(fail)
 }
 
 export { makeToken, makeSession, checkDone }
