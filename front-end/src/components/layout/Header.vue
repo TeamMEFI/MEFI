@@ -1,41 +1,44 @@
 <template>
   <v-toolbar title="MEFI" color="#495464" class="w-100">
     <v-spacer></v-spacer>
+
     <!-- 알림 -->
-    <v-btn variant="text" size="40"
-      ><font-awesome-icon :icon="['fas', 'bell']" style="font-size: 16px"
-    /></v-btn>
+    <v-btn variant="text" size="40">
+      <v-badge :content="alarmCount" color="#E53935">
+        <font-awesome-icon :icon="['fas', 'bell']" style="font-size: x-large;" />
+      </v-badge>
+
+      <v-menu activator="parent" v-model="modalAlarm" width="auto">
+        <AlarmListVue @close="modalAlarm = !modalAlarm"></AlarmListVue>
+      </v-menu>
+    </v-btn>
+
     <!-- 설정 -->
     <v-btn variant="text" size="40">
-      <font-awesome-icon :icon="['fas', 'gear']" style="font-size: 16px" />
-      <v-dialog v-model="setting" activator="parent" width="auto">
+      <font-awesome-icon :icon="['fas', 'gear']" style="font-size: x-large"/>
+      <v-dialog v-model="modalSetting" activator="parent" width="auto">
         <v-card>
-          <Setting @close="settingClose"></Setting>
+          <Setting @close="modalSetting = !modalSetting"></Setting>
         </v-card>
       </v-dialog>
     </v-btn>
 
     <!-- user 설정 -->
     <!-- user 설정 drawer -->
-    <v-btn variant="text" size="40" @click.stop="userSetting = !userSetting">
-      <!-- 헤더에 보이는 이미지 & status -->
-      <font-awesome-icon :icon="['fas', 'user']" style="font-size: 16px" />
-      <!-- 회원 설정 -->
+    <v-btn variant="text" size="40" @click.stop="modalUserSetting = !modalUserSetting">
+      <font-awesome-icon :icon="['fas', 'user']" style="font-size: x-large"/>
       <v-menu location="buttom" activator="parent">
         <v-list class="overflow-hidden ma-0">
           <!-- 상태 정보 -->
-          <v-list-item @click.stop="userStatus = !userStatus">
+          <v-list-item @click.stop="modalUserStatus = !modalUserStatus">
             상태 정보
             <UserStateSetting @status-change="changeStatus"></UserStateSetting>
           </v-list-item>
-
           <!-- 회원 정보 조회 및 수정 -->
-          <v-list-item @click="openUserInfo">
+          <v-list-item>
             회원 정보
-            <v-dialog v-model="userInfo" activator="parent" width="auto">
-              <v-card>
-                <UserInfoSettingVue @close="userInfoClose"></UserInfoSettingVue>
-              </v-card>
+            <v-dialog v-model="modalUserInfo" activator="parent" width="auto">
+              <UserInfoSettingVue @close="modalUserInfo = !modalUserInfo"></UserInfoSettingVue>
             </v-dialog>
           </v-list-item>
           <!-- 로그 아웃 -->
@@ -47,17 +50,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useUserStore } from '../../stores/user'
 import Setting from '../../components/settings/setting/Setting.vue'
 import UserInfoSettingVue from '../settings/userInfoSetting/UserInfoSetting.vue'
 import UserStateSetting from '../settings/userStateSetting/UserStateSetting.vue'
+import AlarmListVue from '../alarm/AlarmList.vue'
+import { alarmAll, alarmReadAll } from "@/api/alarm"
 
 const store = useUserStore()
-const setting = ref(false)
-const userSetting = ref(false)
-const userInfo = ref(false)
-const userStatus = ref(false)
 
 // 로그아웃
 // store logout 함수에 api 추가 및 router.push({name:'home'})
@@ -65,29 +66,39 @@ const goLogout = () => {
   store.logout()
 }
 
-// 설정 모달창 닫기
-const settingClose = () => {
-  setting.value = false
-}
+// 알람 모달창
+const modalAlarm = ref(false)
+// 설정 모달창
+const modalSetting = ref(false)
+// 회원 설정 모달창
+const modalUserSetting = ref(false)
+// 회원 상태 drawer
+const modalUserStatus = ref(false)
+// 회원 정보 모달창
+const modalUserInfo = ref(false)
 
-// 회원 정보 설정 모달창 열기
-const openUserInfo = () => {
-  userSetting.value = true
-}
-
-// 회원 정보 설정 모달창 닫기
-const userInfoClose = () => {
-  userInfo.value = false
-}
-
-// 목적 : 하위 컴포넌트에서 보낸 변화 감지
-// 기능 : 회원 상태 변경된 변화를 반영하기
-// 작동 : store에 저장된 회원 정보를 변경 및 color 속성 동적 할당
-// 작동 : 변경 및 해당 모달창 닫기
+// 회원 상태 변화 반영 및 모달창 제어
 const changeStatus = (color) => {
   store.userInfo.status = color
-  userStatus.value = false
+  modalUserStatus.value = false
 }
+
+// 알림 알림 개수
+const alarmCount = ref(0)
+
+// 알림 조회
+onMounted(async()=>{
+  // await alarmAll(
+  //   (res)=>{
+  //     console.log(res)
+  //     // res == alarms
+  //     // alarmCnt = alarms.size
+  //   }, 
+  //   (err)=>{
+  //     console.log(err)
+  //   })
+})
+
 </script>
 
 <style scoped>
