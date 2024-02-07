@@ -48,19 +48,19 @@ const provider = new WebsocketProvider(
 
 // Yjs + Quill 연동
 const ytext = ydoc.getText('quill')
+const toolbarContainer = ref(null)
 const editorContainer = ref(null)
 
 const binding = ref(null)
 
 onMounted(() => {
-  console.log(provider)
   const editor = new Quill(editorContainer.value, {
     theme: 'snow', // or 'bubble'
     modules: {
-      cursors: true,
       markdownShortcuts: {},
       toolbar: [
         ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
         [{ header: 1 }, { header: 2 }],
         [{ list: 'ordered' }, { list: 'bullet' }],
         [{ script: 'sub' }, { script: 'super' }],
@@ -74,6 +74,11 @@ onMounted(() => {
         ['clean'],
         ['link', 'image', 'video']
       ],
+      cursors: {
+        hideDelayMs: 400,
+        hideSpeedMs: 400,
+        transformOnTextChange: false
+      },
       history: {
         userOnly: true
       }
@@ -119,7 +124,7 @@ watch(
 )
 
 const deleteContent = () => {
-  let target = editorContainer.value.firstChild;
+  let target = editorContainer.value.firstChild
 
   while (target.firstChild) {
     target.removeChild(target.firstChild)
@@ -198,6 +203,7 @@ const createPDF = () => {
 <style scoped>
 #editor {
   background-color: white;
+  padding: 10px 0;
   color: black;
 }
 

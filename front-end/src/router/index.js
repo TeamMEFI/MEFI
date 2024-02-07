@@ -116,7 +116,7 @@ const router = createRouter({
       ]
     },
     {
-      path: '/conference/:teamId/:conferenceId',
+      path: '/conference/:teamid/:conferenceid',
       name: 'conference',
       component: ConferenceView
     },
