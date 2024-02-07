@@ -35,9 +35,6 @@ public class NotiServiceImpl implements NotiService{
     // SSE 연결 생성
     @Override
     public SseEmitter createSseConnection(Long userId, String lastEventId) {
-        // 기존 SSE Emitter 제거
-        notiRepository.deleteEmittersByUserId(String.valueOf(userId));
-
         // SSE Emitter ID 생성
         String emitterId = userId + "_" + System.currentTimeMillis();
 

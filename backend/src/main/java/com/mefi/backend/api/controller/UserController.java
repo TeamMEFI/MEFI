@@ -19,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -120,13 +122,14 @@ public class UserController {
     @PutMapping("/info")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> modifyUserInfoAll(Authentication authentication,
-                                                                     @RequestBody UserModifyAllReqDto userModifyAllReqDto) {
+                        @RequestPart(value="profileImg", required = false) MultipartFile profileImg,
+                        @RequestPart(value="userModifyAllReqDto") UserModifyAllReqDto userModifyAllReqDto) throws IOException {
 
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         // 회원 정보 전체 수정
-        UserModifyAllResDto userModifyAllResDto = userService.modifyUserInfoAll(userDetails.getUserId(),userModifyAllReqDto);
+        UserModifyAllResDto userModifyAllResDto = userService.modifyUserInfoAll(userDetails.getUserId(),userModifyAllReqDto, profileImg);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, userModifyAllResDto));
     }
     
