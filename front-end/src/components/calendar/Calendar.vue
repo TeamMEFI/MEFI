@@ -15,7 +15,7 @@
         </v-row>
       </v-col>
       <v-spacer></v-spacer>
-      <v-btn @click="router.push({ name: 'insertschedule' })">
+      <v-btn @click="router.push({ name: 'insertschedule', params: {date: choicedate}})">
         <p class="font-weight-black text-h6">개인 일정 생성</p>
       </v-btn>
     </v-row>
@@ -27,12 +27,9 @@
       </v-col>
     </v-row>
     <v-row v-for="week in cal" class="d-flex align-center justify-center">
-      <v-col v-for="i in weekday" class="day"  style="flex-grow: 0;" :class="week[i]['type']" >
+      <v-col v-for="i in weekday" class="day"  style="flex-grow: 0;" :class="week[i]['type']" @click="choicedate = week[i]['fulldate']">
           <div >
               {{ week[i]['date'] }}
-              <!-- <v-btn @click="clicksomething(week[i]['date'])" class="ma-0 pa-0">
-              일정잇음?
-              </v-btn> -->
           </div>
       </v-col>
     </v-row>
@@ -42,9 +39,14 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-const router = useRouter()
+const router = useRouter();
 
 
+// 기준 일자 (Today)
+const nowdate = ref(new Date())
+const year  = ref(nowdate.value.getFullYear())
+const month = ref(nowdate.value.getMonth())
+const choicedate = ref(String(year.value) +'-'+ String(month.value+1).padStart(2,'0') +'-' + String(nowdate.value.getDate()).padStart(2,'0'))
 // 셀렉터 옵션 및 캘린더 옵션들
 const weekday = ref([0, 1, 2, 3, 4, 5, 6])
 const dayofweek = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
@@ -60,28 +62,38 @@ const makecalendar = (year, month) => {
   let next = 1
 
   // 현재 달력에 표시하기 위한 일자수 계산용 변수
-  const startday = new Date(year, month, 1).getDay();
+  const startdate = new Date(year, month, 1).getDay();
   const enddate = new Date(year, month + 1, 0).getDate();
-  const new_list = Array(42).fill(null).map(() => ({ type: 'current', date: 0 }));
+  const new_list = Array(42).fill(null).map(() => ({ type: 'current', date: 0, fulldate: '' }));
 
   // 달력 표시 데이터
   const result = [];
-  
+
+  // 이전, 다음 년도 및 월 관리
+  const fullprevyear   = month == 0 ?  year - 1 : year
+  const fullprevmonth  = month == 0 ?  12 : month
+  const fullmonth      = month + 1
+  const fullnextyear   = month == 11 ? year + 1 : year
+  const fullnextmonth  = month == 11 ? 1 : month + 2
+
   // 이전 달 
-  for (let i = startday - 1; i >= 0 ; i--) {
+  for (let i = startdate - 1; i >= 0 ; i--) {
     new_list[i]['type'] = 'not_current' 
-    new_list[i]['date'] = prevenddate--
+    new_list[i]['fulldate'] = String(fullprevyear) +'-'+ String(fullprevmonth).padStart(2,'0') +'-'+ String(prevenddate).padStart(2,'0')
+    new_list[i]['date'] = String(prevenddate--).padStart(2,'0')
   }
 
   // 현재 달
-  for (let j = startday; j < enddate + startday; j++) {
-    new_list[j]['date'] = current++
+  for (let j = startdate; j < enddate + startdate; j++) {
+    new_list[j]['fulldate'] = String(year) +'-'+ String(fullmonth).padStart(2,'0') +'-'+ String(current).padStart(2,'0')
+    new_list[j]['date'] = String(current++).padStart(2,'0')
   }
 
   // 다음달
-  for (let k = enddate + startday; k < 42; k++) {
+  for (let k = enddate + startdate; k < 42; k++) {
     new_list[k]['type'] = 'not_current' 
-    new_list[k]['date'] = next++
+    new_list[k]['fulldate'] = String(fullnextyear) +'-'+ String(fullnextmonth).padStart(2,'0') +'-'+ String(next).padStart(2,'0')
+    new_list[k]['date'] = String(next++).padStart(2,'0')
   }
 
   // 일자 데이터 주차별 나누기
@@ -119,12 +131,7 @@ const clicksomething = (te) => {
   alert(te)
 }
 
-// 기준 일자 (Today)
-const nowdate = ref(new Date())
-const year  = ref(nowdate.value.getFullYear())
-const month = ref(nowdate.value.getMonth())
-const date  = ref(nowdate.value.getDate())
-const day   = ref(nowdate.value.getDay())
+
 
 // 달력 날짜 계산
 const cal = ref(makecalendar(year.value, month.value))
