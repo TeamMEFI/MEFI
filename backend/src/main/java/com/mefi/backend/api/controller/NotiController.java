@@ -41,7 +41,6 @@ public class NotiController {
 
         // NginX 버퍼링 기능 비활성화
         return ResponseEntity.status(HttpStatus.CREATED).header("X-Accel-Buffering", "no").body(sseEmitter);
-//          return ResponseEntity.status(HttpStatus.CREATED).body(sseEmitter);
     }
 
     @GetMapping("/all")
