@@ -6,9 +6,9 @@
             <div class="d-flex flex-row justify-center alien-center my-5">
                 <label for="photo">
                     <!-- 이미지 src 동적으로 할당하고 싶은데, 왜 반영이 안될까 -->
-                    <img class="cursor-pointer" src="@/assets/defaultImg.PNG" style="object-fit: cover; margin: 5px; width: 120px; height: 120px; border-radius: 50%;"/>
+                    <img class="cursor-pointer" :src="previewPhoto" style="object-fit: cover; margin: 5px; width: 120px; height: 120px; border-radius: 50%;"/>
                 </label>
-                <input id="photo" type="file" ref="photo" hidden @change="changePhoto"/>
+                <input :disabled="disable" id="photo" type="file" ref="photo" hidden @change="changePhoto"/>
             </div>
 
             <v-text-field
@@ -69,6 +69,16 @@ const name = ref("")
 const position = ref("")
 const department = ref("")
 const img = ref("")
+
+// 
+const photo = ref(null)
+const previewPhoto = ref("@/assets/defaultImg.PNG");
+
+const changePhoto = () => {
+    const image = photo.value.files[0]
+    const imageURL = URL.createObjectURL(image)
+    previewPhoto.value = imageURL
+}
 
 // 변수 선언 및 값 저장
 onMounted(()=>{

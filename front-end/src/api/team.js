@@ -1,5 +1,7 @@
 import { localAxios } from "@/util/http-commons";
+import { InterceptorAxios } from '@/util/http-axios'
 
+const interceptor = InterceptorAxios()
 const local = localAxios();
 
 async function setHeaders() {
@@ -9,7 +11,7 @@ async function setHeaders() {
 // 팀목록 조회 profile.vue에 물려있음
 async function selectTeam(success, fail) {
   await setHeaders()
-  await local.get(`/team`).then(success).catch(fail)
+  await interceptor.get(`/team`).then(success).catch(fail)
 }
 
 // 팀생성 teamcreateDialog.vue에 물려있음
