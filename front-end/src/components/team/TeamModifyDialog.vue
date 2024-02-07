@@ -259,8 +259,8 @@ const updateTeam = async () => {
     const param = {
         teamId : props.teamId,
         data : {
-            name : teamName.value,
-            description : teamDescription.value,
+            teamName : teamName.value,
+            teamDescription : teamDescription.value,
         }
     }
     await modifyTeam(

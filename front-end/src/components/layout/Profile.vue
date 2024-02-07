@@ -1,5 +1,5 @@
 <template>
-  <v-infinite-scroll class="w-100 h-100 d-flex flex-column aling-center pa-3">
+  <v-infinite-scroll v-if="store.userInfo !== null" class="w-100 h-100 d-flex flex-column aling-center pa-3">
     <div class="d-flex mb-4 align-center">
       <div class="">
         <img
@@ -48,9 +48,9 @@ import { useRouter } from 'vue-router'
 import { selectTeam } from '@/api/team.js'
 import { useUserStore } from "@/stores/user"
 const store = useUserStore()
-const username = ref(store.userInfo.name)
-const userdept = ref(store.userInfo.dept)
-const userposition = ref(store.userInfo.position)
+const username = ref(store.userInfo?.name)
+const userdept = ref(store.userInfo?.dept)
+const userposition = ref(store.userInfo?.position)
 const dialog = ref(false)
 const router = useRouter()
 const teams = ref([])
@@ -58,7 +58,7 @@ const teams = ref([])
 const select = async () => {
     await selectTeam(
         (response) => {
-            teams.value = response.data.dataBody
+            teams.value = response?.data.dataBody
             console.log(teams.value)
         },
         (error)=>{
@@ -68,7 +68,9 @@ const select = async () => {
 }
 
 onMounted(() => {
-  select()
+  if (store.userInfo !== null) {
+    select()
+  }
 });
 
 const goTeamPage = (id) => {

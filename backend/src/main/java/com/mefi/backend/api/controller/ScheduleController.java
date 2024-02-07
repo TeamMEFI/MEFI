@@ -1,6 +1,7 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ScheduleDetailResDto;
 import com.mefi.backend.api.response.ScheduleResDto;
 import com.mefi.backend.api.service.ScheduleService;
 import com.mefi.backend.common.auth.CustomUserDetails;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/schedule")
@@ -52,5 +55,26 @@ public class ScheduleController {
 
         // 반환
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(BaseResponseBody.of(0, "SUCCESS"));
+    }
+
+    @GetMapping("")
+    @Operation(summary = "개인 일정 조회", description = "사용자의 모든 개인 일정 정보를 조회한다.")
+    @ApiResponse(responseCode = "200", description = "성공 시 상태 코드 200와 개인 일정 리스트 반환")
+    public ResponseEntity<? extends BaseResponseBody> getPrivateSchedule(Authentication authentication,
+                                                                         @RequestParam(name = "start") String start,
+                                                                         @RequestParam(name = "end") String end){
+
+        // 로그인 된 유저 정보 조회
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+
+        log.info("================getPrivateSchedule=============");
+        log.info("userID : {} ", user.getUserId());
+        log.info("start : {} ", start);
+        log.info("end : {} ", end);
+
+        List<ScheduleDetailResDto> schedule = scheduleService.getPrivateSchedule(user.getUserId(), start, end);
+
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, schedule));
     }
 }

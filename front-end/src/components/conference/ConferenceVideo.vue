@@ -35,14 +35,14 @@
         />
       </div>
       <v-overlay persistent :model-value="chatOverlay" class="bg-transparent align-end justify-end">
-        <v-btn size="small" @click="exitChatBox" style="position: absolute; right: 0"
+        <v-btn size="small" elevation="0" @click="exitChatBox" style="position: absolute; right: 0"
           ><font-awesome-icon :icon="['fas', 'xmark']" style="color: #000000" />
         </v-btn>
         <v-infinite-scroll
           load
           id="chatBox"
           ref="chatBox"
-          class="bg-white px-4 rounded-lg"
+          class="bg-white px-4 rounded-sm"
           width="50vw"
           height="50vh"
         >
@@ -52,7 +52,7 @@
           <template v-slot:loading></template>
         </v-infinite-scroll>
         <v-divider :thickness="1"></v-divider>
-        <div class="d-flex bg-white px-4 align-center rounded-lg">
+        <div class="d-flex bg-white px-4 align-center rounded-sm">
           <v-textarea
             class="bg-white mt-4 mr-2"
             auto-grow
@@ -61,7 +61,7 @@
             v-model="chatInput"
             @keydown.ctrl.enter="sendChat(chatInput)"
           ></v-textarea>
-          <v-btn @click="sendChat(chatInput)" rounded="sm">send</v-btn>
+          <v-btn @click="sendChat(chatInput)" rounded="sm">SEND</v-btn>
         </div>
       </v-overlay>
     </div>
@@ -89,8 +89,8 @@ const props = defineProps({
 const userStore = useUserStore()
 
 const route = useRoute()
-const teamId = ref(route.params?.teamId)
-const conferenceId = ref(route.params?.conferenceId)
+const teamId = ref(route.params?.teamid)
+const conferenceId = ref(route.params?.conferenceid)
 
 // 1, 2번 layout은 true | 3번 layout은 false
 const isSide = ref(true)
@@ -200,6 +200,18 @@ watch(
     leaveSession()
   }
 )
+
+watch(() => createdSessionId.value, () => {
+  checkDone(
+    createdSessionId.value,
+    (response) => {
+      console.log(response)
+    },
+    (error) => {
+      console.error(error)
+    }
+  )
+})
 
 // 채팅 보내는 함수
 const sendChat = (content) => {
@@ -406,9 +418,9 @@ const getToken = async (sessionId) => {
 const createSession = async (sessionId) => {
   await makeSession(
     { customSessionId: sessionId },
+    teamId.value,
     (response) => {
-      console.log(createdSessionId.value)
-      createdSessionId.value = response.data.dataBody
+      createdSessionId.value = response?.data.dataBody
     },
     (error) => {
       console.error(error)
@@ -420,9 +432,10 @@ const createToken = async (sessionId) => {
   let createdToken;
 
   await makeToken(
-    sessionId,
+    { "sessionId": `${sessionId}` },
+    teamId.value,
     (response) => {
-      createdToken = response.data.dataBody.token
+      createdToken = response?.data.dataBody.token
     },
     (error) => {
       console.error(error)
@@ -553,7 +566,7 @@ onBeforeUnmount(() => {
 }
 
 .toRight {
-  /* animation: rotate 2s linear infinite; */
+  animation: rotate 2s linear infinite;
   /* animation: sizeup linear; */
   border: 2px solid #b2ff59;
   border-radius: 10px;

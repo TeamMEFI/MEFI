@@ -1,6 +1,7 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ScheduleDetailResDto;
 import com.mefi.backend.api.response.ScheduleResDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
@@ -12,6 +13,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +61,27 @@ public class ScheduleServiceImpl implements  ScheduleService{
         // 일정 삭제
         scheduleRepository.delete(schedule);
         return new ScheduleResDto(schedule);
+    }
+
+    @Override
+    public List<ScheduleDetailResDto> getPrivateSchedule(Long userId, String start, String end) {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new Exceptions(ErrorCode.USER_NOT_EXIST));
+
+        // 문자열을 LocalDateTime으로 변환
+        LocalDateTime s = LocalDateTime.parse(start + "000000.000", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
+        LocalDateTime e = LocalDateTime.parse(end + "235959.999", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
+
+        log.info("\nstart {} , end {}", s, e);
+
+        List<PrivateSchedule> result = scheduleRepository.findByUserAndStartedTimeBetweenOrderByStartedTime(user, s, e);
+
+        List<ScheduleDetailResDto> list = new ArrayList<>();
+
+        for (PrivateSchedule ps : result) {
+            list.add(new ScheduleDetailResDto(ps.getId(), ps.getSummary(), ps.getDescription(), ps.getStartedTime() ,ps.getEndTime(), ps.getType()));
+        }
+
+        return list;
     }
 }
