@@ -33,6 +33,7 @@ public class NotiController {
         // 현재 사용자의 식별 ID 조회
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
         log.info("User ID : {}", user.getUserId());
+        log.info("Authentication : {}", authentication);
 
         // SSE Emitter 생성
         SseEmitter sseEmitter = notiService.createSseConnection(user.getUserId(), lastEventId);
@@ -40,6 +41,7 @@ public class NotiController {
 
         // NginX 버퍼링 기능 비활성화
         return ResponseEntity.status(HttpStatus.CREATED).header("X-Accel-Buffering", "no").body(sseEmitter);
+//          return ResponseEntity.status(HttpStatus.CREATED).body(sseEmitter);
     }
 
     @GetMapping("/all")
