@@ -78,7 +78,7 @@ const makecalendar = (year, month) => {
 
   // 이전 달 
   for (let i = startdate - 1; i >= 0 ; i--) {
-    new_list[i]['type'] = 'not_current' 
+    new_list[i]['type'] = 'not_current'
     new_list[i]['fulldate'] = String(fullprevyear) +'-'+ String(fullprevmonth).padStart(2,'0') +'-'+ String(prevenddate).padStart(2,'0')
     new_list[i]['date'] = String(prevenddate--).padStart(2,'0')
   }

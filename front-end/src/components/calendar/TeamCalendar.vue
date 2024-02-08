@@ -21,7 +21,7 @@
       <v-dialog v-model="dialog" persistent width="70%" height="70%">
         <TeamModifyDialog @close-dialog="dialog = false" :team-id="props.teamId"/>
       </v-dialog>  
-      <v-btn @click="router.push({ name: 'insertconference', params: { teamid : props.teamId } })">
+      <v-btn @click="router.push({ name: 'insertconference', params: { teamid : props.teamId }, query: { date: '2024-02-08' } })">
         <p class="font-weight-black text-h6">회의 예약</p>
       </v-btn>
     </v-row>
@@ -36,9 +36,9 @@
       <v-col v-for="i in weekday" class="day"  style="flex-grow: 0;" :class="week[i]['type']" >
           <div >
               {{ week[i]['date'] }}
-              <v-btn @click="clicksomething(week[i]['date'])" class="ma-0 pa-0">
+              <!-- <v-btn @click="clicksomething(week[i]['date'])" class="ma-0 pa-0">
               일정잇음?
-              </v-btn>
+              </v-btn> -->
           </div>
       </v-col>
     </v-row>
@@ -59,6 +59,22 @@ const props = defineProps({
 const dialog = ref(false);
 const role = ref('');
 
+// 달력 날짜 계산
+const cal = ref([])
+
+// 기준 일자 (Today)
+const nowdate = ref(new Date())
+
+const year  = ref(nowdate.value.getFullYear())
+const month = ref(nowdate.value.getMonth())
+const date  = ref(nowdate.value.getDate())
+const day   = ref(nowdate.value.getDay())
+
+
+// 일정 생성 관련
+const type = ref(11)
+const data = ref(22)
+
 const select = async () => {
     const dummy = props.teamId
     await selectTeam(
@@ -71,9 +87,6 @@ const select = async () => {
     )
 }
 
-onMounted(() => {
-  select();
-})
 
 // 팀 전환시 팀원 조회
 watchEffect((props, (newValue) => {
@@ -96,36 +109,43 @@ const makecalendar = (year, month) => {
   let next = 1
 
   // 현재 달력에 표시하기 위한 일자수 계산용 변수
-  const startday = new Date(year, month, 1).getDay();
+  const startdate = new Date(year, month, 1).getDay();
   const enddate = new Date(year, month + 1, 0).getDate();
   const new_list = Array(42).fill(null).map(() => ({ type: 'current', date: 0 }));
 
   // 달력 표시 데이터
   const result = [];
+
+  const fullprevyear   = month == 0 ?  year - 1 : year
+  const fullprevmonth  = month == 0 ?  12 : month
+  const fullmonth      = month + 1
+  const fullnextyear   = month == 11 ? year + 1 : year
+  const fullnextmonth  = month == 11 ? 1 : month + 2
   
   // 이전 달 
-  for (let i = startday - 1; i >= 0 ; i--) {
+  for (let i = startdate - 1; i >= 0 ; i--) {
     new_list[i]['type'] = 'not_current' 
-    new_list[i]['date'] = String(year) + String(month ? 0 : 12).padStart(2,'0') + String(prevenddate--).padStart(2,'0')
+    new_list[i]['fulldate'] = String(fullprevyear) +'-'+ String(fullprevmonth).padStart(2,'0') +'-'+ String(prevenddate).padStart(2,'0')
+    new_list[i]['date'] = String(prevenddate--).padStart(2,'0')
   }
 
   // 현재 달
-  for (let j = startday; j < enddate + startday; j++) {
-    new_list[j]['date'] = String(year) + String(month).padStart(2,'0') + String(current++).padStart(2,'0')
+  for (let j = startdate; j < enddate + startdate; j++) {
+    new_list[j]['fulldate'] = String(year) +'-'+ String(fullmonth).padStart(2,'0') +'-'+ String(current).padStart(2,'0')
+    new_list[j]['date'] = String(current++).padStart(2,'0')
   }
 
   // 다음달
-  for (let k = enddate + startday; k < 42; k++) {
+  for (let k = enddate + startdate; k < 42; k++) {
     new_list[k]['type'] = 'not_current' 
-    new_list[k]['date'] = String(year) + String(month).padStart(2,'0') + String(next++).padStart(2,'0')
+    new_list[k]['fulldate'] = String(fullnextyear) +'-'+ String(fullnextmonth).padStart(2,'0') +'-'+ String(next).padStart(2,'0')
+    new_list[k]['date'] = String(next++).padStart(2,'0')
   }
 
   // 일자 데이터 주차별 나누기
   for (let i = 0; i < 42; i += 7) {
-      result.push(new_list.slice(i, i + 7));
+      cal.value.push(new_list.slice(i, i + 7));
   }
-
-  return result;
 };
 
 // 이전달 이동
@@ -155,24 +175,14 @@ const clicksomething = (te) => {
   alert(te)
 }
 
-// 기준 일자 (Today)
-const nowdate = ref(new Date())
-const year  = ref(nowdate.value.getFullYear())
-const month = ref(nowdate.value.getMonth())
-const date  = ref(nowdate.value.getDate())
-const day   = ref(nowdate.value.getDay())
 
-// 달력 날짜 계산
-const cal = ref(makecalendar(year.value, month.value))
 
-// 일정 생성 관련
 
-const type = ref(11)
-const data = ref(22)
-
+onMounted(() => {
+  select();
+  makecalendar(year.value, month.value)
+})
 </script>
-
-
 
 <style scoped>
 .day {

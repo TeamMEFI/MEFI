@@ -48,7 +48,6 @@ const provider = new WebsocketProvider(
 
 // Yjs + Quill 연동
 const ytext = ydoc.getText('quill')
-const toolbarContainer = ref(null)
 const editorContainer = ref(null)
 
 const binding = ref(null)
