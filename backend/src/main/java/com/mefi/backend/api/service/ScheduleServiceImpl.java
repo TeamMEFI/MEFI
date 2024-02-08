@@ -3,11 +3,15 @@ package com.mefi.backend.api.service;
 import com.mefi.backend.api.request.ScheduleReqDto;
 import com.mefi.backend.api.response.ScheduleDetailResDto;
 import com.mefi.backend.api.response.ScheduleResDto;
+import com.mefi.backend.api.response.ScheduleTimeDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.PrivateSchedule;
 import com.mefi.backend.db.entity.User;
+import com.mefi.backend.db.entity.UserRole;
+import com.mefi.backend.db.entity.UserTeam;
 import com.mefi.backend.db.repository.ScheduleRepository;
+import com.mefi.backend.db.repository.TeamUserRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +31,8 @@ public class ScheduleServiceImpl implements  ScheduleService{
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final TeamUserRepository teamUserRepository;
+
     @Override
     @Transactional
     public void createSchedule(Long userId, ScheduleReqDto scheduleReqDto) {
@@ -83,5 +89,27 @@ public class ScheduleServiceImpl implements  ScheduleService{
         }
 
         return list;
+    }
+
+    @Override
+    public List<ScheduleTimeDto> getAllMemberSchedule(Long userId, Long teamId, String day) {
+
+        UserTeam userTeam  = teamUserRepository.findByUserIdAndTeamId(userId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
+
+        log.info("해당 유저의 권한 : {}", userTeam.getRole());
+
+        if(userTeam.getRole() != UserRole.LEADER){
+            throw new Exceptions(ErrorCode.NOT_TEAM_LEADER);
+        }
+
+        List<Long> memberIds = teamUserRepository.findByUserId(teamId);
+
+        log.info("memberIds : {}", memberIds);
+
+        LocalDateTime date = LocalDateTime.parse(day + "000000.000", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
+
+        log.info("date {}", date);
+
+        return scheduleRepository.findAllMemberSchedule(memberIds, date);
     }
 }
