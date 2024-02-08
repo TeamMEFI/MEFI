@@ -46,22 +46,26 @@ export const useUserStore = defineStore('user', () => {
           console.log(error)
         }
       }
-    ).then( async ()=>{
-      console.log(loginFlage.value)
+    )
+
+    
+    
+    if(loginFlage.value===true){
+      console.log('sse 연결 api')
       const param = {
         "lastEventId":"",
       }
-      if(loginFlage.value===true){
-        console.log('sse 연결 api')
-        router.push({name:'main'})
-        // await alarmSubscribe(param,
-        //   (res)=>{console.log(res, "성공"),
-        //   (err)=>{console.log(err, "실패")}
-        // }).then( async()=>{
-        //   await router.push({name:'main'})
-        // })  
-      }
-    })
+      await alarmSubscribe(param,
+        (res)=>{
+          
+          console.log(res, "sse 연결 성공")
+
+        ,(err)=>{console.log(err, "실패")}
+      }).then( async()=>{
+        await router.push({name:'main'})
+      })  
+    }
+    
   }
 
   // 로그아웃 함수

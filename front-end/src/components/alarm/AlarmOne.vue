@@ -5,7 +5,6 @@
                 <span style="font-size: large;">{{ alarm.title }}</span>
                 <span style="font-size: small;">{{ alarm.day }}</span>
             </div>
-            <input type="checkbox" class="mr-5">
         </div>
     </v-list-item>
 </template>

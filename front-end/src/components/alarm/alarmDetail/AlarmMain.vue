@@ -1,0 +1,22 @@
+<template>
+    <v-card>
+       <HeaderVue @close="close"></HeaderVue> 
+       <BodyVue :alarm="props.alarm" @close="close"></BodyVue>
+    </v-card>
+</template>
+
+<script setup>
+import { onMounted } from "vue"
+import BodyVue from "./Body.vue"
+import HeaderVue from "./Header.vue"
+const props = defineProps({
+    alarm:Object,
+})
+const emit = defineEmits(['close'])
+const close = () => {
+    emit('close')
+}
+</script>
+
+<style scoped>
+</style>
