@@ -6,10 +6,7 @@ import com.mefi.backend.api.response.ScheduleResDto;
 import com.mefi.backend.api.response.ScheduleTimeDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
-import com.mefi.backend.db.entity.PrivateSchedule;
-import com.mefi.backend.db.entity.User;
-import com.mefi.backend.db.entity.UserRole;
-import com.mefi.backend.db.entity.UserTeam;
+import com.mefi.backend.db.entity.*;
 import com.mefi.backend.db.repository.ScheduleRepository;
 import com.mefi.backend.db.repository.TeamUserRepository;
 import com.mefi.backend.db.repository.UserRepository;
@@ -111,5 +108,24 @@ public class ScheduleServiceImpl implements  ScheduleService{
         log.info("date {}", date);
 
         return scheduleRepository.findAllMemberSchedule(memberIds, date);
+    }
+
+    @Override
+    @Transactional
+    public void modifySchedule(Long userId, ScheduleReqDto scheduleReqDto, Long scheduleId) {
+        // 삭제하려는 일정 조회, 존재하지 않는다면 예외 발생
+        PrivateSchedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new Exceptions(ErrorCode.SCHEDULE_NOT_EXIST));
+
+        // 일정을 등록한 유저가 아니라면 예외 발생
+        if(userId != schedule.getUser().getId()){
+            throw new Exceptions(ErrorCode.SCHEDULE_ACCESS_DENIED);
+        }
+
+        // 만약 수정하려는 일정 타입이 회의라면 예외 발생
+        if(schedule.getType() == ScheduleType.CONFERENCE){
+            throw new Exceptions(ErrorCode.CONFERENCE_NOT_MODIFY);
+        }
+
+        schedule.changeDetail(scheduleReqDto.getSummary(), scheduleReqDto.getDescription(), scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime());
     }
 }

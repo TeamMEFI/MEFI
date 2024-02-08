@@ -98,4 +98,22 @@ public class ScheduleController {
 
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, result));
     }
+
+    @PatchMapping("/{scheduleId}")
+    @Operation(summary = "개인 일정 수정", description = "새로운 개인 일정 정보를 받아 DB에 수정한다.")
+    @ApiResponse(responseCode = "200", description = "성공 시 상태 코드 200와 SUCCESS 반환")
+    public ResponseEntity<? extends BaseResponseBody> modifySchedule(Authentication authentication,
+                                                                     @RequestBody ScheduleReqDto scheduleReqDto,
+                                                                     @PathVariable(name = "scheduleId") Long scheduleId){
+        // 로그인 된 유저 정보 조회
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+        log.info("User ID : {}", user.getUserId());
+        log.info("Schedule ID : {}", scheduleId);
+
+        // 일정 등록
+        scheduleService.modifySchedule(user.getUserId(), scheduleReqDto, scheduleId);
+
+        // 반환
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "SUCCESS"));
+    }
 }
