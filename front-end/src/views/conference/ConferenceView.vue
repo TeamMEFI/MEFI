@@ -201,8 +201,8 @@ onMounted(async () => {
 }
 
 #conference-document {
-  display: flex;
   margin: 0 20px;
+  width: 60%;
   background-color: white;
 }
 

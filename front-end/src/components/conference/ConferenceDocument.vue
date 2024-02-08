@@ -207,6 +207,13 @@ const createPDF = () => {
 }
 
 /* quill 기본 css 오버라이딩 */
+.ql-toolbar.ql-snow {
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  padding: 8px;
+}
+
 .ql-container {
   height: 75vh;
 }

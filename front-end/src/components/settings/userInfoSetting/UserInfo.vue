@@ -7,7 +7,14 @@
           <img
             class="cursor-pointer"
             :src="previewPhoto"
-            style="object-fit: cover; margin: 5px; width: 120px; height: 120px; border-radius: 50%"
+            style="
+              object-fit: cover;
+              margin: 5px;
+              width: 120px;
+              height: 120px;
+              border: 0.5px solid #cccccc;
+              border-radius: 50%;
+            "
           />
         </label>
         <input
@@ -67,6 +74,7 @@
 import { onMounted, ref } from 'vue'
 import { useUserStore } from '../../../stores/user'
 import { userModify } from '../../../api/user'
+
 const store = useUserStore()
 
 // 기능 : 변수 할당 후 렌더링 되도록
@@ -81,7 +89,7 @@ const imgURL = ref(store.userInfo?.imgURL)
 
 // 이미지 미리보기를 위한 변수
 const photo = ref(null)
-const previewPhoto = ref('@/assets/defaultImg.PNG')
+const previewPhoto = ref('')
 
 // 이미지 선택할 경우 이미지를 URL로 변환 후 previewPhoto 변수에 할당
 const changePhoto = () => {
@@ -93,6 +101,7 @@ const changePhoto = () => {
 // 변수 선언 및 값 저장
 onMounted(() => {
   rendering.value = true
+  previewPhoto.value = `data:image/jpeg;base64, ${store.userInfo?.profile}`
 })
 
 // 기능 : v-form 비활성화 토글
@@ -145,4 +154,12 @@ const updateUserinfo = async () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.profile-image {
+  object-fit: cover;
+  margin: 5px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+</style>
