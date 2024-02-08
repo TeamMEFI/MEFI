@@ -3,6 +3,7 @@ package com.mefi.backend.api.controller;
 import com.mefi.backend.api.request.ScheduleReqDto;
 import com.mefi.backend.api.response.ScheduleDetailResDto;
 import com.mefi.backend.api.response.ScheduleResDto;
+import com.mefi.backend.api.response.ScheduleTimeDto;
 import com.mefi.backend.api.service.ScheduleService;
 import com.mefi.backend.common.auth.CustomUserDetails;
 import com.mefi.backend.common.model.BaseResponseBody;
@@ -76,5 +77,25 @@ public class ScheduleController {
         List<ScheduleDetailResDto> schedule = scheduleService.getPrivateSchedule(user.getUserId(), start, end);
 
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, schedule));
+    }
+
+    @GetMapping("/{teamId}")
+    @Operation(summary = "팀원 전체 일정 조회", description = "리더가 자신 포함 모든 멤버의 해당 일자 일정 정보를 조회한다.")
+    @ApiResponse(responseCode = "200", description = "성공 시 상태 코드 200와 모든 멤버의 해당 일자 일정 정보")
+    public ResponseEntity<? extends BaseResponseBody> getAllMemberSchedule(Authentication authentication,
+                                                                           @PathVariable("teamId") Long teamId,
+                                                                           @RequestParam(name = "day") String day){
+
+        // 로그인 된 유저 정보 조회
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        log.info("================getPrivateSchedule=============");
+        log.info("userId : {} ", user.getUserId());
+        log.info("teamId : {} ", teamId);
+        log.info("start : {} ", day);
+
+        List<ScheduleTimeDto> result = scheduleService.getAllMemberSchedule(user.getUserId(), teamId, day);
+
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, result));
     }
 }
