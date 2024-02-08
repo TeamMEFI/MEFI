@@ -12,9 +12,9 @@ import com.mefi.backend.db.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,11 +30,13 @@ public class UserServiceImpl implements UserService {
     private final TokenRepository tokenRepository;
     private final FileService fileService;
 
+    @Value("${DEFAULT_PROFILE_URL}")
+    private String DEFAULT_PROFILE_URL;
+
     // 회원가입
     @Override
     @Transactional
     public void join(JoinReqDto joinReqDto) {
-        
         // 가입 정보 입력
         User user = User.builder()
                 .email(joinReqDto.getEmail())
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService {
                 .name(joinReqDto.getName())
                 .position(joinReqDto.getPosition())
                 .dept(joinReqDto.getDept())
+                .imgUrl(DEFAULT_PROFILE_URL)
                 .build();
 
         // DB 저장
@@ -99,14 +102,17 @@ public class UserServiceImpl implements UserService {
 
         // 변경할 프로필 이미지 존재하는지 확인
         String imgUrl = userModifyAllReqDto.getImgUrl();
-        log.info("Updated Profile Image : {}", profileImg.getOriginalFilename());
+        String imgName = imgUrl.substring(imgUrl.lastIndexOf("/")+1);
 
         if(profileImg!=null){
             // 기존 이미지 삭제
-            fileService.deleteProfile(user.getImgUrl());
+            if(imgName != "anonymous.png"){ // 기본 이미지는 삭제하지 않는다
+                fileService.deleteProfile(user.getImgUrl());
+            }
 
             // 새로운 이미지 업로드
             imgUrl = fileService.createProfile(profileImg);
+            log.info("Updated Profile Image : {}", profileImg.getOriginalFilename());
         }
 
         
