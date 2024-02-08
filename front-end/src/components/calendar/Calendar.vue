@@ -30,6 +30,11 @@
       <v-col v-for="i in weekday" class="day"  style="flex-grow: 0;" :class="week[i]['type']" @click="choicedate = week[i]['fulldate']">
           <div >
               {{ week[i]['date'] }}
+              <template v-for="item in week[i]['event']">
+                <div>
+                  {{ item.summary }}
+                </div>
+              </template>
           </div>
       </v-col>
     </v-row>
@@ -39,7 +44,11 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { selectSchedule } from '@/api/schedule.js';
+import { onMounted } from 'vue';
+import { watchEffect } from 'vue';
 const router = useRouter();
+const eventdata = ref([]);
 
 
 // 기준 일자 (Today)
@@ -51,11 +60,10 @@ const choicedate = ref(String(year.value) +'-'+ String(month.value+1).padStart(2
 const weekday = ref([0, 1, 2, 3, 4, 5, 6])
 const dayofweek = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
 const listofmonthword = ['January','February','March','April','May','June','July','August','September','October','November', 'December']
-
 /*-------------------------
 // 해당 월 달력 채우기
 //-----------------------*/
-const makecalendar = (year, month) => {
+const makedate = (year, month) => {
   // 이전 달, 현재 달, 다음 달 구분 및 계산용 변수
   let prevenddate = new Date(year, month, 0).getDate();
   let current = 1
@@ -64,10 +72,7 @@ const makecalendar = (year, month) => {
   // 현재 달력에 표시하기 위한 일자수 계산용 변수
   const startdate = new Date(year, month, 1).getDay();
   const enddate = new Date(year, month + 1, 0).getDate();
-  const new_list = Array(42).fill(null).map(() => ({ type: 'current', date: 0, fulldate: '' }));
-
-  // 달력 표시 데이터
-  const result = [];
+  const new_list = Array(42).fill(null).map(() => ({ type: 'current', date: 0, fulldate: '', event:[] }));
 
   // 이전, 다음 년도 및 월 관리
   const fullprevyear   = month == 0 ?  year - 1 : year
@@ -95,50 +100,99 @@ const makecalendar = (year, month) => {
     new_list[k]['fulldate'] = String(fullnextyear) +'-'+ String(fullnextmonth).padStart(2,'0') +'-'+ String(next).padStart(2,'0')
     new_list[k]['date'] = String(next++).padStart(2,'0')
   }
-
-  // 일자 데이터 주차별 나누기
-  for (let i = 0; i < 42; i += 7) {
-      result.push(new_list.slice(i, i + 7));
-  }
-
-  return result;
+  return makecalendar(new_list);
 };
 
+const makecalendar = (list) => {
+    // 달력 표시 데이터
+    const result = [];
+    // 일자 데이터 주차별 나누기
+    for (let i = 0; i < 42; i += 7) {
+        result.push(list.slice(i, i + 7));
+    }
+    
+    cal.value = result
+}
+
+const schedule = async () => {
+  const s = cal.value[0][0]['fulldate'].replace(/-/gi, '');
+  const e = cal.value[5][6]['fulldate'].replace(/-/gi, '');
+  const data = 'start=' + s + '&end=' + e
+  await selectSchedule(
+      data,(response) => {
+        eventdata.value = response.data.dataBody
+        // cal.value = mergeEvents(cal.value, eventdata.value)
+      },
+      (error)=>{
+          console.log(error)
+      }
+  )
+}
+
+const mergeEvents = (firstArray, secondArray) => {
+    // 결과를 저장할 배열
+    const result = [];
+    // firstArray를 순회하면서 각 배열의 요소들에 대해 작업을 수행
+    firstArray.forEach(subArray => {
+        const mergedSubArray = []; // 각 subArray에 대해 새로운 배열을 생성
+        // subArray의 각 객체에 대해 작업을 수행
+        subArray.forEach(obj => {
+            // 객체를 복사하여 변경하지 않고 유지하기 위해 spread operator 사용
+            const newObj = { ...obj };
+            // const time = new Date(item.startedTime)
+            // const startedTime = String(time.getMonth()).padStart(2,'0')+String(time.getDate()).padStart(2,'0');
+            // 해당 객체의 'fulldate'를 기반으로 secondArray에서 데이터 찾기
+            const matchingEvents = secondArray.filter(item => {
+                const time = item.startedTime.slice(0,10);
+                return time === newObj.fulldate;
+            });
+            
+            // 찾은 데이터를 'event' 배열에 추가
+            newObj.event = matchingEvents;
+            
+            // 수정된 객체를 새로운 배열에 추가
+            mergedSubArray.push(newObj);
+        });
+        
+        // 수정된 subArray를 결과 배열에 추가
+        result.push(mergedSubArray);
+    });
+    return result;
+};
+
+// 달력 날짜 계산
+const cal = ref([])
+onMounted(async () => {
+  makedate(year.value, month.value)
+  await schedule()
+  cal.value = mergeEvents(cal.value, eventdata.value)
+})
+
 // 이전달 이동
-const clickprev = () => {
+const clickprev = async () => {
   if (month.value === 0) {
     year.value -= 1
     month.value = 11
   } else {
     month.value -= 1
   }
-  cal.value = makecalendar(year.value, month.value)
+  makedate(year.value, month.value)
+  await schedule()
+  cal.value = mergeEvents(cal.value, eventdata.value)
 }
 
 // 다음달 이동
-const clicknext = () => {
+const clicknext = async () => {
   if (month.value === 11) {
     year.value += 1
     month.value = 0
   } else {
     month.value += 1
   }
-  cal.value = makecalendar(year.value, month.value)
+  makedate(year.value, month.value)
+  await schedule()
+  cal.value = mergeEvents(cal.value, eventdata.value)
 }
-
-// 추후 개발 예정. 이벤트
-const clicksomething = (te) => {
-  alert(te)
-}
-
-
-
-// 달력 날짜 계산
-const cal = ref(makecalendar(year.value, month.value))
-
-// 일정 생성 관련
-
-
 </script>
 
 

@@ -1,11 +1,16 @@
 import { InterceptorAxios } from "@/util/http-axios";
-import { localAxios } from "@/util/http-commons";
+import { query } from "quill";
 
 // const local = localAxios();
 const interceptor = InterceptorAxios();
 
 async function setHeaders() {
     interceptor.defaults.headers["Authorization"] = 'Bearer ' + localStorage.getItem("accessToken");
+}
+
+async function selectSchedule(query, success, fail){
+    await setHeaders();
+    await interceptor.get(`/schedule?${query}`).then(success).catch(fail);
 }
 
 async function createSchedule(param, success, fail){
@@ -18,4 +23,4 @@ async function deleteSchedule(param, success, fail){
     await interceptor.delete(`/schedule/${param.id}`, param.data).then(success).catch(fail);
 }
 
-export { createSchedule, deleteSchedule }
+export { selectSchedule, createSchedule, deleteSchedule }
