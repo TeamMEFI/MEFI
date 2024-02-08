@@ -2,7 +2,9 @@ package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.ConferenceCreateReqDto;
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ConferenceResDto;
 import com.mefi.backend.api.response.MemberResDto;
+import com.mefi.backend.api.response.NotiResponseDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Conference;
@@ -10,12 +12,16 @@ import com.mefi.backend.db.entity.ScheduleType;
 import com.mefi.backend.db.entity.Team;
 import com.mefi.backend.db.repository.ConferenceRepository;
 import com.mefi.backend.db.repository.TeamRepository;
+import com.mefi.backend.db.repository.TeamUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -81,5 +87,25 @@ public class ConferenceServiceImpl implements ConferenceService {
 
         // DB 저장
         conferenceRepository.save(conference);
+    }
+
+    @Override
+    public List<ConferenceResDto> getConferenceHistory(Long userId, Long teamId, String start, String end) {
+        // 팀 멤버인지 확인, 아니라면 예외 발생
+        teamService.getMemberList(userId, teamId);
+
+        // 문자열을 LocalDateTime으로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS");
+        LocalDateTime startTime = LocalDateTime.parse(start + "000000.000", formatter);
+        LocalDateTime endTime = LocalDateTime.parse(end + "235959.999", formatter);
+        log.info("Start : {}, End : {}", startTime, endTime)
+        ;
+        // 기간 내 존재하는 회의 이력 조회
+        List<Conference> histories = conferenceRepository.findAllByCallTime(startTime, endTime);
+
+        // 엔티티를 DTO로 변환하여 리턴
+        return histories.stream()
+                .map(h -> new ConferenceResDto(h))
+                .collect(Collectors.toList());
     }
 }

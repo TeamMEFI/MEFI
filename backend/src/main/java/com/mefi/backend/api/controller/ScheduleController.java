@@ -77,4 +77,5 @@ public class ScheduleController {
 
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, schedule));
     }
-}
+
+    }
