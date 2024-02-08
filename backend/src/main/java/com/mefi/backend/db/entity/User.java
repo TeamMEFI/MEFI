@@ -71,12 +71,13 @@ public class User {
     private List<UserConference> userConferences = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, String name, String dept, String position) {
+    public User(String email, String password, String name, String dept, String position, String imgUrl) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.dept = dept;
         this.position = position;
+        this.imgUrl = imgUrl;
     }
 
     public void updatePassword(String password) {
