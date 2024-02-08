@@ -46,4 +46,11 @@ public class PrivateSchedule {
         this.description = description;
         this.user = user;
     }
+
+    public void changeDetail(String summary, String description, LocalDateTime startedTime, LocalDateTime endTime) {
+        this.startedTime = startedTime;
+        this.endTime = endTime;
+        this.summary = summary;
+        this.description = description;
+    }
 }

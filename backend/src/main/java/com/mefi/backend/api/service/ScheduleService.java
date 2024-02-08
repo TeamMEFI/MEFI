@@ -20,4 +20,6 @@ public interface ScheduleService {
     // 해당 일자 전체 일정 조회
     List<ScheduleTimeDto> getAllMemberSchedule(Long userId, Long teamId, String day);
 
+    // 개인 일정 수정
+    void modifySchedule(Long userId, ScheduleReqDto scheduleReqDto, Long scheduleId);
 }
