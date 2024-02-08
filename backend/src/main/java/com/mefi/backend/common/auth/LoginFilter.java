@@ -3,9 +3,11 @@ package com.mefi.backend.common.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mefi.backend.api.request.LoginReqDto;
 import com.mefi.backend.api.response.LoginResDto;
+import com.mefi.backend.api.service.FileService;
 import com.mefi.backend.common.util.JWTUtil;
 import com.mefi.backend.db.entity.Token;
 import com.mefi.backend.db.entity.User;
+import com.mefi.backend.db.repository.FileRepository;
 import com.mefi.backend.db.repository.TokenRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -30,12 +32,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JWTUtil jwtUtil;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
+    private final FileService fileService;
     private ObjectMapper mapper;
 
     // 생성자 주입 (Security 기본 로그인 URL 수정을 위해 직접 작성)
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, TokenRepository tokenRepository, UserRepository userRepository) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, TokenRepository tokenRepository, UserRepository userRepository, FileService fileService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.fileService = fileService;
         this.setFilterProcessesUrl("/api/users/login");
         this.tokenRepository = tokenRepository;
         this.userRepository = userRepository;
@@ -117,9 +121,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.addHeader("refreshToken",refreshToken);
         response.setStatus(200);
 
+        // 프로필 이미지 파일 조회
+        String imgUrl = user.getImgUrl();
+        String fileName = imgUrl.substring(imgUrl.lastIndexOf("/")+1);
+        byte[] profileImg = fileService.downloadFile(-1L, fileName);
+
         // 응답에 저장 (바디)
         Map<String,LoginResDto> reposenBody = new HashMap<>();
-        LoginResDto loginResDto = new LoginResDto(user.getEmail(),user.getName(),user.getDept(),user.getPosition());
+        LoginResDto loginResDto = new LoginResDto(user.getEmail(),user.getName(),user.getDept(),user.getPosition(), profileImg);
         reposenBody.put("dataBody",loginResDto);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(reposenBody));

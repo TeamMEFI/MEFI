@@ -30,7 +30,6 @@ public class FileServiceImpl implements FileService {
 
     private final AmazonS3Client amazonS3Client;
     private final FileRepository fileRepository;
-    private final String DIRECTORY = "CONFERENCE";
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket; // 버킷 이름
@@ -51,7 +50,7 @@ public class FileServiceImpl implements FileService {
             System.out.println(fileName);
 
             // S3에 저장될 파일명 생성
-            String key =  DIRECTORY + "/" + conferenceId + "/" + fileName;
+            String key =  "CONFERENCE/" + conferenceId + "/" + fileName;
 
             // S3에 오브젝트 저장
             amazonS3Client.putObject(bucket, key, multipartFile.getInputStream(), objectMetadata);
@@ -75,7 +74,7 @@ public class FileServiceImpl implements FileService {
             MeetingFile meetingFile = fileRepository.findByFileName(fileName).orElseThrow(()-> new Exceptions(ErrorCode.FILE_NOT_EXIST));
 
             // DeleteObjectRequest 생성
-            String key = DIRECTORY + "/" + conferenceId  + "/" + fileName;
+            String key = "CONFERENCE/" + conferenceId  + "/" + fileName;
 
             DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
 
@@ -91,11 +90,15 @@ public class FileServiceImpl implements FileService {
 
     // 회의록 또는 첨부파일을 다운로드
     public byte[] downloadFile(Long conferenceId, String fileName){
-        try{
-            // GetObjectRequest 생성
-            String key = DIRECTORY + "/" + conferenceId + "/" + fileName;
-            GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
+        // KEY 생성
+        String key;
+        if(conferenceId < 0) key = "PROFILE" + "/" + fileName; // 프로필 이미지
+        else key = "CONFERENCE" + "/" + conferenceId + "/" + fileName; // 회의록 또는 첨부파일
 
+        // GetObjectRequest 생성
+        GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
+
+        try{
             // AWS S3에서 해당되는 파일 다운로드
             S3Object s3Object = amazonS3Client.getObject(getObjectRequest);
 
