@@ -9,6 +9,7 @@ import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Conference;
 import com.mefi.backend.db.entity.MeetingFile;
 import com.mefi.backend.db.entity.MeetingFileType;
+import com.mefi.backend.db.repository.ConferenceRepository;
 import com.mefi.backend.db.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ public class FileServiceImpl implements FileService {
 
     private final AmazonS3Client amazonS3Client;
     private final FileRepository fileRepository;
+    private final ConferenceRepository conferenceRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket; // 버킷 이름
@@ -55,12 +57,14 @@ public class FileServiceImpl implements FileService {
             // S3에 오브젝트 저장
             amazonS3Client.putObject(bucket, key, multipartFile.getInputStream(), objectMetadata);
 
-            // 파일 엔티티 생성 및 저장
-            // TODO : 컨퍼런스 객체 전달하는 부분 반드시 수정해야 한다
+            // 파일 엔티티 생성 및 연관관계 맺어줌
             String fileUrl = amazonS3Client.getUrl(bucket, key).toString();
-//            Conference conference = fileRepository.findConference(conferenceId);
-//            MeetingFile meetingFile = new MeetingFile(fileName, fileUrl, type, conference);
-//            fileRepository.save(meetingFile);
+            MeetingFile meetingFile = new MeetingFile(fileName, fileUrl, type);
+            Conference conference = conferenceRepository.findById(conferenceId).get();
+            meetingFile.setConference(conference);
+
+            // 파일 엔티티 저장
+            fileRepository.save(meetingFile);
         }catch(Exception e){
             e.printStackTrace();
         }
