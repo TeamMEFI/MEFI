@@ -32,6 +32,7 @@ public class FileServiceImpl implements FileService {
     private final AmazonS3Client amazonS3Client;
     private final FileRepository fileRepository;
     private final ConferenceRepository conferenceRepository;
+    private final String DIRECTORY = "CONFERENCE";
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket; // 버킷 이름
@@ -62,8 +63,6 @@ public class FileServiceImpl implements FileService {
             MeetingFile meetingFile = new MeetingFile(fileName, fileUrl, type);
             Conference conference = conferenceRepository.findById(conferenceId).get();
             meetingFile.setConference(conference);
-
-            // 파일 엔티티 저장
             fileRepository.save(meetingFile);
         }catch(Exception e){
             e.printStackTrace();
