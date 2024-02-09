@@ -2,19 +2,24 @@ package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.ConferenceCreateReqDto;
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ConferenceDetailResDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Conference;
+import com.mefi.backend.db.entity.MeetingFile;
 import com.mefi.backend.db.entity.ScheduleType;
 import com.mefi.backend.db.entity.Team;
 import com.mefi.backend.db.repository.ConferenceRepository;
+import com.mefi.backend.db.repository.FileRepository;
 import com.mefi.backend.db.repository.TeamRepository;
+import com.mefi.backend.db.repository.TeamUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -26,6 +31,8 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final TeamRepository teamRepository;
     private final TeamService teamService;
     private final ScheduleService scheduleService;
+    private final TeamUserRepository teamUserRepository;
+    private final FileRepository fileRepository;
 
     // 회의 생성
     @Override
@@ -71,15 +78,58 @@ public class ConferenceServiceImpl implements ConferenceService {
         // 팀원 목록 조회
         List<MemberResDto> members = teamService.getMemberList(leaderId, team.getId());
 
-        log.info("팀원 목록 완료 후 일정 추가 시작-------------");
+        log.info("\n팀원 목록 완료 후 일정 추가 시작-------------");
 
         // 팀원들 개인 일정에 추가
         for(MemberResDto member: members) {
-            log.info("팀원 : {}", member.getId());
+            log.info("\n팀원 : {}", member.getId());
             scheduleService.createSchedule(member.getId(),scheduleReqDto);
         }
 
         // DB 저장
         conferenceRepository.save(conference);
+    }
+
+    
+    // 회의 상세 조회
+    @Override
+    public ConferenceDetailResDto detailMeeting(Long userId, Long conferenceId) {
+
+        // 회의 진행하는 팀 확인
+        if(!conferenceRepository.findById(conferenceId).isPresent())
+            throw new Exceptions(ErrorCode.CONFERENCE_NOT_EXIST);
+
+        log.info("\n회의 진행하는 팀 확인 : OK");
+
+        Conference conference = conferenceRepository.findById(conferenceId).get();
+
+        log.info("\n회의 조회 : OK");
+
+        // 해당 팀의 팀원인지 확인
+        if(teamUserRepository.isMember(userId, conference.getTeam().getId())==0)
+            throw new Exceptions(ErrorCode.NOT_TEAM_MEMBER);
+
+        log.info("\n회의 팀의 팀원인지 확인 : OK");
+
+        // 해당 회의관련 파일 메타 데이터 가져오기
+        List<MeetingFile> meetingFiles = fileRepository.findByConferenceId(conferenceId);
+
+        log.info("\n파일 메타 데이터 가져오기 : OK");
+        log.info("\n파일 개수 : {}", meetingFiles.size());
+
+        // 파일 리스트를 담을 리스트
+        List<String> conferenceFileList = new ArrayList<>();
+        
+        // 파일 리스트 출력
+        for(MeetingFile meetingFile: meetingFiles)
+            conferenceFileList.add(meetingFile.getFileName());
+
+        // 회의 상세 조회 Dto에 담기
+        ConferenceDetailResDto conferenceDetailResDto = new ConferenceDetailResDto(
+                conference.getTitle(),conference.getDescription(),
+                conference.getCallStart(),conference.getCallEnd(),
+                conference.getThumbnailUrl(), conferenceFileList);
+
+        return conferenceDetailResDto;
     }
 }
