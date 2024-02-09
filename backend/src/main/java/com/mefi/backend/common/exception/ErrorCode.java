@@ -37,8 +37,11 @@ public enum ErrorCode {
 
     // 일정
     SCHEDULE_NOT_EXIST(HttpStatus.BAD_REQUEST, "S-001", "존재하지 않는 일정입니다."),
-    SCHEDULE_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "S-002", "개인 일정은 본인에게만 관리 권한이 있습니다.");
+    SCHEDULE_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "S-002", "개인 일정은 본인에게만 관리 권한이 있습니다."),
 
+    // 회의
+    CONFERENCE_NOT_EXIST(HttpStatus.BAD_REQUEST, "C-001", "존재하지 않는 회의입니다.");
+    
     // 상태, 에러 코드, 메시지
     private HttpStatus httpStatus;
     private String errorCode;
