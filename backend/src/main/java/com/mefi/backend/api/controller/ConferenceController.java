@@ -38,8 +38,11 @@ public class ConferenceController {
         log.info("\n회의 생성자 : {}", userDetails.getUserId());
 
         // 회의 생성
-        conferenceService.createMeeting(userDetails.getUserId(), conferenceCreateReqDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0, "Success"));
+        Long conferenceId = conferenceService.createMeeting(userDetails.getUserId(), conferenceCreateReqDto);
+
+        log.info("회의 생성 반환 값 확인 : {}", conferenceId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0, conferenceId));
     }
 
     @GetMapping("/{teamId}")

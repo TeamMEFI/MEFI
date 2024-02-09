@@ -38,7 +38,7 @@ public class Conference {
     @OneToMany(mappedBy = "conference")
     private List<UserConference> userConferences = new ArrayList<>();
 
-    @OneToMany(mappedBy = "conference")
+    @OneToMany(mappedBy = "conference", orphanRemoval = true)
     private List<MeetingFile> meetingFiles = new ArrayList<>();
 
     @Builder

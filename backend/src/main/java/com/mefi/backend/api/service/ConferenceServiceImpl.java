@@ -36,7 +36,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     // 회의 생성
     @Override
     @Transactional
-    public void createMeeting(Long leaderId, ConferenceCreateReqDto conferenceCreateReqDto) {
+    public Long createMeeting(Long leaderId, ConferenceCreateReqDto conferenceCreateReqDto) {
 
         // 팀 존재 여부 확인
         if(!teamRepository.findById(conferenceCreateReqDto.getTeamId()).isPresent()) {
@@ -87,6 +87,8 @@ public class ConferenceServiceImpl implements ConferenceService {
 
         // DB 저장
         conferenceRepository.save(conference);
+
+        return conference.getId();
     }
 
     @Override

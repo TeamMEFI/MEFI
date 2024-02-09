@@ -30,8 +30,8 @@ const props = defineProps({
 const userStore = useUserStore()
 
 const route = useRoute()
-const teamId = ref(route.params?.teamId)
-const conferenceId = ref(route.params?.conferenceId)
+const teamId = ref(route.params?.teamid)
+const conferenceId = ref(route.params?.conferenceid)
 
 Quill.register('modules/cursors', QuillCursors)
 Quill.register('modules/markdownShortcuts', MarkdownShortcuts)
