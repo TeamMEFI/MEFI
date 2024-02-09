@@ -102,12 +102,8 @@ public class ConferenceServiceImpl implements ConferenceService {
         LocalDateTime endTime = LocalDateTime.parse(end + "235959.999", formatter);
         log.info("Start : {}, End : {}", startTime, endTime)
         ;
-        // 기간 내 존재하는 회의 이력 조회
-        List<Conference> histories = conferenceRepository.findAllByCallTime(startTime, endTime);
-
-        // 엔티티를 DTO로 변환하여 리턴
-        return histories.stream()
-                .map(h -> new ConferenceResDto(h))
-                .collect(Collectors.toList());
+        // 기간 내 존재하는 회의 이력 조회, DTO를 직접 조회한다
+        List<ConferenceResDto> histories = conferenceRepository.findAllByCallTime(startTime, endTime);
+        return histories;
     }
 }
