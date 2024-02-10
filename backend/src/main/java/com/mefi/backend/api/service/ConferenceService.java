@@ -18,4 +18,7 @@ public interface ConferenceService {
 
     // 회의 취소
     void cancelMeeting(Long userId, Long conferenceId);
+
+    // 회의 종료
+    void doneMeeting(Long userId, Long conferenceId);
 }

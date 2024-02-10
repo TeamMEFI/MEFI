@@ -199,4 +199,34 @@ public class ConferenceServiceImpl implements ConferenceService {
             log.info("\n 개인 일정 삭제 완료 : OK");
         }
     }
+
+    // 회의 종료
+    @Override
+    @Transactional
+    public void doneMeeting(Long leaderId, Long conferenceId) {
+
+        // 회의 존재 여부 확인
+        if(!conferenceRepository.findById(conferenceId).isPresent())
+            throw new Exceptions(ErrorCode.CONFERENCE_NOT_EXIST);
+
+        Conference conference = conferenceRepository.findById(conferenceId).get();
+
+        log.info("\n회의 조회 : OK");
+
+        // 팀 존재 여부 확인
+        if(!teamRepository.findById(conference.getTeam().getId()).isPresent())
+            throw new Exceptions(ErrorCode.TEAM_NOT_EXIST);
+
+        Team team = teamRepository.findById(conference.getTeam().getId()).get();
+
+        // 해당 팀의 리더인지 확인
+        teamService.checkRole(leaderId, team.getId());
+
+        log.info("\n팀 존재 여부 & 팀의 리더인지 확인 : OK");
+
+        // 회의 상태 변경
+        conference.doneConferenceStatus();
+
+        log.info("\n회의 상태 변경 완료 : {}", conference.getStatus());
+    }
 }
