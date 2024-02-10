@@ -15,4 +15,7 @@ public interface ConferenceService {
 
     // 회의 상세 조회
     ConferenceDetailResDto detailMeeting(Long userId, Long conferenceId);
+
+    // 회의 취소
+    void cancelMeeting(Long userId, Long conferenceId);
 }
