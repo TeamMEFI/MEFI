@@ -22,4 +22,7 @@ public interface ScheduleService {
 
     // 개인 일정 수정
     void modifySchedule(Long userId, ScheduleReqDto scheduleReqDto, Long scheduleId);
+
+    // 개인 일정 상세 조회
+    ScheduleDetailResDto getPrivateScheduleDetail(Long userId, Long scheduleId);
 }

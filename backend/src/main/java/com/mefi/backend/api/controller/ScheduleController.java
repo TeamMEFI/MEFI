@@ -116,4 +116,26 @@ public class ScheduleController {
         // 반환
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "SUCCESS"));
     }
+
+    @GetMapping("/{scheduleId}")
+    @Operation(summary = "개인 일정 상세 조회", description = "개인 일정 상세정보 조회한다.")
+    @ApiResponse(responseCode = "200", description = "성공 시 상태 코드 200와 상태와 상세 정보 DTO 반환")
+    public ResponseEntity<? extends BaseResponseBody> getPrivateScheduleDetail(Authentication authentication,
+                                                                               @PathVariable(name = "scheduleId") Long scheduleId){
+
+        log.info("=======================ScheduleController-getPrivateScheduleDetail()=======================");
+
+        // 현재 사용자의 세부 정보를 인증 객체에서 추출하여 저장
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        // 사용자와 개인 일정 식별자 로깅
+        log.info("userID : {} ", user.getUserId());
+        log.info("scheduleId : {} ", scheduleId);
+
+        // 개인 일정 상세 정보 조회 서비스 호출 및 사용자, 일정 식별자 전달
+        ScheduleDetailResDto schedule = scheduleService.getPrivateScheduleDetail(user.getUserId(), scheduleId);
+
+        // 조회가 성공하면 HTTP 상태 코드 200(OK) 및 개인 일정 상세 정보를 반환
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, schedule));
+    }
 }

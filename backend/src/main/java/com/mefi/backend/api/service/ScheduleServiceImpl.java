@@ -128,4 +128,20 @@ public class ScheduleServiceImpl implements  ScheduleService{
 
         schedule.changeDetail(scheduleReqDto.getSummary(), scheduleReqDto.getDescription(), scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime());
     }
+
+    // 개인 일정 상세 조회
+    @Override
+    public ScheduleDetailResDto getPrivateScheduleDetail(Long userId, Long scheduleId) {
+
+        log.info("=======================ScheduleService-getPrivateScheduleDetail()=======================");
+
+        // 해당 일정이 존재하지 않는다면 예외 처리
+        PrivateSchedule ps = scheduleRepository.findById(scheduleId).orElseThrow(() -> new Exceptions(ErrorCode.SCHEDULE_NOT_EXIST));
+
+        // 해당 일정의 현재 사용자의 일정이 아니라면 예외 처리
+        if(ps.getUser().getId() == userId) new Exceptions(ErrorCode.SCHEDULE_ACCESS_DENIED);
+
+        // 일정 상세 DTO 반환
+        return new ScheduleDetailResDto(ps.getId(), ps.getSummary(), ps.getDescription(), ps.getStartedTime(), ps.getEndTime(), ps.getType());
+    }
 }
