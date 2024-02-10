@@ -1,6 +1,7 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ScheduleCalResDto;
 import com.mefi.backend.api.response.ScheduleDetailResDto;
 import com.mefi.backend.api.response.ScheduleResDto;
 import com.mefi.backend.api.response.ScheduleTimeDto;
@@ -67,7 +68,7 @@ public class ScheduleServiceImpl implements  ScheduleService{
     }
 
     @Override
-    public List<ScheduleDetailResDto> getPrivateSchedule(Long userId, String start, String end) {
+    public List<ScheduleCalResDto> getPrivateSchedule(Long userId, String start, String end) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new Exceptions(ErrorCode.USER_NOT_EXIST));
 
@@ -79,10 +80,10 @@ public class ScheduleServiceImpl implements  ScheduleService{
 
         List<PrivateSchedule> result = scheduleRepository.findByUserAndStartedTimeBetweenOrderByStartedTime(user, s, e);
 
-        List<ScheduleDetailResDto> list = new ArrayList<>();
+        List<ScheduleCalResDto> list = new ArrayList<>();
 
         for (PrivateSchedule ps : result) {
-            list.add(new ScheduleDetailResDto(ps.getId(), ps.getSummary(), ps.getDescription(), ps.getStartedTime() ,ps.getEndTime(), ps.getType()));
+            list.add(new ScheduleCalResDto(ps.getId(), ps.getSummary(), ps.getStartedTime() ,ps.getEndTime(), ps.getType()));
         }
 
         return list;

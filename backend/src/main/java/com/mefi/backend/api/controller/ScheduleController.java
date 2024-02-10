@@ -1,6 +1,7 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ScheduleCalResDto;
 import com.mefi.backend.api.response.ScheduleDetailResDto;
 import com.mefi.backend.api.response.ScheduleResDto;
 import com.mefi.backend.api.response.ScheduleTimeDto;
@@ -74,7 +75,7 @@ public class ScheduleController {
         log.info("start : {} ", start);
         log.info("end : {} ", end);
 
-        List<ScheduleDetailResDto> schedule = scheduleService.getPrivateSchedule(user.getUserId(), start, end);
+        List<ScheduleCalResDto> schedule = scheduleService.getPrivateSchedule(user.getUserId(), start, end);
 
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, schedule));
     }
