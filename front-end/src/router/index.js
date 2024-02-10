@@ -59,11 +59,12 @@ const router = createRouter({
           })
         },
         {
-          path: '/Detail/schedule/:scheduleid',
+          path: '/Detail/schedule/:date/:scheduleid',
           name: 'detailschedule',
           component: DetailSchedule,
           props: (route) =>({
             scheduleid: Number(route.params.scheduleid),
+            date: String(route.params.date)
           })
         },
         {
