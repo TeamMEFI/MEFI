@@ -1,5 +1,4 @@
 import { InterceptorAxios } from "@/util/http-axios";
-import { query } from "quill";
 
 // const local = localAxios();
 const interceptor = InterceptorAxios();
@@ -20,7 +19,12 @@ async function createSchedule(param, success, fail){
 
 async function deleteSchedule(param, success, fail){
     await setHeaders();
-    await interceptor.delete(`/schedule/${param.id}`, param.data).then(success).catch(fail);
+    await interceptor.delete(`/schedule/${param}`).then(success).catch(fail);
 }
 
-export { selectSchedule, createSchedule, deleteSchedule }
+async function modifySchedule(param, success, fail){
+    await setHeaders();
+    await interceptor.patch(`/schedule/${param.id}`, param.data).then(success).catch(fail);
+}
+
+export { selectSchedule, createSchedule, deleteSchedule, modifySchedule }

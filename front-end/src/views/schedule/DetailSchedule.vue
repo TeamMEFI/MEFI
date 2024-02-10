@@ -3,8 +3,8 @@
         <v-card-title class="d-flex align-center pa-2">
             <p class="text-h5 font-weight-black">일정 상세</p>
             <v-spacer></v-spacer>
-            <v-btn>일정 수정하기</v-btn>
-            <v-btn>일정 삭제하기</v-btn>
+            <v-btn @click="modify">일정 수정하기</v-btn>
+            <v-btn @click="deletes">일정 삭제하기</v-btn>
         </v-card-title>
         <v-card-item class="pa-3 h-40">
             <form @submit.prevent="submit">
@@ -34,6 +34,7 @@
                             <v-row>
                                 <v-col cols="3">
                                     <v-select
+                                        v-model="selectSh"
                                         :items="starthours"
                                         variant="outlined"
                                         density="compact"
@@ -42,6 +43,7 @@
                                 </v-col>
                                 <v-col cols="3">
                                     <v-select
+                                        v-model="selectSm"
                                         :items="startmins"
                                         variant="outlined"
                                         density="compact"
@@ -50,6 +52,7 @@
                                 </v-col>
                                 <v-col cols="3">
                                     <v-select
+                                        v-model="selectEh"
                                         :items="endhours"
                                         variant="outlined"
                                         density="compact"
@@ -58,6 +61,7 @@
                                 </v-col>
                                 <v-col cols="3">
                                     <v-select
+                                        v-model="selectEm"
                                         :items="endmins"
                                         variant="outlined"
                                         density="compact"
@@ -78,6 +82,7 @@
                     <v-row>
                         <v-col cols="6">
                             <v-text-field
+                                v-model="summary"
                                 label="Summary"
                                 variant="outlined"
                                 required
@@ -85,7 +90,8 @@
                         </v-col>
                         <v-col cols="6">
                             <v-text-field
-                                label="Summary"
+                                v-model="description"
+                                label="Description"
                                 variant="outlined"
                                 required
                             ></v-text-field>
@@ -100,11 +106,60 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { deleteSchedule, modifySchedule } from '@/api/schedule';
+const router = useRouter()
 const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
 const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
-const typeschedule = ref(['연차', '회의', '출장','기타'])
+const typeschedule = ref(['회의', '출장'])
+
+const selectSh = ref('08')
+const selectSm = ref('00')
+const selectEh = ref('22')
+const selectEm = ref('00')
+const props = defineProps({
+    scheduleid: Number,
+    date: String,
+})
+const summary = ref('')
+const description = ref('')
+
+const modify = async () => {
+    const data = {
+        startedTime : props.date + 'T' + selectSh.value + ':' + selectSm.value + ':00.000Z',
+        endTime : props.date + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',
+        type : typeschedule.value == '회의' ? 'CONFERENCE' : 'BUSINESSTRIP',
+        summary : summary.value,
+        description : description.value
+    }
+    const param = {
+        id: props.scheduleid,
+        data: data
+    }
+    console.log(data)
+    await modifySchedule(
+        param,(response) => {
+            console.log(response)
+            router.back()
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
+  }
+
+const deletes = async () => {
+    await deleteSchedule(
+        props.scheduleid, (response) => {
+            console.log(response)
+            router.back()
+        },
+        (error)=>{
+            console.log(error)
+        }
+    )
+}
 
 </script>
 

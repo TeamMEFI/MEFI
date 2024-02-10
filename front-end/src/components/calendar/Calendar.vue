@@ -27,7 +27,7 @@
       </v-col>
     </v-row>
     <v-row v-for="week in cal" class="d-flex align-center justify-center">
-      <v-col v-for="i in weekday" class="day"  style="flex-grow: 0;" :class="week[i]['type']" @click="choicedate = week[i]['fulldate']">
+      <v-col v-for="i in weekday" class="day" style="flex-grow: 0;" :class="week[i]['type']" @click="clickday(week[i])">
           <div >
               {{ week[i]['date'] }}
               <template v-for="item in week[i]['event']">
@@ -47,15 +47,18 @@ import { useRouter } from 'vue-router';
 import { selectSchedule } from '@/api/schedule.js';
 import { onMounted } from 'vue';
 import { watchEffect } from 'vue';
+
 const router = useRouter();
 const eventdata = ref([]);
 
+const emit = defineEmits(['clickDay'])
 
 // 기준 일자 (Today)
 const nowdate = ref(new Date())
 const year  = ref(nowdate.value.getFullYear())
 const month = ref(nowdate.value.getMonth())
-const choicedate = ref(String(year.value) +'-'+ String(month.value+1).padStart(2,'0') +'-' + String(nowdate.value.getDate()).padStart(2,'0'))
+const date = ref(nowdate.value.getDate())
+const choicedate = ref(String(year.value) +'-'+ String(month.value+1).padStart(2,'0') +'-' + String(date).padStart(2,'0'))
 // 셀렉터 옵션 및 캘린더 옵션들
 const weekday = ref([0, 1, 2, 3, 4, 5, 6])
 const dayofweek = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
@@ -139,8 +142,6 @@ const mergeEvents = (firstArray, secondArray) => {
         subArray.forEach(obj => {
             // 객체를 복사하여 변경하지 않고 유지하기 위해 spread operator 사용
             const newObj = { ...obj };
-            // const time = new Date(item.startedTime)
-            // const startedTime = String(time.getMonth()).padStart(2,'0')+String(time.getDate()).padStart(2,'0');
             // 해당 객체의 'fulldate'를 기반으로 secondArray에서 데이터 찾기
             const matchingEvents = secondArray.filter(item => {
                 const time = item.startedTime.slice(0,10);
@@ -157,15 +158,28 @@ const mergeEvents = (firstArray, secondArray) => {
         // 수정된 subArray를 결과 배열에 추가
         result.push(mergedSubArray);
     });
+    
     return result;
 };
 
 // 달력 날짜 계산
 const cal = ref([])
+
 onMounted(async () => {
   makedate(year.value, month.value)
   await schedule()
   cal.value = mergeEvents(cal.value, eventdata.value)
+
+  const data = cal.value.flatMap(week => {
+    // 현재 날짜를 'yyyy-mm-dd' 형식으로 가져옵니다.
+    const currentDate = String(new Date().getFullYear()) + '-' + 
+                        String(new Date().getMonth() + 1).padStart(2, 0) + '-' + 
+                        String(new Date().getDate()).padStart(2, 0);
+    
+    // 주(week) 내에서 현재 날짜와 일치하는 요소를 찾습니다.
+    return week.filter(day => day.fulldate === currentDate);
+  })[0]
+  emit('clickDay', data.fulldate, data.event)
 })
 
 // 이전달 이동
@@ -192,6 +206,12 @@ const clicknext = async () => {
   makedate(year.value, month.value)
   await schedule()
   cal.value = mergeEvents(cal.value, eventdata.value)
+}
+
+// 일자 선택
+const clickday = (data) => {
+  choicedate.value = data.fulldate;
+  emit('clickDay', data.fulldate, data.event)
 }
 </script>
 

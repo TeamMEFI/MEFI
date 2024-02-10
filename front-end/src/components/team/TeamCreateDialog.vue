@@ -125,7 +125,6 @@ const create = async () => {
     }
     await createTeam(
         data,(response) => {
-            console.log(response)
             emit('closeDialog')
         },
         (error)=>{
