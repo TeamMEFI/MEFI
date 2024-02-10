@@ -7,14 +7,8 @@ import com.mefi.backend.api.response.ConferenceDetailResDto;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
-import com.mefi.backend.db.entity.Conference;
-import com.mefi.backend.db.entity.MeetingFile;
-import com.mefi.backend.db.entity.ScheduleType;
-import com.mefi.backend.db.entity.Team;
-import com.mefi.backend.db.repository.ConferenceRepository;
-import com.mefi.backend.db.repository.FileRepository;
-import com.mefi.backend.db.repository.TeamRepository;
-import com.mefi.backend.db.repository.TeamUserRepository;
+import com.mefi.backend.db.entity.*;
+import com.mefi.backend.db.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +29,8 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final ScheduleService scheduleService;
     private final TeamUserRepository teamUserRepository;
     private final FileRepository fileRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
     // 회의 생성
     @Override
@@ -103,8 +99,8 @@ public class ConferenceServiceImpl implements ConferenceService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS");
         LocalDateTime startTime = LocalDateTime.parse(start + "000000.000", formatter);
         LocalDateTime endTime = LocalDateTime.parse(end + "235959.999", formatter);
-        log.info("Start : {}, End : {}", startTime, endTime)
-        ;
+        log.info("Start : {}, End : {}", startTime, endTime);
+
         // 기간 내 존재하는 회의 이력 조회, DTO를 직접 조회한다
         List<ConferenceResDto> histories = conferenceRepository.findAllByCallTime(startTime, endTime);
         return histories;
@@ -150,5 +146,57 @@ public class ConferenceServiceImpl implements ConferenceService {
                 conference.getThumbnailUrl(), conferenceFileList);
 
         return conferenceDetailResDto;
+    }
+
+    // 회의 취소
+    @Override
+    @Transactional
+    public void cancelMeeting(Long leaderId, Long conferenceId) {
+
+        // 회의 존재 여부 확인
+        if(!conferenceRepository.findById(conferenceId).isPresent())
+            throw new Exceptions(ErrorCode.CONFERENCE_NOT_EXIST);
+
+        Conference conference = conferenceRepository.findById(conferenceId).get();
+
+        log.info("\n회의 조회 : OK");
+
+        // 팀 존재 여부 확인
+        if(!teamRepository.findById(conference.getTeam().getId()).isPresent())
+            throw new Exceptions(ErrorCode.TEAM_NOT_EXIST);
+
+        Team team = teamRepository.findById(conference.getTeam().getId()).get();
+
+        // 해당 팀의 리더인지 확인
+        teamService.checkRole(leaderId, team.getId());
+        
+        log.info("\n팀 존재 여부 & 팀의 리더인지 확인 : OK");
+
+        // 회의 상태 변경
+        conference.cancelConferenceStatus();
+
+        log.info("\n회의 상태 변경 완료 : {}", conference.getStatus());
+
+        // 팀원들 개인 일정에서 회의 삭제
+        List<MemberResDto> members = teamService.getMemberList(leaderId, team.getId());
+
+        // 팀원 순회
+        for(MemberResDto member: members) {
+
+            // 유저 조회
+            if(!userRepository.findById(member.getId()).isPresent())
+                throw new Exceptions(ErrorCode.USER_NOT_EXIST);
+
+            User user = userRepository.findById(member.getId()).get();
+
+            // 해당 시간 개인 일정 조회
+            List<PrivateSchedule> privateSchedules =
+                    scheduleRepository.findByUserAndStartedTimeBetweenOrderByStartedTime(
+                            user,conference.getCallStart(),conference.getCallEnd());
+            scheduleService.deleteSchedule(user.getId(),privateSchedules.get(0).getId());
+
+            log.info("\n 팀원 : {}, {}", user.getId(),user.getName());
+            log.info("\n 개인 일정 삭제 완료 : OK");
+        }
     }
 }

@@ -54,4 +54,9 @@ public class Conference {
         this.status = ConferenceStatus.TODO;
         this.thumbnailUrl = thumbnailUrl;
     }
+
+    // 회의 취소 상태 변경 메서드
+    public void cancelConferenceStatus() {
+        this.status = ConferenceStatus.CANCELED;
+    }
 }
