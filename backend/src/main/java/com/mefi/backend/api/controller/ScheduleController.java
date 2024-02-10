@@ -117,7 +117,7 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "SUCCESS"));
     }
 
-    @GetMapping("/{scheduleId}")
+    @GetMapping("/detail/{scheduleId}")
     @Operation(summary = "개인 일정 상세 조회", description = "개인 일정 상세정보 조회한다.")
     @ApiResponse(responseCode = "200", description = "성공 시 상태 코드 200와 상태와 상세 정보 DTO 반환")
     public ResponseEntity<? extends BaseResponseBody> getPrivateScheduleDetail(Authentication authentication,
