@@ -59,4 +59,9 @@ public class Conference {
     public void cancelConferenceStatus() {
         this.status = ConferenceStatus.CANCELED;
     }
+
+    // 회의 종료 상태 변경 메서드
+    public void doneConferenceStatus() {
+        this.status = ConferenceStatus.DONE;
+    }
 }
