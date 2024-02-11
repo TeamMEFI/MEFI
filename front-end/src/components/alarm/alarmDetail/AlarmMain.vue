@@ -6,7 +6,6 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue"
 import BodyVue from "./Body.vue"
 import HeaderVue from "./Header.vue"
 const props = defineProps({
@@ -14,6 +13,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['close'])
 const close = () => {
+    console.log('alarm main close')
     emit('close')
 }
 </script>

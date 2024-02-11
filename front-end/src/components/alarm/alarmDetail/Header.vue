@@ -8,6 +8,7 @@
 <script setup>
 const emit = defineEmits(['close'])
 const close = () => {
+    console.log('알림 단일 헤더')
     emit('close')
 }
 </script>
