@@ -3,11 +3,10 @@
     <v-spacer></v-spacer>
 
     <!-- 알림 -->
-    <v-btn variant="text" size="40">
+    <v-btn variant="text" size="40" stacked>
       <v-badge :content="alarmCount" color="#E53935">
-        <font-awesome-icon :icon="['fas', 'bell']" style="font-size: x-large;" />
+        <v-icon>mdi-bell-outline</v-icon>
       </v-badge>
-
       <v-menu activator="parent" v-model="modalAlarm" width="auto">
         <AlarmListVue @close="modalAlarm = !modalAlarm"></AlarmListVue>
       </v-menu>
