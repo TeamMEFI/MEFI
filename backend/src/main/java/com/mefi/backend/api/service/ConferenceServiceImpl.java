@@ -103,7 +103,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         log.info("Start : {}, End : {}", startTime, endTime)
         ;
         // 기간 내 존재하는 회의 이력 조회, DTO를 직접 조회한다
-        List<ConferenceResDto> histories = conferenceRepository.findAllByCallTime(startTime, endTime);
+        List<ConferenceResDto> histories = conferenceRepository.findAllByCallTime(teamId, startTime, endTime);
         return histories;
     }
 }
