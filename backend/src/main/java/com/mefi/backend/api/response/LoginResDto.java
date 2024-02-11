@@ -9,6 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class LoginResDto {
+
+    // 회원 식별 ID
+    private Long id;
     
     // 이메일
     private String email;

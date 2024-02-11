@@ -128,7 +128,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // 응답에 저장 (바디)
         Map<String,LoginResDto> reposenBody = new HashMap<>();
-        LoginResDto loginResDto = new LoginResDto(user.getEmail(),user.getName(),user.getDept(),user.getPosition(), profileImg);
+        LoginResDto loginResDto = new LoginResDto(user.getId(),user.getEmail(),user.getName(),user.getDept(),user.getPosition(), profileImg);
         reposenBody.put("dataBody",loginResDto);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(reposenBody));
