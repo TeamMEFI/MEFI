@@ -27,7 +27,6 @@ export const useUserStore = defineStore('user', () => {
 
   // 로그인 및 sse 연결
   const login = async (user) => {
-
     await userLogin(
       user,
       async (response) => {
@@ -36,9 +35,11 @@ export const useUserStore = defineStore('user', () => {
         localStorage.setItem("accessToken", response.headers.accesstoken)
         localStorage.setItem("refreshToken", response.headers.refreshtoken)
 
+        // sse 연결 api
         const lastEventId = ref("")
         await alarmSubscribe(lastEventId.value)
         
+        // main 화면으로 이동
         router.push({name:"main"})
       },
       (error)=>{
