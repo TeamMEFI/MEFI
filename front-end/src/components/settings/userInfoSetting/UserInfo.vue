@@ -139,10 +139,12 @@ const updateUserinfo = async () => {
         console.log(res)
 
         // res userinfo store
-        store.userInfo.name = name.value
-        store.userInfo.position = position.value
-        store.userInfo.dept = department.value
-        store.userInfo.imgUrl = imgURL.value
+        // store.userInfo.name = name.value
+        // store.userInfo.position = position.value
+        // store.userInfo.dept = department.value
+        // store.userInfo.imgUrl = imgURL.value
+        store.userInfo = res
+        console.log(store.userInfo)
 
         disable.value = true
       },

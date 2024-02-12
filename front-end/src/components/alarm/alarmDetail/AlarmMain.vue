@@ -13,7 +13,6 @@ const props = defineProps({
 })
 const emit = defineEmits(['close'])
 const close = () => {
-    console.log('alarm main close')
     emit('close')
 }
 </script>

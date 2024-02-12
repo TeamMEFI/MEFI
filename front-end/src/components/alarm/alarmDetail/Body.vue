@@ -14,7 +14,7 @@
             <span style="padding: auto; margin: auto;">{{ props.alarm.title }}</span>
         </div>
         <div class="d-flex flex-row justify-space-around pa-5">
-            <v-btn @click="read" color="#45566F" variant="flat" class="w-40">확인</v-btn>
+            <v-btn @click.stop="read" color="#45566F" variant="flat" class="w-40">확인</v-btn>
         </div>
     </div>
 </template>

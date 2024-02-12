@@ -4,11 +4,11 @@
 
     <!-- 알림 -->
     <v-btn variant="text" size="40" stacked>
-      <v-badge :content="alarmCount" color="#E53935">
+      <v-badge :content="props.alarms.length" color="#E53935">
         <v-icon>mdi-bell-outline</v-icon>
       </v-badge>
       <v-menu activator="parent" v-model="modalAlarm" width="auto">
-        <AlarmListVue @close="modalAlarm = !modalAlarm"></AlarmListVue>
+        <AlarmListVue :alarms="props.alarms" @close="modalAlarm = !modalAlarm"></AlarmListVue>
       </v-menu>
     </v-btn>
 
@@ -34,7 +34,7 @@
             <UserStateSetting @status-change="changeStatus"></UserStateSetting>
           </v-list-item>
           <!-- 회원 정보 조회 및 수정 -->
-          <v-list-item>
+          <v-list-item style="cursor: pointer;">
             회원 정보
             <v-dialog v-model="modalUserInfo" activator="parent" width="auto">
               <UserInfoSettingVue @close="modalUserInfo = !modalUserInfo"></UserInfoSettingVue>
@@ -82,20 +82,9 @@ const changeStatus = (color) => {
   modalUserStatus.value = false
 }
 
-// 알림 알림 개수
-const alarmCount = ref(0)
-
-// 알림 조회
-onMounted(async()=>{
-  // await alarmAll(
-  //   (res)=>{
-  //     console.log(res)
-  //     // res == alarms
-  //     // alarmCnt = alarms.size
-  //   }, 
-  //   (err)=>{
-  //     console.log(err)
-  //   })
+// 알림 정보
+const props = defineProps({
+  alarms:Array,
 })
 
 </script>

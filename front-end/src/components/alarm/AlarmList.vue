@@ -1,23 +1,22 @@
 <template>
-    <v-card min-width="400">
-        <AlarmHeader @close="close" @read-all="readAll()"></AlarmHeader>
-        <!-- 스크롤 : 안보이게 하고 싶음 --> 
-        <!-- <v-infinite-scroll :height="300" class="pa-0 ma-0"> -->
+    <v-card class="w-30 ma-0 pa-0 d-flex flex-column justify-center" min-width="400" style="border-radius: 10px;">
+        <AlarmHeader @close="closeModal" @read-all="readAll"></AlarmHeader> 
+        
             <!-- alarms 있을때 -->
-            <div v-if="alarms != null" class="ma-0 pa-0">
-                <v-list class="pa-0" v-for="alarm in alarms" :key="alarm.id">
-                    <AlarmOne :alarm="alarm" class="cursor-pointer" @click="openAlarm(alarm)"></AlarmOne>
+            <v-table v-if="props.alarms?.length > 0" class="ma-0 pa-0" height="300px">
+                <v-list class="pa-0" v-for="alarm in props.alarms" :key="alarm.id">
+                    <AlarmOne :alarm="alarm" class="cursor-pointer" @click.stop="openAlarm(alarm)"></AlarmOne>
                 </v-list>
-                <v-dialog :value="modalAlarm" activator="parent" width="auto">
+                <v-dialog v-model="modalAlarm" activator="parent" width="auto">
                     <AlarmMain :alarm="propsAlarm" @close="closeAlarm"></AlarmMain>
                 </v-dialog>
-            </div>
+            </v-table>
 
             <!-- alarms 없을때 -->
-            <div v-else>
-                <span>알림이 없습니다</span>
+            <div v-else class="d-flex flex-column justify-center" style="min-height: 100px;">
+                <span class="text-center">알림이 없습니다</span>
             </div>
-        <!-- </v-infinite-scroll> -->
+        
     </v-card>
 </template>
 
@@ -26,83 +25,100 @@ import AlarmOne from './AlarmOne.vue';
 import AlarmHeader from './AlarmHeader.vue';
 import AlarmMain from './alarmDetail/AlarmMain.vue';
 import { ref } from 'vue';
+import { alarmReadAll, alarmReadOne } from '@/api/alarm'
 
-
-const openAlarm = (alarm) => {
+// 알림 상세 조회
+const openAlarm = async (alarm) => {
     modalAlarm.value = true
     propsAlarm.value = alarm
     // 읽음 처리 api
+    // await alarmReadOne(alarm.id,
+    // (res)=>{
+    //     console.log(res)
+    // },
+    // (err)=>{
+    //     console.log(err)
+    // })
 }
 const closeAlarm = () => {
     modalAlarm.value = false
-    console.log('close 되어야함')
 }
 
 // 알림 모달 제어
 const modalAlarm = ref(false)
+
+// 알림 상세 조회
 const propsAlarm = ref({
+    // 백이랑 맞춰야함
     id:0,
-    title:'asdf',
-    writer:'asdf',
-    day:'00-00-00'
+    title:'',
+    writer:'',
+    day:''
 })
 
-// 더미데이터
-const alarms = ref([
+// 알림 정보
+const props = defineProps({
+    alarms:Array,
+})
+
+// 더미 데이터
+const alarms = [
     {
         id:1,
-        title:'title1',
-        writer:'writer1',
-        day:'00-00-00',
+        title:'title01',
+        writer:'writer01',
+        day:'00-00-00'
     },
     {
         id:2,
-        title:'title2',
-        writer:'writer2',
-        day:'00-00-00',
+        title:'title01',
+        writer:'writer01',
+        day:'00-00-00'
     },
     {
         id:3,
-        title:'title3',
-        writer:'writer3',
-        day:'00-00-00',
+        title:'title01',
+        writer:'writer01',
+        day:'00-00-00'
     },
     {
         id:4,
-        title:'title4',
-        writer:'writer4',
-        day:'00-00-00',
+        title:'title01',
+        writer:'writer01',
+        day:'00-00-00'
     },
     {
         id:5,
-        title:'title5',
-        writer:'writer5',
-        day:'00-00-00',
+        title:'title01',
+        writer:'writer01',
+        day:'00-00-00'
     },
     {
         id:6,
-        title:'title6',
-        writer:'writer6',
-        day:'00-00-00',
+        title:'title01',
+        writer:'writer01',
+        day:'00-00-00'
     },
-])
+]
 
 // 안 읽은 알림 전체 조회 창 닫기
 const emit = defineEmits(['close'])
-const close = () => {
+const closeModal = () => {
     emit('close')
 }
 
-const readAll = () =>{
+// 알림 전체 읽음
+const readAll = async () =>{
     console.log('전체 읽음')
     // api alarm all
+    // await alarmReadAll (
+    //     (res)=>{
+    //         console.log(res)
+    //     },
+    //     (err)=>{console.log(err)}
+    // )
 }
 </script>
 
 <style scoped>
-/* 예시 CSS */
-.v-dialog {
-    z-index: 9999; /* 다른 요소보다 위에 표시되도록 설정 */
-}
-
 </style>

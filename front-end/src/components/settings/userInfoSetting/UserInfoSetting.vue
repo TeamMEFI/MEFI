@@ -26,10 +26,13 @@ import ChangePwdVue from "./ChangePwd.vue";
 import UserDelete from "./UserDelete.vue";
 import { ref } from "vue";
 
+// 선택지 ( 기본 첫번째꺼 클릭되어 있음)
 const option = ref(1)
 const optionChange = (num)=>{
     option.value = num
 }
+
+// 모달창 닫기
 const emit = defineEmits(['close'])
 const close = () => {
     emit('close')
