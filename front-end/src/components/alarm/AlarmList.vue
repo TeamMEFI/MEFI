@@ -32,8 +32,10 @@ const openAlarm = async (alarm) => {
     modalAlarm.value = true
     propsAlarm.value = alarm
     // 읽음 처리 api
+    console.log('component', alarm)
     // await alarmReadOne(alarm.id,
     // (res)=>{
+    //     console.log('component')
     //     console.log(res)
     // },
     // (err)=>{
