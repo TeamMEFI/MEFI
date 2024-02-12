@@ -92,22 +92,20 @@ public class ScheduleServiceImpl implements  ScheduleService{
     @Override
     public List<ScheduleTimeDto> getAllMemberSchedule(Long userId, Long teamId, String day) {
 
-        UserTeam userTeam  = teamUserRepository.findByUserIdAndTeamId(userId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
+        log.info("=======================ScheduleService-getAllMemberSchedule()=======================");
 
-        log.info("해당 유저의 권한 : {}", userTeam.getRole());
+        // 팀원이 아닌 경우 예외 처리
+        teamUserRepository.findByUserIdAndTeamId(userId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
 
-        if(userTeam.getRole() != UserRole.LEADER){
-            throw new Exceptions(ErrorCode.NOT_TEAM_LEADER);
-        }
-
+        // 팀원들의 PK 값 조회 및 로깅
         List<Long> memberIds = teamUserRepository.findByUserId(teamId);
-
         log.info("memberIds : {}", memberIds);
 
+        // 조회 일자 파싱 및 로깅
         LocalDateTime date = LocalDateTime.parse(day + "000000.000", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
-
         log.info("date {}", date);
 
+        // 팀원들 일정 조회
         return scheduleRepository.findAllMemberSchedule(memberIds, date);
     }
 
