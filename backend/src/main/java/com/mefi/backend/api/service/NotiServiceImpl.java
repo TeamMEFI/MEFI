@@ -81,7 +81,7 @@ public class NotiServiceImpl implements NotiService{
     // 특정 유저에게 알림 전송
     @Override
     @Transactional
-    public void sendNotiForUser(Long userId, String message) {
+    public void sendNotiForUser(Long userId, String sender, String message) {
         // Event ID 생성
         String eventId = makeTimeIncludeEventId(String.valueOf(userId));
 
@@ -94,6 +94,7 @@ public class NotiServiceImpl implements NotiService{
                 .message(message)
                 .createdTime(LocalDateTime.now())
                 .status(false)
+                .sender(sender)
                 .build();
         notiRepository.save(noti);
 
@@ -114,13 +115,13 @@ public class NotiServiceImpl implements NotiService{
     // 팀에 소속된 모든 유저에게 알림 전송
     @Override
     @Transactional
-    public void sendNotiForTeam(Long teamId, String message) {
+    public void sendNotiForTeam(Long teamId, String sender, String message) {
         // 팀원 목록 조회
         List<MemberResDto> users = teamUserRepository.getMemberList(teamId);
 
         // 각 팀원에 대해 알림 전송
         for(MemberResDto user : users){
-            sendNotiForUser(user.getId(), message);
+            sendNotiForUser(user.getId(), sender, message);
         }
     }
 

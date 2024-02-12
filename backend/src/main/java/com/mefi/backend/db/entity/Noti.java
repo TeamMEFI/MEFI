@@ -26,16 +26,22 @@ public class Noti {
     // 생성시간
     private LocalDateTime createdTime;
 
+    // 수신자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    // 발송자 이름
+    private String sender;
+
+
     @Builder
-    public Noti(String message, Boolean status, LocalDateTime createdTime, User user){
+    public Noti(String message, Boolean status, LocalDateTime createdTime, User user, String sender){
         this.message = message;
         this.status = status;
         this.createdTime = createdTime;
         this.user = user;
+        this.sender = sender;
     }
 
     public void read(){

@@ -3,6 +3,7 @@ package com.mefi.backend.db.repository;
 import com.mefi.backend.db.entity.Noti;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -43,6 +44,7 @@ public class NotiRepositoryCustomImpl implements NotiRepositoryCustom {
         );
     }
 
+//    @Scheduled(cron="0 0 0 * * ?")
     @Override
     public void deleteEventCacheByUserId(String userId) {
     }
