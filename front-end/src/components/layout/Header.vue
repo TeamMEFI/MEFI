@@ -49,13 +49,12 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { useUserStore } from '../../stores/user'
 import Setting from '../../components/settings/setting/Setting.vue'
 import UserInfoSettingVue from '../settings/userInfoSetting/UserInfoSetting.vue'
 import UserStateSetting from '../settings/userStateSetting/UserStateSetting.vue'
 import AlarmListVue from '../alarm/AlarmList.vue'
-import { alarmAll, alarmReadAll } from "@/api/alarm"
 
 const store = useUserStore()
 

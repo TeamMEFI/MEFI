@@ -25,6 +25,7 @@
 import { alarmAll } from '@/api/alarm';
 import HeaderVue from '@/components/layout/Header.vue'
 import ProfileVue from '@/components/layout/Profile.vue'
+import { watch } from 'vue';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 
@@ -41,6 +42,8 @@ onMounted(async()=>{
     console.log(error)
   }
 })
+
+
 </script>
 
 <style> 
