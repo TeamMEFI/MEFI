@@ -5,13 +5,13 @@
       <HeaderVue />
     </v-app-bar>
     
-    <div class="d-flex w-100 wrapper pa-2">
+    <div class="d-flex w-100 wrapper pa-0 h-100">
       <!-- 사이드바 -->
-      <div class="bg-white border-right h-100 mt-5 pt-5" style="width: 240px;">
+      <div class="bg-white border-right h-cal mt-5 pt-5" style="width: 240px;">
         <ProfileVue />
       </div>
       <!-- 메인 컨텐츠 -->
-      <RouterView class="bg-white w-100 h-100 ml-2 mt-10 rounded" />
+      <RouterView class="bg-white w-100 h-cal ml-2 mt-10 rounded" />
     </div>
 
     <!-- 풋터 -->

@@ -27,7 +27,12 @@
       </v-col>
     </v-row>
     <v-row v-for="week in cal" class="d-flex align-center justify-center">
-      <v-col v-for="i in weekday" class="day" style="flex-grow: 0;" :class="week[i]['type']" @click="clickday(week[i])">
+      <v-col v-for="i in weekday" 
+            class="day" 
+            style="flex-grow: 0;" 
+
+            :class="[week[i]['type']], { 'clicked': week[i]['fulldate'] === choicedate }"
+            @click="clickday(week[i])">
           <div >
               {{ week[i]['date'] }}
               <template v-for="item in week[i]['event']">
@@ -42,11 +47,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { selectSchedule } from '@/api/schedule.js';
-import { onMounted } from 'vue';
-import { watchEffect } from 'vue';
 
 const router = useRouter();
 const eventdata = ref([]);
@@ -58,7 +61,7 @@ const nowdate = ref(new Date())
 const year  = ref(nowdate.value.getFullYear())
 const month = ref(nowdate.value.getMonth())
 const date = ref(nowdate.value.getDate())
-const choicedate = ref(String(year.value) +'-'+ String(month.value+1).padStart(2,'0') +'-' + String(date).padStart(2,'0'))
+const choicedate = ref(String(year.value) +'-'+ String(month.value+1).padStart(2,'0') +'-' + String(date.value).padStart(2,'0'))
 // 셀렉터 옵션 및 캘린더 옵션들
 const weekday = ref([0, 1, 2, 3, 4, 5, 6])
 const dayofweek = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
@@ -179,6 +182,7 @@ onMounted(async () => {
     // 주(week) 내에서 현재 날짜와 일치하는 요소를 찾습니다.
     return week.filter(day => day.fulldate === currentDate);
   })[0]
+  console.log(data.fulldate)
   emit('clickDay', data.fulldate, data.event)
 })
 
@@ -216,7 +220,7 @@ const clickday = (data) => {
 </script>
 
 
-
+ 
 <style scoped>
 .day {
     max-width: calc(95%/7);
@@ -235,5 +239,9 @@ const clickday = (data) => {
 }
 .not_current {
   background-color: #e0e0e0;
+}
+
+.clicked {
+  background-color: lightblue; /* 클릭된 일자의 배경색 */
 }
 </style>
