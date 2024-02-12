@@ -2,13 +2,12 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import { userLogin, userSignup } from '@/api/user.js'
-import { useSSEStore } from './sse'
+import { alarmSubscribe } from '@/api/alarm'
 
 
 // user store
 // login, signup, user info, 토큰 관리
 export const useUserStore = defineStore('user', () => {
-  const sseStore = useSSEStore();
   const router = useRouter()
   const userInfo = ref(null)
 
@@ -29,9 +28,6 @@ export const useUserStore = defineStore('user', () => {
   // 로그인 및 sse 연결
   const login = async (user) => {
 
-    // 성공하면 지우기
-    const loginFlage = ref(false)
-
     await userLogin(
       user,
       async (response) => {
@@ -39,7 +35,11 @@ export const useUserStore = defineStore('user', () => {
         console.log(userInfo.value)
         localStorage.setItem("accessToken", response.headers.accesstoken)
         localStorage.setItem("refreshToken", response.headers.refreshtoken)
-        loginFlage.value = true
+
+        const lastEventId = ref("")
+        await alarmSubscribe(lastEventId.value)
+
+        router.push({name:"main"})
       },
       (error)=>{
         console.log(error.response)
@@ -51,16 +51,6 @@ export const useUserStore = defineStore('user', () => {
         }
       }
     )
-    
-    if(loginFlage.value===true){
-      console.log('store user')
-      await sseStore.sseConnect("1", userInfo.value.id,
-        async (res)=>{
-          console.log(res)
-          await router.push({name:'main'})},
-        (err)=>{console.log(err)}
-      )  
-    }
   }
 
   // 로그아웃 함수

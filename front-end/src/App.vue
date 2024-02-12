@@ -20,12 +20,7 @@ router.beforeEach((to, from, next) => {
         updateToken(
             (res) => {
                 console.log(res)
-                if (to.name!=="main"){
-                    next({name:"main"})
-                }
-                else{
-                    next()
-                }
+                next()
             },
             (err) => {
                 console.log(err)
