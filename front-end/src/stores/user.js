@@ -40,6 +40,7 @@ export const useUserStore = defineStore('user', () => {
         localStorage.setItem("accessToken", response.headers.accesstoken)
         localStorage.setItem("refreshToken", response.headers.refreshtoken)
         loginFlage.value = true
+        router.push({name:'main'})
       },
       (error)=>{
         console.log(error.response)

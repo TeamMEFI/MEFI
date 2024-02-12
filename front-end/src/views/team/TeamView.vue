@@ -14,7 +14,6 @@
       <v-col cols="3" class="w-100 h-100 pa-0">
         <!-- 오른쪽 컴포넌트를 여기에 추가하세요 -->
         <v-container class="w-100 h-100 d-flex flex-column">
-          <Schedule :team-id="Number(props.id)" />
           <TeamMateList :team-id="Number(props.id)" />
         </v-container>
       </v-col>

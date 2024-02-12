@@ -104,6 +104,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { createSchedule } from '@/api/schedule.js';
+const router = useRouter()
 const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
@@ -119,7 +120,6 @@ const props = defineProps({
 })
 const summary = ref('')
 const description = ref('')
-console.log(props.date)
 
 const create = async () => {
     const data = {
@@ -133,6 +133,7 @@ const create = async () => {
     await createSchedule(
         data,(response) => {
             console.log(response)
+            router.back()
         },
         (error)=>{
             console.log(error)

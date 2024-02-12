@@ -1,7 +1,7 @@
 <template>
-  <v-app class="w-100 h-100 d-flex justify-center">
+  <v-app class="w-100 h-cal d-flex justify-center">
     <!-- v-row를 사용하여 왼쪽(6), 오른쪽(4)으로 나눈 레이아웃 -->
-    <v-row>
+    <v-row class="h-cal">
       <!-- 왼쪽(6) -->
       <v-col cols="9" class="w-100 h-100 d-flex justify-center">
         <!-- 왼쪽 컴포넌트를 여기에 추가하세요 -->
@@ -36,6 +36,7 @@ const catchdate = ref('')
 const dataCheck = (date, data) => {
   catchdate.value = date
   schedule.value = data
+  console.log(date, data)
 }
 
 window.addEventListener('resize', function () {
