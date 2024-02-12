@@ -27,7 +27,7 @@ public class NotiController {
 
     private final NotiService notiService;
 
-    @GetMapping(name="/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value="/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "SSE 연결 API", description = "서버에서 클라이언트에 실시간 알림을 전송하기 위한 SSE Emitter 생성")
     public ResponseEntity<SseEmitter> createSseConnection( Authentication authentication,  @RequestParam(name = "lastEventId", required = false) String lastEventId){
 

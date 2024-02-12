@@ -19,9 +19,13 @@ public class NotiResponseDto {
     // 생성일
     private LocalDateTime createdTime;
 
+    // 발송자
+    private String sender;
+
     public NotiResponseDto(Noti noti){
         this.message = noti.getMessage();
         this.status = noti.getStatus();
         this.createdTime = noti.getCreatedTime();
+        this.sender = noti.getSender();
     }
 }

@@ -31,6 +31,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final FileRepository fileRepository;
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final NotiService notiService;
 
     // 회의 생성
     @Override
@@ -86,6 +87,11 @@ public class ConferenceServiceImpl implements ConferenceService {
 
         // DB 저장
         conferenceRepository.save(conference);
+
+        // 팀원 모두에게 알림 전송
+        String sender = team.getName();
+        String message =  makeMessage(sender, conference.getTitle(),1);
+        notiService.sendNotiForTeam(team.getId(), sender, message);
 
         return conference.getId();
     }
@@ -180,6 +186,11 @@ public class ConferenceServiceImpl implements ConferenceService {
         // 팀원들 개인 일정에서 회의 삭제
         List<MemberResDto> members = teamService.getMemberList(leaderId, team.getId());
 
+        // 팀원 모두에게 알림 전송
+        String sender = team.getName();
+        String message =  makeMessage(sender, conference.getTitle(),-1);
+        notiService.sendNotiForTeam(team.getId(), sender, message);
+
         // 팀원 순회
         for(MemberResDto member: members) {
 
@@ -228,5 +239,11 @@ public class ConferenceServiceImpl implements ConferenceService {
         conference.doneConferenceStatus();
 
         log.info("\n회의 상태 변경 완료 : {}", conference.getStatus());
+    }
+
+    public String makeMessage(String sender, String conferenceName, int type){
+        if(type==1)
+            return String.format("팀[%s]에 회의 %s가 예약되었습니다.", sender, conferenceName);
+        return String.format("팀[%s]의 회의 %s가 취소되었습니다.", sender, conferenceName);
     }
 }
