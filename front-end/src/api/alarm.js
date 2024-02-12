@@ -25,11 +25,6 @@ async function alarmSubscribe(lastEventId){
 
     SSE.addEventListener("sse", (event)=>{
         console.log(event.data)
-        // 알림창 띄우기
-        // settingStore.alarm = true
-
-        // 변화 감지
-        // 전체 조회 API
     })
 
     SSE.onmessage = (event)=>{

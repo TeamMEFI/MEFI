@@ -8,7 +8,7 @@
         <v-icon>mdi-bell-outline</v-icon>
       </v-badge>
       <v-menu activator="parent" v-model="modalAlarm" width="auto">
-        <AlarmListVue :alarms="props.alarms" @close="modalAlarm = !modalAlarm"></AlarmListVue>
+        <AlarmListVue :alarms="props.alarms" @close="modalAlarm = !modalAlarm" @remove-alarm="removeAlarm" @remove-alarms="removeAlarms"></AlarmListVue>
       </v-menu>
     </v-btn>
 
@@ -57,6 +57,16 @@ import UserStateSetting from '../settings/userStateSetting/UserStateSetting.vue'
 import AlarmListVue from '../alarm/AlarmList.vue'
 
 const store = useUserStore()
+
+const emit = defineEmits(['removeAlarm', 'removeAlarms'])
+
+// 읽은 알림 삭제 처리
+const removeAlarm = (alarmId) => {
+  emit('removeAlarm', alarmId)
+}
+const removeAlarms = () => {
+  emit('removeAlarms')
+}
 
 // 로그아웃
 // store logout 함수에 api 추가 및 router.push({name:'home'})

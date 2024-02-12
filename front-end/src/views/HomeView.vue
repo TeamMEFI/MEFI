@@ -2,7 +2,7 @@
   <v-layout>
     <!-- 헤더 -->
     <v-app-bar app color="#494550" height="40" class="elevation-0" >
-      <HeaderVue :alarms="alarms"/>
+      <HeaderVue :alarms="alarms" @remove-alarm="removeAlarm" @remove-alarms="removeAlarms"/>
     </v-app-bar>
     
     <div class="d-flex w-100 wrapper pa-0 h-100">
@@ -25,9 +25,38 @@
 import { alarmAll } from '@/api/alarm';
 import HeaderVue from '@/components/layout/Header.vue'
 import ProfileVue from '@/components/layout/Profile.vue'
+import { useSettingStore } from '@/stores/setting';
 import { watch } from 'vue';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
+
+
+// 변화 감지하여 알림 추가
+const store = useSettingStore()
+watch(()=> store.alarmFlag, () => {
+  if(store.alarmFlag === true){
+    alarms.value.push(store.alarmContent)
+    store.alarmFlag = false
+    console.log(alarms.value, store.alarmFlag, store.alarmContent)
+  }
+})
+
+// 읽은 알림 삭제 처리
+const removeAlarm = async (alarmId) => {
+  console.log(alarmId)
+  console.log(alarms.value)
+  for(let i=0;i<alarms.value.length;i++){
+    if(alarms.value[i].id===alarmId){
+      alarms.value.splice(i,1);
+    }
+  }
+  console.log(alarms.value)
+}
+
+// 알림 전체 읽음 및 배열 삭제
+const removeAlarms = () => {
+  alarms.value = []
+}
 
 // 안읽은 알림
 const alarms = ref([])

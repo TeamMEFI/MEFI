@@ -27,16 +27,24 @@ import AlarmMain from './alarmDetail/AlarmMain.vue';
 import { ref } from 'vue';
 import { alarmReadAll, alarmReadOne } from '@/api/alarm'
 
+const emit = defineEmits(['close', 'removeAlarm', 'removeAlarms'])
+
 // 알림 상세 조회
 const openAlarm = async (alarm) => {
     modalAlarm.value = true
     propsAlarm.value = alarm
+    
+    // 알림 읽음 처리 API
     await alarmReadOne(alarm.id)
 }
 
 // 단일 알림 조회 모달창 닫기
-const closeAlarm = () => {
+const closeAlarm = (alarmId) => {
     modalAlarm.value = false
+
+    // front alarms remove
+    console.log(alarmId)
+    emit('removeAlarm', alarmId)
 }
 
 // 알림 모달 제어
@@ -44,7 +52,6 @@ const modalAlarm = ref(false)
 
 // 알림 상세 조회
 const propsAlarm = ref({
-    // 백이랑 맞춰야함
     id:0,
     message:'',
     sender:'',
@@ -57,14 +64,15 @@ const props = defineProps({
 })
 
 // 안 읽은 알림 전체 조회 창 닫기
-const emit = defineEmits(['close'])
 const closeModal = () => {
     emit('close')
 }
 
 // 알림 전체 읽음
 const readAll = async () =>{
-    await alarmReadAll ()
+    await alarmReadAll ();
+
+    emit('removeAlarms');
 }
 </script>
 
