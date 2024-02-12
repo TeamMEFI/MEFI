@@ -30,6 +30,7 @@ public class TeamServiceImpl implements TeamService{
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
     private final TeamUserRepository teamUserRepository;
+    private final NotiService notiService;
 
     @Override
     @Transactional
@@ -63,6 +64,12 @@ public class TeamServiceImpl implements TeamService{
 
         // 팀 저장
         Team newTeam = teamRepository.save(team);
+
+        // 팀원 모두에게 알림 전송
+        String sender = makeSender(newTeam.getName(), leader.getName());
+        String message =  makeMessage(leader.getName(), newTeam.getName(),1);
+        notiService.sendNotiForTeam(newTeam.getId(), sender,message);
+        log.info("알림 전송 완료 : {}", message);
     }
 
     // 팀 목록 조회 서비스
@@ -122,6 +129,12 @@ public class TeamServiceImpl implements TeamService{
 
             teamUserRepository.save(teamMember);
 
+            // 팀원에게 알림 전송
+            User leader = userRepository.findById(userId).orElseThrow(() -> new Exceptions(ErrorCode.MEMBER_NOT_EXIST));
+            String sender = makeSender(team.getName(), leader.getName());
+            String message =  makeMessage(leader.getName(), team.getName(), 1);
+            notiService.sendNotiForUser(memberId, sender, message);
+
         }else{
             throw new Exceptions(ErrorCode.NOT_TEAM_LEADER);
         }
@@ -141,6 +154,8 @@ public class TeamServiceImpl implements TeamService{
 
         // 팀 삭제
         teamRepository.delete(team);
+
+
     }
 
     @Override
@@ -157,7 +172,14 @@ public class TeamServiceImpl implements TeamService{
         // 삭제하려는 멤버가 해당 팀에 없다면 예외 발생
         teamUserRepository.findByUserIdAndTeamId(memberId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
 
+        // 멤버 삭제
         teamUserRepository.deleteByUserIdAndTeamId(memberId, teamId);
+
+        // 삭제된 팀원에게 알림 전송
+        User leader = userRepository.findById(userId).orElseThrow(() -> new Exceptions(ErrorCode.MEMBER_NOT_EXIST));
+        String sender = makeSender(userTeam.getTeam().getName(), leader.getName());
+        String message = makeMessage(leader.getName(), userTeam.getTeam().getName(), -1);
+        notiService.sendNotiForUser(memberId, sender, message);
     }
 
     @Override
@@ -190,9 +212,19 @@ public class TeamServiceImpl implements TeamService{
 
         // 받은 유저가 팀의 멤버가 아니면 예외 처리
         UserTeam leader = teamUserRepository.findByUserIdAndTeamId(userId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
-        UserTeam member = teamUserRepository.findByUserIdAndTeamId(memberId,teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));;
+        UserTeam member = teamUserRepository.findByUserIdAndTeamId(memberId,teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
 
         leader.changeRole(UserRole.MEMBER);
         member.changeRole(UserRole.LEADER);
+    }
+
+    public String makeSender(String teamName, String leaderName){
+        return teamName + " " + leaderName;
+    }
+
+    public String makeMessage(String sender, String teamName, int type){
+        if(type==1)
+            return String.format("%s님이 당신을 팀 %s에 초대하였습니다.", sender, teamName);
+        return String.format("%s님이 당신을 팀 %s에서 제외하였습니다.", sender, teamName);
     }
 }

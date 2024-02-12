@@ -23,10 +23,10 @@ public interface NotiService {
 
     // 특정 사용자에게 알림 전송
     @Transactional
-    void sendNotiForUser(Long userId, String message);
+    void sendNotiForUser(Long userId, String sender, String message);
 
     // 팀에 소속된 사용자 모두에게 알림 전송
-    void sendNotiForTeam(Long teamId, String message);
+    void sendNotiForTeam(Long teamId, String sender, String message);
 
     int readNotiAll(Long userId);
 }

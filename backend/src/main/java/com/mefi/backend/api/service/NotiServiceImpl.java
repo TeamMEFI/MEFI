@@ -11,6 +11,8 @@ import com.mefi.backend.db.repository.TeamUserRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@EnableScheduling
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
@@ -81,7 +84,7 @@ public class NotiServiceImpl implements NotiService{
     // 특정 유저에게 알림 전송
     @Override
     @Transactional
-    public void sendNotiForUser(Long userId, String message) {
+    public void sendNotiForUser(Long userId, String sender, String message) {
         // Event ID 생성
         String eventId = makeTimeIncludeEventId(String.valueOf(userId));
 
@@ -94,6 +97,7 @@ public class NotiServiceImpl implements NotiService{
                 .message(message)
                 .createdTime(LocalDateTime.now())
                 .status(false)
+                .sender(sender)
                 .build();
         notiRepository.save(noti);
 
@@ -114,13 +118,13 @@ public class NotiServiceImpl implements NotiService{
     // 팀에 소속된 모든 유저에게 알림 전송
     @Override
     @Transactional
-    public void sendNotiForTeam(Long teamId, String message) {
+    public void sendNotiForTeam(Long teamId, String sender, String message) {
         // 팀원 목록 조회
         List<MemberResDto> users = teamUserRepository.getMemberList(teamId);
 
         // 각 팀원에 대해 알림 전송
         for(MemberResDto user : users){
-            sendNotiForUser(user.getId(), message);
+            sendNotiForUser(user.getId(), sender, message);
         }
     }
 
@@ -161,4 +165,10 @@ public class NotiServiceImpl implements NotiService{
         return userId + "_" + System.currentTimeMillis();
     }
 
+    // 매일 새벽 5시마다 3개월 지난 이벤트 캐시를 제거하는 메소드
+    @Scheduled(cron="0 5 * * * ?")
+    protected void deleteEventCaches(){
+        notiRepository.deleteEventCacheByUserId();
+        log.info(LocalDateTime.now() + "기준으로 3개월 지난 EventCache 삭제 완료");
+    }
 }

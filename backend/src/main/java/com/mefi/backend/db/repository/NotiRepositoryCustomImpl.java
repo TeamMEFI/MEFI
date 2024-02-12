@@ -3,9 +3,11 @@ package com.mefi.backend.db.repository;
 import com.mefi.backend.db.entity.Noti;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -44,7 +46,17 @@ public class NotiRepositoryCustomImpl implements NotiRepositoryCustom {
     }
 
     @Override
-    public void deleteEventCacheByUserId(String userId) {
+    public void deleteEventCacheByUserId() {
+        // 3개월이 지난 EventCache는 삭제
+        eventCaches.forEach(
+                (key, noti) ->{
+                    LocalDateTime createdTime = noti.getCreatedTime().plusMonths(3L); // 생성 후 3시간이 지난 알림
+                    LocalDateTime now = LocalDateTime.now(); // 현재 시간
+                    if(now.compareTo(createdTime) <= 0){ // 생성한 지 3개월이 지난 알림은 캐시에서 제거
+                        eventCaches.remove(noti);
+                    }
+                }
+        );
     }
 
     @Override
