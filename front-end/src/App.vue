@@ -20,11 +20,17 @@ router.beforeEach((to, from, next) => {
         updateToken(
             (res) => {
                 console.log(res)
-                next()
+                if (to.name!=="main"){
+                    next({name:"main"})
+                }
+                else{
+                    next()
+                }
             },
             (err) => {
                 console.log(err)
                 localStorage.clear();
+                
                 if (to.name != 'login' &&
                     to.name != 'signup' &&
                     to.name != 'email' &&
@@ -34,7 +40,7 @@ router.beforeEach((to, from, next) => {
                     next({name:'login'})
                 }
                 else{
-                    next();
+                    next()
                 }
             }
         )
@@ -49,9 +55,11 @@ router.beforeEach((to, from, next) => {
             to.name != 'search-password1' &&
             to.name != 'search-password2' &&
             to.name != 'search-password3') {
+            console.log('else-if')
             next({name:'login'})
         }
         else{
+            console.log('else-else')
             next()
         }
     }

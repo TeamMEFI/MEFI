@@ -8,7 +8,7 @@ import { useSSEStore } from './sse'
 // user store
 // login, signup, user info, 토큰 관리
 export const useUserStore = defineStore('user', () => {
-  const seeStore = useSSEStore();
+  const sseStore = useSSEStore();
   const router = useRouter()
   const userInfo = ref(null)
 
@@ -34,7 +34,7 @@ export const useUserStore = defineStore('user', () => {
 
     await userLogin(
       user,
-      (response) => {
+      async (response) => {
         userInfo.value = response.data.dataBody
         console.log(userInfo.value)
         localStorage.setItem("accessToken", response.headers.accesstoken)
@@ -52,20 +52,15 @@ export const useUserStore = defineStore('user', () => {
       }
     )
     
-    // if(loginFlage.value===true){
-    //   console('user store')
-    //   const param = {
-    //     "lastEventId":"",
-    //   }
-    //   await seeStore.sseConnect(param, userInfo.value.id,
-    //     (res)=>{console.log(res)
-    //     ,(err)=>{console.log(err)}
-    //   })
-    //   .then( async()=>{
-    //     await router.push({name:'main'})
-    //   })  
-    // }
-    
+    if(loginFlage.value===true){
+      console.log('store user')
+      await sseStore.sseConnect("1", userInfo.value.id,
+        async (res)=>{
+          console.log(res)
+          await router.push({name:'main'})},
+        (err)=>{console.log(err)}
+      )  
+    }
   }
 
   // 로그아웃 함수
