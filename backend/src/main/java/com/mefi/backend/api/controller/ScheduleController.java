@@ -38,8 +38,9 @@ public class ScheduleController {
         log.info("User ID : {}", user.getUserId());
 
         // 일정 등록
+        log.info("Schedule start : {}", scheduleReqDto.getStartedTime());
+        log.info("Schedule end : {}", scheduleReqDto.getEndTime());
         scheduleService.createSchedule(user.getUserId(), scheduleReqDto);
-        log.info("Schedule Summary : {}", scheduleReqDto.getSummary());
 
         // 반환
         return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0, "SUCCESS"));

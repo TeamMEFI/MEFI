@@ -27,7 +27,7 @@ public class Noti {
     private LocalDateTime createdTime;
 
     // 수신자
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id")
     private User user;
 
