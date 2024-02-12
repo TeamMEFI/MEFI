@@ -42,16 +42,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getFiles, createFile, downloadFile, deleteFile } from '@/api/file.js'
 
 const route = useRoute()
 const teamId = ref(route.params?.teamid)
 const conferenceId = ref(route.params?.conferenceid)
+const props = defineProps({
+  documentState: Object
+})
 
 // API 호출 함수
-const file = ref(null)
 const fileList = ref([])
 const addedFileList = ref([])
 
@@ -70,7 +72,7 @@ const fetchFiles = () => {
   )
 }
 
-const uploadFile = () => {
+const uploadFile = (file) => {
   const formData = new FormData()
 
   const fileRequestDto = new Blob(
@@ -78,21 +80,20 @@ const uploadFile = () => {
       JSON.stringify({
         teamId: teamId.value,
         conferenceId: conferenceId.value,
-        fileName: 'test.png',
-        type: 'DOCUMENT'
+        fileName: 'attach.pdf',
+        type: 'ATTACHMENT'
       })
     ],
     { type: 'application/json' }
   )
 
-  formData.append('file', file.value.files[0])
+  formData.append('file', file)
   formData.append('fileRequestDto', fileRequestDto)
 
   createFile(
     formData,
-    (response) => {
-      fetchFiles()
-      addedFileList.value = []
+    () => {
+      console.log(`upload success`)
     },
     (error) => {
       console.log(error)
@@ -138,7 +139,7 @@ const eraseFile = (fileName) => {
     },
     546,
     (response) => {
-      alert('삭제되었답니다~')
+      alert('문서가 삭제되었습니다.')
       fetchFiles()
     },
     (error) => {
@@ -151,8 +152,27 @@ const removeFile = (fileName) => {
   addedFileList.value = addedFileList.value.filter((addedFile) => addedFile.name !== fileName)
 }
 
+watch(() => props.documentState.state, () => {
+  if (props.documentState.state === "detail") {
+    fetchFiles()
+  }
+
+  if (props.documentState.state === "done") {
+    conferenceId.value = props.documentState.conferenceId
+
+    addedFileList.value.forEach((addedFile) => {
+      uploadFile(addedFile);
+    });
+
+    addedFileList.value = []
+  }
+})
+
 onMounted(() => {
-  fetchFiles()
+  console.log(props.documentState.state)
+  if (props.documentState.state === "detail") {
+    fetchFiles()
+  }
 })
 
 // 드래그 앤 드롭을 사용하지 않고 수동으로 파일을 넣는 함수

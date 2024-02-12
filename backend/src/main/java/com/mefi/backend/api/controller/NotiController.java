@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class NotiController {
 
     private final NotiService notiService;
 
-    @GetMapping("/subscribe")
+    @GetMapping(name="/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "SSE 연결 API", description = "서버에서 클라이언트에 실시간 알림을 전송하기 위한 SSE Emitter 생성")
     public ResponseEntity<SseEmitter> createSseConnection( Authentication authentication,  @RequestParam(name = "lastEventId", required = false) String lastEventId){
 
@@ -40,8 +41,7 @@ public class NotiController {
         log.info("SSE Emitter : {}", sseEmitter);
 
         // NginX 버퍼링 기능 비활성화
-        return ResponseEntity.status(HttpStatus.CREATED).header("X-Accel-Buffering", "no").body(sseEmitter);
-//          return ResponseEntity.status(HttpStatus.CREATED).body(sseEmitter);
+        return ResponseEntity.status(HttpStatus.OK).header("X-Accel-Buffering", "no").body(sseEmitter);
     }
 
     @GetMapping("/all")

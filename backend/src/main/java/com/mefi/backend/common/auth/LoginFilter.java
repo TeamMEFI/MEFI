@@ -3,9 +3,11 @@ package com.mefi.backend.common.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mefi.backend.api.request.LoginReqDto;
 import com.mefi.backend.api.response.LoginResDto;
+import com.mefi.backend.api.service.FileService;
 import com.mefi.backend.common.util.JWTUtil;
 import com.mefi.backend.db.entity.Token;
 import com.mefi.backend.db.entity.User;
+import com.mefi.backend.db.repository.FileRepository;
 import com.mefi.backend.db.repository.TokenRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -30,12 +32,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JWTUtil jwtUtil;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
+    private final FileService fileService;
     private ObjectMapper mapper;
 
     // 생성자 주입 (Security 기본 로그인 URL 수정을 위해 직접 작성)
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, TokenRepository tokenRepository, UserRepository userRepository) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, TokenRepository tokenRepository, UserRepository userRepository, FileService fileService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.fileService = fileService;
         this.setFilterProcessesUrl("/api/users/login");
         this.tokenRepository = tokenRepository;
         this.userRepository = userRepository;
@@ -82,10 +86,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // JWT 발급 (아이디, 직책, 만료 기간)
         // accessToken, refreshToken 생성
-        // accessToken : 테스트 - 5분, 추후 - Duration.ofHours(1)
-        // refreshToken : 테스트 - 10분, 추후 - Duration.ofHours(6)
-        String accessToken = jwtUtil.createJwt(user.getEmail(), null, 60*5*1000L);
-        String refreshToken = jwtUtil.createJwt(user.getEmail(), null, 60*10*1000L);
+        // accessToken : 테스트 - 1시간, 추후 - Duration.ofHours(1)
+        // refreshToken : 테스트 - 7일, 추후 - Duration.ofHours(6)
+        String accessToken = jwtUtil.createJwt(user.getEmail(), null, 60*60*1000L);
+        String refreshToken = jwtUtil.createJwt(user.getEmail(), null, 7*24*60*60*1000L);
 
         // 유저 식별 아이디로 토큰 조회
         Optional<Token> token = tokenRepository.findByUserId(user.getId());
@@ -117,9 +121,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.addHeader("refreshToken",refreshToken);
         response.setStatus(200);
 
+        // 프로필 이미지 파일 조회
+        String imgUrl = user.getImgUrl();
+        String fileName = imgUrl.substring(imgUrl.lastIndexOf("/")+1);
+        byte[] profileImg = fileService.downloadFile(-1L, fileName);
+
         // 응답에 저장 (바디)
         Map<String,LoginResDto> reposenBody = new HashMap<>();
-        LoginResDto loginResDto = new LoginResDto(user.getEmail(),user.getName(),user.getDept(),user.getPosition());
+        LoginResDto loginResDto = new LoginResDto(user.getId(),user.getEmail(),user.getName(),user.getDept(),user.getPosition(), profileImg);
         reposenBody.put("dataBody",loginResDto);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(reposenBody));

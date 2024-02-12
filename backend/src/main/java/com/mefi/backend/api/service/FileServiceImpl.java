@@ -9,6 +9,7 @@ import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.db.entity.Conference;
 import com.mefi.backend.db.entity.MeetingFile;
 import com.mefi.backend.db.entity.MeetingFileType;
+import com.mefi.backend.db.repository.ConferenceRepository;
 import com.mefi.backend.db.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ public class FileServiceImpl implements FileService {
 
     private final AmazonS3Client amazonS3Client;
     private final FileRepository fileRepository;
+    private final ConferenceRepository conferenceRepository;
     private final String DIRECTORY = "CONFERENCE";
 
     @Value("${cloud.aws.s3.bucket}")
@@ -51,17 +53,17 @@ public class FileServiceImpl implements FileService {
             System.out.println(fileName);
 
             // S3에 저장될 파일명 생성
-            String key =  DIRECTORY + "/" + conferenceId + "/" + fileName;
+            String key =  "CONFERENCE/" + conferenceId + "/" + fileName;
 
             // S3에 오브젝트 저장
             amazonS3Client.putObject(bucket, key, multipartFile.getInputStream(), objectMetadata);
 
-            // 파일 엔티티 생성 및 저장
-            // TODO : 컨퍼런스 객체 전달하는 부분 반드시 수정해야 한다
+            // 파일 엔티티 생성 및 연관관계 맺어줌
             String fileUrl = amazonS3Client.getUrl(bucket, key).toString();
-//            Conference conference = fileRepository.findConference(conferenceId);
-//            MeetingFile meetingFile = new MeetingFile(fileName, fileUrl, type, conference);
-//            fileRepository.save(meetingFile);
+            MeetingFile meetingFile = new MeetingFile(fileName, fileUrl, type);
+            Conference conference = conferenceRepository.findById(conferenceId).get();
+            meetingFile.setConference(conference);
+            fileRepository.save(meetingFile);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -75,7 +77,7 @@ public class FileServiceImpl implements FileService {
             MeetingFile meetingFile = fileRepository.findByFileName(fileName).orElseThrow(()-> new Exceptions(ErrorCode.FILE_NOT_EXIST));
 
             // DeleteObjectRequest 생성
-            String key = DIRECTORY + "/" + conferenceId  + "/" + fileName;
+            String key = "CONFERENCE/" + conferenceId  + "/" + fileName;
 
             DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
 
@@ -91,11 +93,15 @@ public class FileServiceImpl implements FileService {
 
     // 회의록 또는 첨부파일을 다운로드
     public byte[] downloadFile(Long conferenceId, String fileName){
-        try{
-            // GetObjectRequest 생성
-            String key = DIRECTORY + "/" + conferenceId + "/" + fileName;
-            GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
+        // KEY 생성
+        String key;
+        if(conferenceId < 0) key = "PROFILE" + "/" + fileName; // 프로필 이미지
+        else key = "CONFERENCE" + "/" + conferenceId + "/" + fileName; // 회의록 또는 첨부파일
 
+        // GetObjectRequest 생성
+        GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
+
+        try{
             // AWS S3에서 해당되는 파일 다운로드
             S3Object s3Object = amazonS3Client.getObject(getObjectRequest);
 

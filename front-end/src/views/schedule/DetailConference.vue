@@ -100,7 +100,7 @@
             <p class="text-h5 font-weight-black">회의 관련 문서</p>
         </v-card-title>
         <div class="h-50 pa-3">
-            <SearchDoc/>
+            <SearchDoc :documentState="documentState"/>
         </div>
     </v-card>
 </template>
@@ -108,15 +108,61 @@
 <script setup>
 import SearchDoc from '@/components/docs/SearchDoc.vue';
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 const starthours = ref(['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const endhours = ref(['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
 const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const typeschedule = ref(['회의'])
 const selectvalue = ref('회의')
-const router = useRouter()
 
+const route = useRoute()
+const teamId = ref(route.params?.teamid)
+const conferenceId = ref(route.params?.conferenceid)
+const props = defineProps({
+  date: String
+})
+
+const documentState = ref({
+  state: 'detail',
+  conferenceId: conferenceId.value
+})
+
+const title = ref('')
+const description = ref('')
+const date = ref(route.query?.date)
+const selectSh = ref('')
+const selectSm = ref('')
+const selectEh = ref('')
+const selectEm = ref('')
+
+const reservateConference = async () => {
+  if (!selectSh.value || !selectSh.value || !selectSh.value || !selectSh.value) {
+    alert("회의 시간을 설정해주세요.")
+    return false;
+  }
+
+  const conferenceCreateReqDto = {
+    title: title.value,
+    description: description.value,
+    thumbnailUrl: '',
+    callStart: date.value + 'T' + selectSh.value + ':' + selectSm.value + ':00.000Z',
+    callEnd: date.value + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',
+    teamId: teamId.value
+  }
+
+  await createConference(
+    conferenceCreateReqDto,
+    (response) => {
+      const conferenceId = response.data.dataBody;
+      documentState.value.state = "done";
+      documentState.value.conferenceId = conferenceId;
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
 </script>
 
 <style lang="scss" scoped>

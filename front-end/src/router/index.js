@@ -43,9 +43,12 @@ const router = createRouter({
           })
         },
         {
-          path: '/insert/schedule',
+          path: '/insert/schedule/:date',
           name: 'insertschedule',
           component: InsertSchedule,
+          props: (route) => ({
+            date: String(route.params.date)
+          })
         },
         {
           path: '/insert/conference/:teamid',
@@ -56,11 +59,12 @@ const router = createRouter({
           })
         },
         {
-          path: '/Detail/schedule/:scheduleid',
+          path: '/Detail/schedule/:date/:scheduleid',
           name: 'detailschedule',
           component: DetailSchedule,
           props: (route) =>({
             scheduleid: Number(route.params.scheduleid),
+            date: String(route.params.date)
           })
         },
         {
@@ -113,7 +117,7 @@ const router = createRouter({
       ]
     },
     {
-      path: '/conference/:teamId/:conferenceId',
+      path: '/conference/:teamid/:conferenceid',
       name: 'conference',
       component: ConferenceView
     },

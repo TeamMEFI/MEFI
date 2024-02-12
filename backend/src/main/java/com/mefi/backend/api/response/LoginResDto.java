@@ -9,6 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class LoginResDto {
+
+    // 회원 식별 ID
+    private Long id;
     
     // 이메일
     private String email;
@@ -21,4 +24,7 @@ public class LoginResDto {
 
     // 직책
     private String position;
+
+    // 프로필 이미지;
+    private byte[] profile;
 }

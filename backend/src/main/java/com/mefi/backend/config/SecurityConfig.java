@@ -1,5 +1,6 @@
 package com.mefi.backend.config;
 
+import com.mefi.backend.api.service.FileService;
 import com.mefi.backend.common.auth.JWTFilter;
 import com.mefi.backend.common.auth.LoginFilter;
 import com.mefi.backend.common.util.JWTUtil;
@@ -32,6 +33,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
+    private final FileService fileService;
 
     // AuthenticationManager 등록
     // 데이터베이스에서 회원 정보를 가져와 검증 수행하는 클래스
@@ -80,7 +82,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil,userRepository), LoginFilter.class)
 
                 // 해당 필터 자리에서 수행 (수행 할 필터, 대체 필터 자리)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,tokenRepository,userRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,tokenRepository,userRepository, fileService), UsernamePasswordAuthenticationFilter.class);
 
         // 세션 설정 (JWT를 통한 인증/인가를 위해서 세션을 STATELESS 상태로 설정)
         http

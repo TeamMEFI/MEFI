@@ -1,7 +1,10 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ScheduleCalResDto;
+import com.mefi.backend.api.response.ScheduleDetailResDto;
 import com.mefi.backend.api.response.ScheduleResDto;
+import com.mefi.backend.api.response.ScheduleTimeDto;
 import com.mefi.backend.api.service.ScheduleService;
 import com.mefi.backend.common.auth.CustomUserDetails;
 import com.mefi.backend.common.model.BaseResponseBody;
@@ -14,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/schedule")
@@ -52,5 +57,86 @@ public class ScheduleController {
 
         // 반환
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(BaseResponseBody.of(0, "SUCCESS"));
+    }
+
+    @GetMapping("")
+    @Operation(summary = "개인 일정 조회", description = "사용자의 모든 개인 일정 정보를 조회한다.")
+    @ApiResponse(responseCode = "200", description = "성공 시 상태 코드 200와 개인 일정 리스트 반환")
+    public ResponseEntity<? extends BaseResponseBody> getPrivateSchedule(Authentication authentication,
+                                                                         @RequestParam(name = "start") String start,
+                                                                         @RequestParam(name = "end") String end){
+
+        // 로그인 된 유저 정보 조회
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+
+        log.info("================getPrivateSchedule=============");
+        log.info("userID : {} ", user.getUserId());
+        log.info("start : {} ", start);
+        log.info("end : {} ", end);
+
+        List<ScheduleCalResDto> schedule = scheduleService.getPrivateSchedule(user.getUserId(), start, end);
+
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, schedule));
+    }
+
+    @GetMapping("/{teamId}")
+    @Operation(summary = "팀원 전체 일정 조회", description = "리더가 자신 포함 모든 멤버의 해당 일자 일정 정보를 조회한다.")
+    @ApiResponse(responseCode = "200", description = "성공 시 상태 코드 200와 모든 멤버의 해당 일자 일정 정보")
+    public ResponseEntity<? extends BaseResponseBody> getAllMemberSchedule(Authentication authentication,
+                                                                           @PathVariable("teamId") Long teamId,
+                                                                           @RequestParam(name = "day") String day){
+
+        // 로그인 된 유저 정보 조회
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        log.info("================getPrivateSchedule=============");
+        log.info("userId : {} ", user.getUserId());
+        log.info("teamId : {} ", teamId);
+        log.info("start : {} ", day);
+
+        List<ScheduleTimeDto> result = scheduleService.getAllMemberSchedule(user.getUserId(), teamId, day);
+
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, result));
+    }
+
+    @PatchMapping("/{scheduleId}")
+    @Operation(summary = "개인 일정 수정", description = "새로운 개인 일정 정보를 받아 DB에 수정한다.")
+    @ApiResponse(responseCode = "200", description = "성공 시 상태 코드 200와 SUCCESS 반환")
+    public ResponseEntity<? extends BaseResponseBody> modifySchedule(Authentication authentication,
+                                                                     @RequestBody ScheduleReqDto scheduleReqDto,
+                                                                     @PathVariable(name = "scheduleId") Long scheduleId){
+        // 로그인 된 유저 정보 조회
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+        log.info("User ID : {}", user.getUserId());
+        log.info("Schedule ID : {}", scheduleId);
+
+        // 일정 등록
+        scheduleService.modifySchedule(user.getUserId(), scheduleReqDto, scheduleId);
+
+        // 반환
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "SUCCESS"));
+    }
+
+    @GetMapping("/detail/{scheduleId}")
+    @Operation(summary = "개인 일정 상세 조회", description = "개인 일정 상세정보 조회한다.")
+    @ApiResponse(responseCode = "200", description = "성공 시 상태 코드 200와 상태와 상세 정보 DTO 반환")
+    public ResponseEntity<? extends BaseResponseBody> getPrivateScheduleDetail(Authentication authentication,
+                                                                               @PathVariable(name = "scheduleId") Long scheduleId){
+
+        log.info("=======================ScheduleController-getPrivateScheduleDetail()=======================");
+
+        // 현재 사용자의 세부 정보를 인증 객체에서 추출하여 저장
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+
+        // 사용자와 개인 일정 식별자 로깅
+        log.info("userID : {} ", user.getUserId());
+        log.info("scheduleId : {} ", scheduleId);
+
+        // 개인 일정 상세 정보 조회 서비스 호출 및 사용자, 일정 식별자 전달
+        ScheduleDetailResDto schedule = scheduleService.getPrivateScheduleDetail(user.getUserId(), scheduleId);
+
+        // 조회가 성공하면 HTTP 상태 코드 200(OK) 및 개인 일정 상세 정보를 반환
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, schedule));
     }
 }

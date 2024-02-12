@@ -31,14 +31,18 @@ public enum ErrorCode {
     NOT_TEAM_LEADER(HttpStatus.BAD_REQUEST, "G-003", "팀장만 수정 권한이 있습니다."),
     LEADER_NOT_DELETEABLE(HttpStatus.BAD_REQUEST, "G-004", "리더는 삭제할 수 없습니다."),
     MEMBER_NOT_EXIST(HttpStatus.BAD_REQUEST, "G-005", "해당 팀원은 존재하지 않습니다."),
-
+    NOT_TEAM_MEMBER(HttpStatus.BAD_REQUEST, "G-006", "해당 팀의 멤버가 아닙니다."),
     // 파일
     FILE_NOT_EXIST(HttpStatus.BAD_REQUEST, "F-001", "파일이 존재하지 않습니다."),
 
     // 일정
     SCHEDULE_NOT_EXIST(HttpStatus.BAD_REQUEST, "S-001", "존재하지 않는 일정입니다."),
-    SCHEDULE_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "S-002", "개인 일정은 본인에게만 관리 권한이 있습니다.");
+    SCHEDULE_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "S-002", "개인 일정은 본인에게만 관리 권한이 있습니다."),
+    CONFERENCE_NOT_MODIFY(HttpStatus.BAD_REQUEST, "S-003", "회의 일정은 수정 불가능 합니다."),
 
+    // 회의
+    CONFERENCE_NOT_EXIST(HttpStatus.BAD_REQUEST, "C-001", "존재하지 않는 회의입니다.");
+    
     // 상태, 에러 코드, 메시지
     private HttpStatus httpStatus;
     private String errorCode;

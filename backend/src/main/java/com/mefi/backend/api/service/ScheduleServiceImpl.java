@@ -1,17 +1,25 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.ScheduleReqDto;
+import com.mefi.backend.api.response.ScheduleCalResDto;
+import com.mefi.backend.api.response.ScheduleDetailResDto;
 import com.mefi.backend.api.response.ScheduleResDto;
+import com.mefi.backend.api.response.ScheduleTimeDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
-import com.mefi.backend.db.entity.PrivateSchedule;
-import com.mefi.backend.db.entity.User;
+import com.mefi.backend.db.entity.*;
 import com.mefi.backend.db.repository.ScheduleRepository;
+import com.mefi.backend.db.repository.TeamUserRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +29,8 @@ public class ScheduleServiceImpl implements  ScheduleService{
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final TeamUserRepository teamUserRepository;
+
     @Override
     @Transactional
     public void createSchedule(Long userId, ScheduleReqDto scheduleReqDto) {
@@ -55,5 +65,84 @@ public class ScheduleServiceImpl implements  ScheduleService{
         // 일정 삭제
         scheduleRepository.delete(schedule);
         return new ScheduleResDto(schedule);
+    }
+
+    @Override
+    public List<ScheduleCalResDto> getPrivateSchedule(Long userId, String start, String end) {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new Exceptions(ErrorCode.USER_NOT_EXIST));
+
+        // 문자열을 LocalDateTime으로 변환
+        LocalDateTime s = LocalDateTime.parse(start + "000000.000", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
+        LocalDateTime e = LocalDateTime.parse(end + "235959.999", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
+
+        log.info("\nstart {} , end {}", s, e);
+
+        List<PrivateSchedule> result = scheduleRepository.findByUserAndStartedTimeBetweenOrderByStartedTime(user, s, e);
+
+        List<ScheduleCalResDto> list = new ArrayList<>();
+
+        for (PrivateSchedule ps : result) {
+            list.add(new ScheduleCalResDto(ps.getId(), ps.getSummary(), ps.getStartedTime() ,ps.getEndTime(), ps.getType()));
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<ScheduleTimeDto> getAllMemberSchedule(Long userId, Long teamId, String day) {
+
+        UserTeam userTeam  = teamUserRepository.findByUserIdAndTeamId(userId, teamId).orElseThrow(() -> new Exceptions(ErrorCode.TEAM_ACCESS_DENIED));
+
+        log.info("해당 유저의 권한 : {}", userTeam.getRole());
+
+        if(userTeam.getRole() != UserRole.LEADER){
+            throw new Exceptions(ErrorCode.NOT_TEAM_LEADER);
+        }
+
+        List<Long> memberIds = teamUserRepository.findByUserId(teamId);
+
+        log.info("memberIds : {}", memberIds);
+
+        LocalDateTime date = LocalDateTime.parse(day + "000000.000", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
+
+        log.info("date {}", date);
+
+        return scheduleRepository.findAllMemberSchedule(memberIds, date);
+    }
+
+    @Override
+    @Transactional
+    public void modifySchedule(Long userId, ScheduleReqDto scheduleReqDto, Long scheduleId) {
+        // 삭제하려는 일정 조회, 존재하지 않는다면 예외 발생
+        PrivateSchedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new Exceptions(ErrorCode.SCHEDULE_NOT_EXIST));
+
+        // 일정을 등록한 유저가 아니라면 예외 발생
+        if(userId != schedule.getUser().getId()){
+            throw new Exceptions(ErrorCode.SCHEDULE_ACCESS_DENIED);
+        }
+
+        // 만약 수정하려는 일정 타입이 회의라면 예외 발생
+        if(schedule.getType() == ScheduleType.CONFERENCE){
+            throw new Exceptions(ErrorCode.CONFERENCE_NOT_MODIFY);
+        }
+
+        schedule.changeDetail(scheduleReqDto.getSummary(), scheduleReqDto.getDescription(), scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime());
+    }
+
+    // 개인 일정 상세 조회
+    @Override
+    public ScheduleDetailResDto getPrivateScheduleDetail(Long userId, Long scheduleId) {
+
+        log.info("=======================ScheduleService-getPrivateScheduleDetail()=======================");
+
+        // 해당 일정이 존재하지 않는다면 예외 처리
+        PrivateSchedule ps = scheduleRepository.findById(scheduleId).orElseThrow(() -> new Exceptions(ErrorCode.SCHEDULE_NOT_EXIST));
+
+        // 해당 일정의 현재 사용자의 일정이 아니라면 예외 처리
+        if(ps.getUser().getId() == userId) new Exceptions(ErrorCode.SCHEDULE_ACCESS_DENIED);
+
+        // 일정 상세 DTO 반환
+        return new ScheduleDetailResDto(ps.getId(), ps.getSummary(), ps.getDescription(), ps.getStartedTime(), ps.getEndTime(), ps.getType());
     }
 }

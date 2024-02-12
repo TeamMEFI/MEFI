@@ -1,11 +1,13 @@
 package com.mefi.backend.api.request;
 
 import com.mefi.backend.db.entity.ScheduleType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 public class ScheduleReqDto {
 
     // 시작 시간

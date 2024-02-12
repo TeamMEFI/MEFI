@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -46,5 +45,12 @@ public class PrivateSchedule {
         this.summary = summary;
         this.description = description;
         this.user = user;
+    }
+
+    public void changeDetail(String summary, String description, LocalDateTime startedTime, LocalDateTime endTime) {
+        this.startedTime = startedTime;
+        this.endTime = endTime;
+        this.summary = summary;
+        this.description = description;
     }
 }

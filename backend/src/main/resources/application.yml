@@ -1,10 +1,12 @@
 spring:
+
   # database
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ENC(HnRs9Ivms5soqKFzIKEquPvllun7PEIfmFM43Vn9dbSD7GyDGGgu34nyQKrC0k/6MwWXnJg8ImpKlcPos6OkiHppuPdZeYrti2rhDM1RhyjQe+vkN4MBjokjJcvKzREPyaSIcyE0jDlYYsLLyQu2vg==)
     username: ENC(STFAJLTBNjto5twxRhLYvg==)
     password: ENC(WxXgJEw2DSZp2O2LvV3g0jsWmvKqhev9)
+
   # jpa
   jpa:
     hibernate:
@@ -14,26 +16,29 @@ spring:
         format_sql: true
         show_sql: true;
     open-in-view: false
+
   # encoding
   http:
     encoding:
       charset: UTF-8
       force: true
       enabled: true
+
   # secret key
   jwt:
-    secret: ENC(PAhihR/o/LMG5jb0+zepLwkJwRsbLWEtrMvly4hkcPa/SPLUDBeIHp2a9ZjOlRm74akyR74ZlOLwzosYsYEt9w==)
-    filter: ENC(CAEg9MCNghGS+/LMWdeFZeMvjCMo0n8c)
+    secret: ENC(hkdBLsuDYACownjfWcONpecb1EL7rHUVHvh/DKNcnA4toirqhjWLeVlVnj5Jikw+hgyiNZmb5i5qIGDTKzju8g==)
+    filter: ENC(4n4C2GddJ5b20njYiAEE69Q0b1GsZli0)
+
   # mail smtp
   mail:
     # 서버 주소
-    host: ENC(mupn/aG1QTqut/pKRGlRdKiFQuJbh9Tn)
+    host: ENC(jbo5qLQB1u0g0tDxaHjhyz4DtyXt9cPv)
     # 메일 인증 서버 포트 (587, 465 존재, SSL은 465)
     port: 465
     # 아이디
-    username: ENC(pTGzOwQWXpdqNkSLdhp8RT95SFo9ZpCF09C3AzhKVlCP2CSKgPywSQ==)
+    username: ENC(UDmYz6dgES3+0W8XTjLzrqdiRb4xBmBTMYN6hixMbNpGE+e4yYRcJQ==)
     # 비밀번호
-    password: ENC(Itionk0I8JVYo7Fcy4hItUKfPYHXmWRb)
+    password: ENC(DgX/6xhu95VWtgqv/3RPhh16psw9zXdb)
     properties:
       # 메일 디버그 모드 설정 (전송 과정 로그 출력)
       debug: true
@@ -45,24 +50,30 @@ spring:
             # SSL 보안 설정 (전송 과정 데이터 암호화 제공)
             enable: true
             # 신뢰할 수 있는 SMTP 서버 호스트 지정
-            trust: ENC(bGAAKA52ojbicLqm/h74IoFxDVO55h6Z)
+            trust: ENC(UWnTUhjXR9CLA7QeMPU7IlFRVzNpoFH4)
           # STARTTLS 연결을 활성화 (평문 통신 채널에서 암호화 통신 채널로 업그레이드)
           starttls.enable: true
+          
 # AWS S3
 cloud:
   aws:
     s3:
-      bucket: ENC(Hi5do06VG0lVlNJCfEKOjgku7M81xUJi)
+      bucket: ENC(ERGwjpE29QUvgdCKrtT7DhjeTHMmsCV7)
       credentials:
-        access-key: ENC(OzJEObME0H66eqHzFatuSpSTGlg+TMClMEs45aSjBOQ=)
-        secret-key: ENC(3Z8znblOJXvQHMUdMO37Ebw7eA3iH29koHw0SkSiwtxReXXyPlzHtO/2yRVw0hG0rL31L8Xwhiw=)
+        access-key: ENC(za+2tqUiVZwKNuBGyWME3FyLfzfRlAg9RuwhxN+Cku0=)
+        secret-key: ENC(EJfxTl5mm2MsvPfISoO2YubWYFjxao/25FGRjc7zeibt6JwvQZfD9O9+fQp4IqVvL6sda8px9S8=)
     region:
       static: ap-northeast-2
     stack:
       auto: false # EC2의 Spring Cloud 자동 구성 해제
+      
 # OPENVIDU
-OPENVIDU_URL: ENC(/JNrRlfJxD6r56rgRs+bT9fSGwVzr+y8OnOhMQtNekbsi8F4La34drl9fgdsqLq9)
-OPENVIDU_SECRET: ENC(hwb45ywSah0r1wahddgmpFSSC1etSbImoUoje/sScb8=)
+OPENVIDU_URL: ENC(tr0z7Tmn2o8vvcLN93iQc2j4EE1EMZOi4IUsoXwL9HcKp6N1sB9VD/kX4AfuUw0v)
+OPENVIDU_SECRET: ENC(24+6uqrXC+CRv3uNOtSeM4OUV3jd6IH4dqlh6GbAais=)
 
+# logger로 Hibernate 실행 SQL 출력
 logging.level:
-  org.hibernate.SQL: debug  # logger로 Hibernate 실행 SQL을 남긴다.
+  org.hibernate.SQL: debug  
+
+# PROFILE IMAGE
+DEFAULT_PROFILE_URL : ENC(Dp06UzclQawgo6UvSMClII7TqN2vwL/wZ6bf5It4nNreW8qGT31HyyH44JumXFcCAs6ZyFZjDRsiV/9q1pOibNk/N4ueEHTK6eSLJPPzpaXA4lIBQDmY2A==)

@@ -29,10 +29,21 @@ public class MeetingFile {
     private Conference conference;
 
     @Builder
-    public MeetingFile(String fileName, String fileUrl, MeetingFileType type, Conference conference){
+    public MeetingFile(String fileName, String fileUrl, MeetingFileType type){
         this.fileName = fileName;
         this.fileUrl = fileUrl;
         this.type = type;
-        this.conference = conference;
     }
+
+    // 연관관계 편의 메소드
+    public void setConference(Conference conference){
+        // 기본 연관관계 정리
+        if(this.conference != null){
+            this.conference.getMeetingFiles().remove(this);
+        }
+        // 양방향 연관관계를 맺는다
+        this.conference = conference;
+        conference.getMeetingFiles().add(this);
+    }
+
 }
