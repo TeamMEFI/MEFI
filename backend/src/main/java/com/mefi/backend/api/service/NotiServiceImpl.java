@@ -11,6 +11,8 @@ import com.mefi.backend.db.repository.TeamUserRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@EnableScheduling
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
@@ -162,4 +165,10 @@ public class NotiServiceImpl implements NotiService{
         return userId + "_" + System.currentTimeMillis();
     }
 
+    // 매일 새벽 5시마다 3개월 지난 이벤트 캐시를 제거하는 메소드
+    @Scheduled(cron="0 5 * * * ?")
+    protected void deleteEventCaches(){
+        notiRepository.deleteEventCacheByUserId();
+        log.info(LocalDateTime.now() + "기준으로 3개월 지난 EventCache 삭제 완료");
+    }
 }

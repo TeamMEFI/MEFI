@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 @Getter
 public class NotiResponseDto {
 
+    // 알림 ID
+    private Long id;
+
     // 알림 메세지
     private String message;
 
@@ -23,6 +26,7 @@ public class NotiResponseDto {
     private String sender;
 
     public NotiResponseDto(Noti noti){
+        this.id = noti.getId();
         this.message = noti.getMessage();
         this.status = noti.getStatus();
         this.createdTime = noti.getCreatedTime();

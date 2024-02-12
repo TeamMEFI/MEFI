@@ -4,12 +4,14 @@ import com.mefi.backend.api.request.*;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.UserModifyAllResDto;
 import com.mefi.backend.api.service.MailServiceImpl;
+import com.mefi.backend.api.service.NotiService;
 import com.mefi.backend.api.service.TokenService;
 import com.mefi.backend.api.service.UserService;
 import com.mefi.backend.common.auth.CustomUserDetails;
 import com.mefi.backend.common.model.BaseResponseBody;
 import com.mefi.backend.db.entity.Token;
 import com.mefi.backend.db.entity.User;
+import com.mefi.backend.db.repository.NotiRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,6 +35,7 @@ public class UserController {
     private final UserService userService;
     private final TokenService tokenService;
     private final MailServiceImpl mailService;
+    private final NotiRepository notiRepository;
 
     @Operation(summary = "회원가입", description = "/users\n\n 사용자의 정보를 통해 회원가입 한다.")
     @PostMapping("")
@@ -72,6 +75,9 @@ public class UserController {
         // 식별 ID로 리프레시 토큰 제거
         Token token = tokenService.findByUserId(userDetails.getUserId());
         tokenService.deleteRefreshToken(token);
+
+        // 해당 유저의 SseEmitter 모두 제거
+        notiRepository.deleteEmittersByUserId(String.valueOf(userDetails.getUserId()));
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, "Success"));
     }
 

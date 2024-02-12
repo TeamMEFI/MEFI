@@ -16,7 +16,7 @@ public interface NotiRepositoryCustom {
     public void deleteEmittersByUserId(String userId);
 
     // 특정 유저의 EventCache 모두 삭제
-    public void deleteEventCacheByUserId(String userId);
+    public void deleteEventCacheByUserId();
 
     // 특정 유저의 SSE Emitter 모두 조회
     public Map<String, SseEmitter> findSseEmittersById(String userId);
