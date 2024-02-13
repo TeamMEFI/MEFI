@@ -20,5 +20,5 @@ public class UserModifyAllResDto {
     private String position;
 
     // 프로필 이미지
-    private String imgUrl;
+    private byte[] profile;
 }
