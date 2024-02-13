@@ -64,6 +64,8 @@ const emit = defineEmits(['removeAlarm', 'removeAlarms'])
 const removeAlarm = (alarmId) => {
   emit('removeAlarm', alarmId)
 }
+
+// 전체 알림 읽음 삭제 처리
 const removeAlarms = () => {
   emit('removeAlarms')
 }

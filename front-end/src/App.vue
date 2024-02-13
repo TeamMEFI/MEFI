@@ -19,11 +19,10 @@ router.beforeEach((to, from, next) => {
     if (localStorage.getItem('refreshToken') !== null) {
         updateToken(
             (res) => {
-                console.log(res)
+                localStorage.setItem('accessToken', res.data.dataBody.accessToken)
                 next()
             },
             (err) => {
-                console.log(err)
                 localStorage.clear();
                 
                 if (to.name != 'login' &&
@@ -50,11 +49,9 @@ router.beforeEach((to, from, next) => {
             to.name != 'search-password1' &&
             to.name != 'search-password2' &&
             to.name != 'search-password3') {
-            console.log('else-if')
             next({name:'login'})
         }
         else{
-            console.log('else-else')
             next()
         }
     }
