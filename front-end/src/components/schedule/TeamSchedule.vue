@@ -9,6 +9,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getConferenceHistory } from '@/api/conference'
+import { selectTeamSchedule } from '@/api/schedule';
 
 const route = useRoute()
 const router = useRouter()
@@ -38,18 +39,12 @@ const schedule = async () => {
   )
 }
 
-watchEffect((props, (newvalue) => {
-  console.log('check')
-  schedule()
-}))
-
-
 watch(() => props.scheduleDate, () => {
-  getHistory()
+  schedule()
 })
 
 onMounted(() => {
-  getHistory()
+  schedule()
 })
 </script>
 <style scoped>

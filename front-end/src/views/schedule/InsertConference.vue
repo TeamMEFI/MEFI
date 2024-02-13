@@ -132,12 +132,12 @@ const documentState = ref({
 })
 const title = ref('')
 const description = ref('')
-const selectSh = ref('08')
-const selectSm = ref('00')
-const selectEh = ref('22')
-const selectEm = ref('00')
+const selectSh = ref('')
+const selectSm = ref('')
+const selectEh = ref('')
+const selectEm = ref('')
 
-const reservateConference = async () => {
+const conferenceReservation = async () => {
   if (!selectSh.value || !selectSh.value || !selectSh.value || !selectSh.value) {
     alert("회의 시간을 설정해주세요.")
     return false;

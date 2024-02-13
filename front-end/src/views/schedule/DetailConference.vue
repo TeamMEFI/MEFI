@@ -1,236 +1,238 @@
 <template>
-    <v-card class="h-100 pa-10">
-      <v-card-title class="d-flex h-5 align-center pa-2">
-        <p class="text-h5 font-weight-black">회의 예약</p>
-        <v-spacer></v-spacer>
-        <v-btn>회의 정보 수정하기</v-btn>
-        <v-btn @click="cancelConference">회의 예약 삭제하기</v-btn>
-      </v-card-title>
-      <v-card-item class="pa-3 h-40">
-        <v-container>
-          <v-row>
-            <v-col cols="6">
-              <p>일정 종류</p>
-            </v-col>
-            <v-col cols="3">
-              <p>시작 시간</p>
-            </v-col>
-            <v-col cols="3">
-              <p>종료 시간</p>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="6">
-              <v-select
-                v-model="selectvalue"
-                :items="typeschedule"
-                hide-selected="1"
-                variant="outlined"
-                density="compact"
-                hide-details="true"
-                disabled
-              ></v-select>
-            </v-col>
-            <v-col cols="6">
-              <v-row>
-                <v-col cols="3">
-                  <v-select
-                    v-model="selectSh"
-                    :items="starthours"
-                    variant="outlined"
-                    density="compact"
-                    hide-details="true"
-                  ></v-select>
-                </v-col>
-                <v-col cols="3">
-                  <v-select
-                    v-model="selectSm"
-                    :items="startmins"
-                    variant="outlined"
-                    density="compact"
-                    hide-details="true"
-                  ></v-select>
-                </v-col>
-                <v-col cols="3">
-                  <v-select
-                    v-model="selectEh"
-                    :items="endhours"
-                    variant="outlined"
-                    density="compact"
-                    hide-details="true"
-                  ></v-select>
-                </v-col>
-                <v-col cols="3">
-                  <v-select
-                    v-model="selectEm"
-                    :items="endmins"
-                    variant="outlined"
-                    density="compact"
-                    hide-details="true"
-                  ></v-select>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="6">
-              <p>제목</p>
-            </v-col>
-            <v-col cols="6">
-              <p>설명</p>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="6">
-              <v-text-field
-                v-model="title"
-                label="title"
-                variant="outlined"
-                density="compact"
-                required
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                v-model="description"
-                label="description"
-                variant="outlined"
-                density="compact"
-                required
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card-item>
-      <v-card-title class="d-flex h-5 align-center pa-2">
-        <p class="text-h5 font-weight-black">회의 관련 문서</p>
-      </v-card-title>
-      <div class="h-50 pa-3">
-        <SearchDoc :documentState="documentState" />
-      </div>
-    </v-card>
-  </template>
-  <script setup>
-  import SearchDoc from '@/components/docs/SearchDoc.vue'
-  import { ref, onMounted } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
-  import { detailConference, cancelMeeting } from '@/api/conference.js'
-  const starthours = ref([
-    '00',
-    '01',
-    '02',
-    '03',
-    '04',
-    '05',
-    '06',
-    '07',
-    '08',
-    '09',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-    '17',
-    '18',
-    '19',
-    '20',
-    '21',
-    '22',
-    '23'
-  ])
-  const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
-  const endhours = ref([
-    '00',
-    '01',
-    '02',
-    '03',
-    '04',
-    '05',
-    '06',
-    '07',
-    '08',
-    '09',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-    '17',
-    '18',
-    '19',
-    '20',
-    '21',
-    '22',
-    '23'
-  ])
-  const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
-  const typeschedule = ref(['회의'])
-  const selectvalue = ref('회의')
-  const route = useRoute()
-  const router = useRouter()
-  const teamId = ref(route.params?.teamid)
-  const conferenceId = ref(route.params?.conferenceid)
-  const props = defineProps({
-    date: String
-  })
-  const documentState = ref({
-    state: 'detail',
-    conferenceId: conferenceId.value
-  })
-  const title = ref('')
-  const description = ref('')
-  const date = ref(route.query?.date)
-  const selectSh = ref('')
-  const selectSm = ref('')
-  const selectEh = ref('')
-  const selectEm = ref('')
-  const cancelConference = () => {
-    cancelMeeting(
-      {conferenceId: conferenceId.value},
-      conferenceId.value,
-      (response) => {
-        console.log(response.data?.dataBody)
-        router.push({name: 'team', params: {id: teamId.value}})
-      },
-      (error) => {
-        console.log(error)
+  <v-card class="h-100 pa-10">
+    <v-card-title class="d-flex h-5 align-center pa-2">
+      <p class="text-h5 font-weight-black">회의 예약</p>
+      <v-spacer></v-spacer>
+      <template v-if="role === 'LEADER'">
+        <template v-if="modify">
+          <v-btn @click="modify = !modify">회의 정보 수정하기</v-btn>
+        </template>
+        <template v-else>
+          <v-btn @click="modify = !modify">회의 정보 수정하기</v-btn>
+          <v-btn @click="cancelConference">회의 예약 삭제하기</v-btn>
+          <v-btn
+            @click="
+              router.push({
+                name: 'conference',
+                params: { teamid: teamId, conferenceid: conferenceId }
+              })
+            "
+            >회의 시작하기</v-btn
+          >
+        </template>
+      </template>
+      <template v-else>
+        <v-btn
+          @click="
+            router.push({
+              name: 'conference',
+              params: { teamid: teamId, conferenceid: conferenceId }
+            })
+          "
+          >회의 참여하기</v-btn
+        >
+      </template>
+    </v-card-title>
+    <v-card-item class="pa-3 h-40">
+      <v-container>
+        <v-row>
+          <v-col cols="6">
+            <p>일정 종류</p>
+          </v-col>
+          <v-col cols="3">
+            <p>시작 시간</p>
+          </v-col>
+          <v-col cols="3">
+            <p>종료 시간</p>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6">
+            <v-select
+              v-model="selectvalue"
+              :items="typeschedule"
+              hide-selected="1"
+              variant="outlined"
+              density="compact"
+              hide-details="true"
+              disabled
+            ></v-select>
+          </v-col>
+          <v-col cols="6">
+            <v-row>
+              <v-col cols="3">
+                <v-select
+                  v-model="selectSh"
+                  :items="starthours"
+                  variant="outlined"
+                  density="compact"
+                  hide-details="true"
+                  :disabled="role === 'MEMBER' || !modify"
+                ></v-select>
+              </v-col>
+              <v-col cols="3">
+                <v-select
+                  v-model="selectSm"
+                  :items="startmins"
+                  variant="outlined"
+                  density="compact"
+                  hide-details="true"
+                  :disabled="role === 'MEMBER' || !modify"
+                ></v-select>
+              </v-col>
+              <v-col cols="3">
+                <v-select
+                  v-model="selectEh"
+                  :items="endhours"
+                  variant="outlined"
+                  density="compact"
+                  hide-details="true"
+                  :disabled="role === 'MEMBER' || !modify"
+                ></v-select>
+              </v-col>
+              <v-col cols="3">
+                <v-select
+                  v-model="selectEm"
+                  :items="endmins"
+                  variant="outlined"
+                  density="compact"
+                  hide-details="true"
+                  :disabled="role === 'MEMBER' || !modify"
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6">
+            <p>제목</p>
+          </v-col>
+          <v-col cols="6">
+            <p>설명</p>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field
+              v-model="title"
+              label="title"
+              variant="outlined"
+              density="compact"
+              required
+              :disabled="role === 'MEMBER' || !modify"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="description"
+              label="description"
+              variant="outlined"
+              density="compact"
+              required
+              :disabled="role === 'MEMBER' || !modify"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-item>
+    <v-card-title class="d-flex h-5 align-center pa-2">
+      <p class="text-h5 font-weight-black">회의 관련 문서</p>
+    </v-card-title>
+    <div class="h-50 pa-3">
+      <SearchDoc :documentState="documentState" />
+    </div>
+  </v-card>
+</template>
+<script setup>
+import SearchDoc from '@/components/docs/SearchDoc.vue'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { detailConference, cancelMeeting } from '@/api/conference.js'
+import { selectTeam } from '@/api/team.js'
+
+const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
+const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
+const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
+const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
+const typeschedule = ref(['회의'])
+const selectvalue = ref('회의')
+const route = useRoute()
+const router = useRouter()
+const teamId = ref(route.params?.teamid)
+const conferenceId = ref(route.params?.conferenceid)
+const props = defineProps({
+  date: String
+})
+const documentState = ref({
+  state: 'detail',
+  conferenceId: conferenceId.value
+})
+const title = ref('')
+const description = ref('')
+const date = ref(route.query?.date)
+const selectSh = ref('')
+const selectSm = ref('')
+const selectEh = ref('')
+const selectEm = ref('')
+const role = ref('')
+const modify = ref(false)
+
+const cancelConference = () => {
+  cancelMeeting(
+    { conferenceId: conferenceId.value },
+    conferenceId.value,
+    (response) => {
+      console.log(response.data?.dataBody)
+      router.push({ name: 'team', params: { id: teamId.value } })
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
+const getConferenceDetail = () => {
+  detailConference(
+    { conferenceId: conferenceId.value },
+    conferenceId.value,
+    (response) => {
+      const responseData = response.data?.dataBody
+      console.log(responseData)
+      title.value = responseData?.title
+      description.value = responseData?.description
+      const callStart = responseData?.callStart.slice(11).split(':')
+      selectSh.value = callStart[0]
+      selectSm.value = callStart[1]
+      const callEnd = responseData?.callEnd.slice(11).split(':')
+      selectEh.value = callEnd[0]
+      selectEm.value = callEnd[1]
+    },
+    (error) => {
+      const errorCode = error.response.data.dataHeader?.resultCode
+      const errorMessage = error.response.data.dataHeader?.resultMessage
+
+      if (errorCode === 'C-001' || errorCode === 'G-006') {
+        alert(errorMessage)
+        router.replace({ name: 'notFound' })
       }
-    )
-  }
-  const getConferenceDetail = () => {
-    detailConference(
-      { conferenceId: conferenceId.value },
-      conferenceId.value,
-      (response) => {
-        const responseData = response.data?.dataBody
-        console.log(responseData)
-        title.value = responseData?.title
-        description.value = responseData?.description
-        const callStart = responseData?.callStart.slice(11).split(':')
-        selectSh.value = callStart[0]
-        selectSm.value = callStart[1]
-        const callEnd = responseData?.callEnd.slice(11).split(':')
-        selectEh.value = callEnd[0]
-        selectEm.value = callEnd[1]
-      },
-      (error) => {
-        const errorCode = error.response.data.dataHeader?.resultCode
-        const errorMessage = error.response.data.dataHeader?.resultMessage
-        
-        if (errorCode === "C-001" || errorCode === "G-006") {
-          alert(errorMessage)
-          router.replace({name: "notFound"})
-        }
-      }
-    )
-  }
-  onMounted(() => {
-    getConferenceDetail()
-  })
-  </script>
-  <style lang="scss" scoped></style>
+    }
+  )
+}
+
+const checkRole = async () => {
+  await selectTeam(
+    (response) => {
+      role.value = response.data.dataBody.find((data) => data.teamId == teamId.value).role
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
+onMounted(() => {
+  checkRole()
+  getConferenceDetail()
+})
+</script>
+<style lang="scss" scoped></style>
