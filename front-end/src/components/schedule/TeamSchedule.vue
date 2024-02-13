@@ -20,6 +20,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getConferenceHistory } from '@/api/conference'
+
 const route = useRoute()
 const router = useRouter()
 const props = defineProps({

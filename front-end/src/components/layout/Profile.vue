@@ -6,7 +6,7 @@
           class="rounded-circle"
           width="50px"
           height="50px"
-          src="@/assets/sampleImg.PNG"
+          :src="userphoto"
           alt="profile-image"
         />
       </div>
@@ -51,6 +51,7 @@ const store = useUserStore()
 const username = ref(store.userInfo?.name)
 const userdept = ref(store.userInfo?.dept)
 const userposition = ref(store.userInfo?.position)
+const userphoto = ref(`data:image/jpeg;base64, ${store.userInfo?.profile}`)
 const dialog = ref(false)
 const router = useRouter()
 const teams = ref([])

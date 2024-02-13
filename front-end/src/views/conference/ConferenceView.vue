@@ -1,7 +1,12 @@
 <template>
   <v-app v-if="userStore.userInfo !== null" class="bg-grey-darken-4">
     <div :class="['conference-view', layoutType]">
-      <v-infinite-scroll id="conference-video" class="ma-0 pa-0" tag="div" :height="layoutType.slice(-1) === '3' ? '' : '90vh'">
+      <v-infinite-scroll
+        id="conference-video"
+        class="ma-0 pa-0"
+        tag="div"
+        :height="layoutType.slice(-1) === '3' ? '' : '90vh'"
+      >
         <ConferenceVideo
           :videoStatus="videoStatus"
           @end-conference="changeConferenceState"
@@ -67,6 +72,16 @@
           <p class="text-overline">채팅창</p>
         </v-list-item>
         <v-list-item
+          v-if="role === 'LEADER'"
+          type="button"
+          class="text-center"
+          @click="doneConference"
+        >
+          <font-awesome-icon :icon="['fas', 'person-running']" style="color: #ffffff" />
+          <p class="text-overline">회의 종료</p>
+        </v-list-item>
+        <v-list-item
+          v-else
           type="button"
           class="text-center"
           @click="videoStatus.leaveSession = !videoStatus.leaveSession"
@@ -76,7 +91,6 @@
         </v-list-item>
       </v-list>
     </v-bottom-sheet>
-    <v-btn @click="doneConferecne">doneMeeting 테스트</v-btn>
   </v-app>
 </template>
 <script setup>
@@ -87,8 +101,9 @@ import { useSettingStore } from '@/stores/setting'
 import ConferenceVideo from '@/components/conference/ConferenceVideo.vue'
 import ConferenceDocument from '@/components/conference/ConferenceDocument.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { selectTeamMate } from '@/api/team'
+import { selectTeamMate, selectTeam } from '@/api/team'
 import { doneMeeting } from '@/api/conference'
+
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
@@ -96,6 +111,8 @@ const settingStore = useSettingStore()
 const teamId = ref(route.params?.teamid)
 const conferenceId = ref(route.params?.conferenceid)
 const teamMembers = ref([])
+const role = ref('')
+
 // bottom sheet 변수
 const sheet = ref(false)
 // overlay 설정 변수
@@ -107,8 +124,12 @@ const videoStatus = ref({
   cameraStatus: true,
   voiceStatus: true,
   leaveSession: false,
-  chatLayout: false
+  chatLayout: false,
+  conferenceDone: false,
+  role: '',
+  createdSessionId: '',
 })
+
 const changeCameraStatus = () => {
   videoStatus.value.cameraStatus = !videoStatus.value.cameraStatus
 }
@@ -127,19 +148,25 @@ const changeOverlay = (layout) => {
   videoStatus.value.layoutType = layout
   settingStore.conferenceLayout = layout
 }
-const doneConferecne = () => {
-  doneMeeting({}, conferenceId.value, (response) => {
-    console.log(response.data)
-  }, (error) => {
-    const errorCode = error.response.data.dataHeader?.resultCode
+const doneConference = () => {
+  doneMeeting(
+    { conferenceId: conferenceId.value },
+    conferenceId.value,
+    (response) => {
+      console.log(response.data)
+    },
+    (error) => {
+      const errorCode = error.response.data.dataHeader?.resultCode
       const errorMessage = error.response.data.dataHeader?.resultMessage
-      
-      if (errorCode === "C-001" || errorCode === "G-001") {
+
+      if (errorCode === 'C-001' || errorCode === 'G-001') {
         alert(errorMessage)
-        router.replace({name: "notFound"})
+        router.replace({ name: 'notFound' })
       }
-  })
+    }
+  )
 }
+
 const selectmember = async () => {
   await selectTeamMate(
     teamId.value,
@@ -153,12 +180,30 @@ const selectmember = async () => {
     }
   )
 }
+
+const checkRole = async () => {
+  await selectTeam(
+    (response) => {
+      role.value = response.data.dataBody.find((data) => data.teamId == teamId.value).role
+      videoStatus.value.role = role.value
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
 onMounted(async () => {
+  await checkRole()
   await selectmember()
+
   // 이용자가 팀의 멤버가 맞는지 확인하는 메서드
   const isIncluded = teamMembers.value.filter((teamMember) => {
     return teamMember.email === userStore.userInfo?.email
   })
+
+  console.log(teamMembers.value)
+
   if (isIncluded.length === 0) {
     router.replace({ name: 'notFound' })
   }

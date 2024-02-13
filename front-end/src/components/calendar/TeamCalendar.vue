@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { selectTeam } from '@/api/team.js';
 import TeamModifyDialog from '../team/TeamModifyDialog.vue';
@@ -91,9 +91,9 @@ const select = async () => {
 }
 
 // 팀 전환시 팀원 조회
-watchEffect((props, (newValue) => {
+watch(() => props.teamId, () => {
   select();
-}))
+})
 
 
 // 셀렉터 옵션 및 캘린더 옵션들

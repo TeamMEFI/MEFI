@@ -174,17 +174,28 @@ watch(
     leaveSession()
   }
 )
-watch(() => createdSessionId.value, () => {
-  checkDone(
-    createdSessionId.value,
-    (response) => {
-      console.log(response)
-    },
-    (error) => {
-      console.error(error)
+
+// 팀장이 회의 종료하였을 경우 팀원들을 세션에서 방출함
+watch(
+  () => props.videoStatus.conferenceDone,
+  () => {
+    if (props.videoStatus.conferenceDone) {
+      sessionCamera.value
+        .signal({
+          data: `conferenceDone`,
+          to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+          type: 'conferenceDone' // The type of message (optional)
+        })
+        .then(() => {
+          alert('회의가 종료되었습니다.')
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     }
-  )
-})
+  }
+)
+
 // 채팅 보내는 함수
 const sendChat = (content) => {
   // 입력값이 없을 경우 pass
@@ -265,7 +276,7 @@ const joinSession = () => {
   // 미디어 서버와 카메라 세션을 연결
   getToken(sessionId.value).then((token) => {
     sessionCamera.value
-      .connect(token, JSON.stringify({ 'clientData': userName.value }))
+      .connect(token, JSON.stringify({ clientData: userName.value }))
       .then(() => {
         const newPublisher = OVCamera.value.initPublisher(undefined, {
           audioSource: undefined,
@@ -307,6 +318,10 @@ const joinSession = () => {
     // 새로운 채팅이 들어오면 스크롤을 가장 아래로 당김
     const chatBox = document.querySelector('#chatBox')
     chatBox.scrollTo(0, chatBox.scrollHeight)
+  })
+
+  sessionCamera.value.on('signal:conferenceDone', (event) => {
+    leaveSession()
   })
   window.addEventListener('beforeunload', leaveSession)
 }
@@ -368,19 +383,18 @@ const createSession = async (sessionId) => {
     (error) => {
       const errorCode = error.response.data.dataHeader?.resultCode
       const errorMessage = error.response.data.dataHeader?.resultMessage
-      
-      if (errorCode === "G-003") {
+
+      if (errorCode === 'G-003') {
         alert(errorMessage)
-        router.replace({name: "notFound"})
+        // router.replace({ name: 'notFound' })
       }
-      
     }
   )
 }
 const createToken = async (sessionId) => {
-  let createdToken;
+  let createdToken
   await makeToken(
-    { "sessionId": `${sessionId}` },
+    { sessionId: `${sessionId}` },
     teamId.value,
     (response) => {
       createdToken = response?.data.dataBody.token
