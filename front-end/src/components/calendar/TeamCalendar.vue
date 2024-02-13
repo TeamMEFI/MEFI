@@ -21,7 +21,7 @@
       <v-dialog v-model="dialog" persistent width="70%" height="70%">
         <TeamModifyDialog @close-dialog="dialog = false" :team-id="props.teamId"/>
       </v-dialog>  
-      <v-btn @click="router.push({ name: 'insertconference', params: { teamid : props.teamId } })">
+      <v-btn @click="router.push({ name: 'insertconference', params: { teamid : props.teamId, date : choicedate } })">
         <p class="font-weight-black text-h6">회의 예약</p>
       </v-btn>
     </v-row>
@@ -34,7 +34,7 @@
     </v-row>
     <v-row class="d-flex align-center justify-center h-75">
       <v-col v-for="day in cal" class="day h-100" style="flex-grow: 0;">
-        <TeamSchedule :schedule-date="String(day.year) + String(day.month + 1).padStart(2,'0') + String(day.date).padStart(2,'0')" :team-id="props.teamId"/>
+        <TeamSchedule :schedule-date="String(day.year) +'-'+ String(day.month + 1).padStart(2,'0') +'-'+ String(day.date).padStart(2,'0')" :team-id="props.teamId" @click-day="(data) => choicedate=data"/>
       </v-col>
     </v-row>
     <v-row >
@@ -67,6 +67,7 @@ const nowdate = ref(new Date())
 const year  = ref(nowdate.value.getFullYear())
 const month = ref(nowdate.value.getMonth())
 const date  = ref(nowdate.value.getDate())
+const choicedate = ref(String(year.value) +'-'+ String(month.value+1).padStart(2,'0') +'-' + String(date.value).padStart(2,'0'))
 // const day   = ref(nowdate.value.getDay())
 
 // const getWeek = (date) => {
@@ -106,14 +107,11 @@ const listofmonthword = ['January','February','March','April','May','June','July
 //-----------------------*/
 const makeWeekCalendar = (year, month, date) => {
   const today = new Date(year, month, date).getDay();
-  console.log(year, month, date, today)
   
   const startOfWeek = new Date(year, month, date);
   startOfWeek.setDate(date-today);
-  console.log(startOfWeek)
   const endOfWeek = new Date(year, month, date); 
   endOfWeek.setDate(date + (6 - today));
-  console.log(endOfWeek)
   const week = [];
 
   let currentDate = new Date(startOfWeek);
@@ -143,7 +141,6 @@ const clickprev = () => {
     }
   }
   cal.value = makeWeekCalendar(year.value, month.value, date.value)
-  console.log('prev!')
 }
 
 // 다음달 이동
@@ -160,13 +157,14 @@ const clicknext = () => {
     }
   }
   cal.value = makeWeekCalendar(year.value, month.value, date.value)
-  console.log('prev!')
 }
 
 onMounted(() => {
   select();
   cal.value = makeWeekCalendar(year.value, month.value, date.value)
 })
+
+
 </script>
 
 <style scoped>

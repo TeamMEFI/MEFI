@@ -51,11 +51,12 @@ const router = createRouter({
           })
         },
         {
-          path: '/insert/conference/:teamid',
+          path: '/insert/conference/:teamid/:date',
           name: 'insertconference',
           component: InsertConference,
           props: (route) =>({
             teamid: Number(route.params.teamid),
+            date: String(route.params.date)
           })
         },
         {
