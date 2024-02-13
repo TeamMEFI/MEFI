@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -75,7 +77,13 @@ public class ScheduleController {
         log.info("start : {} ", start);
         log.info("end : {} ", end);
 
-        List<ScheduleCalResDto> schedule = scheduleService.getPrivateSchedule(user.getUserId(), start, end);
+        // 문자열을 LocalDateTime으로 변환
+        LocalDateTime s = LocalDateTime.parse(start + "000000.000", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
+        LocalDateTime e = LocalDateTime.parse(end + "235959.999", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
+
+        log.info("\nstart {} , end {}", s, e);
+
+        List<ScheduleCalResDto> schedule = scheduleService.getPrivateSchedule(user.getUserId(), s, e);
 
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, schedule));
     }
