@@ -1,10 +1,13 @@
 package com.mefi.backend.api.controller;
 
+import com.mefi.backend.api.service.ConferenceService;
 import com.mefi.backend.api.service.TeamService;
 import com.mefi.backend.common.auth.CustomUserDetails;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
 import com.mefi.backend.common.model.BaseResponseBody;
+import com.mefi.backend.db.entity.Conference;
+import com.mefi.backend.db.repository.ConferenceRepository;
 import com.mefi.backend.db.repository.TeamUserRepository;
 import io.openvidu.java.client.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +42,7 @@ public class OpenViduController {
     private OpenVidu openVidu;      // OpenVidu Deployment와 상호작용 하기 위한 객체
 
     private final TeamService teamService;
-
+    private final ConferenceService conferenceService;
     @PostConstruct  // WAS에서 BEAN 초기화 이후 한 번만 호출
     public void init() {
         this.openVidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
@@ -51,6 +54,7 @@ public class OpenViduController {
     public ResponseEntity<? extends BaseResponseBody> createSession(
             Authentication authentication,
             @PathVariable("teamId") Long teamId,
+            @RequestParam("conferenceId") Long conferenceId,
             @RequestBody(required = false) Map<String, Object> params) {
         // 로그인 사용자 조회
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
@@ -65,6 +69,8 @@ public class OpenViduController {
             log.info("SessionProperties : {}", properties);
             log.info("Session : {}", session.getSessionId());
 
+            // DB 저장
+            conferenceService.updateSession(conferenceId, session.getSessionId());
             return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, session.getSessionId()));
         } catch (Exception e) {
             e.printStackTrace();
