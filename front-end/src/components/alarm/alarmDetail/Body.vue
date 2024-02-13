@@ -38,11 +38,13 @@ onMounted(()=>{
     createdTime.value = array[0] + "년 " + array[1] + "월 " + array[2] + "일"
     if (array2[0]>12){
         createdTime.value += '  오후 '
+        createdTime.value += array2[0]-12 + '시 ' + array2[1] + '분'
     }
     else{
         createdTime.value += '  오전 '
+        createdTime.value += String(Number(array2[0])) + '시 ' + array2[1] + '분'
     }
-    createdTime.value += array2[0]-12 + '시 ' + array2[1] + '분'
+    
 })
 </script>
 
