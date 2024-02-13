@@ -14,43 +14,22 @@
       <RouterView class="bg-white w-100 h-cal ml-2 mt-10 rounded" />
     </div>
 
-    <!-- 풋터 -->
-    <!-- <v-footer app class="w-100" color="#f0f0f0">
-      <FooterVue/>
-    </v-footer> -->
   </v-layout>
 </template>
 
 <script setup>
-import { alarmAll } from '@/api/alarm';
+import { alarmAll,alarmSubscribe } from '@/api/alarm';
 import HeaderVue from '@/components/layout/Header.vue'
 import ProfileVue from '@/components/layout/Profile.vue'
-import { useSettingStore } from '@/stores/setting';
-import { watch } from 'vue';
-import { ref } from 'vue';
-import { onMounted } from 'vue';
-
-
-// 변화 감지하여 알림 추가
-const store = useSettingStore()
-watch(()=> store.alarmFlag, () => {
-  if(store.alarmFlag === true){
-    alarms.value.push(store.alarmContent)
-    store.alarmFlag = false
-    console.log(alarms.value, store.alarmFlag, store.alarmContent)
-  }
-})
+import { ref, onMounted } from 'vue';
 
 // 읽은 알림 삭제 처리
 const removeAlarm = async (alarmId) => {
-  console.log(alarmId)
-  console.log(alarms.value)
   for(let i=0;i<alarms.value.length;i++){
     if(alarms.value[i].id===alarmId){
       alarms.value.splice(i,1);
     }
   }
-  console.log(alarms.value)
 }
 
 // 알림 전체 읽음 및 배열 삭제
@@ -61,13 +40,24 @@ const removeAlarms = () => {
 // 안읽은 알림
 const alarms = ref([])
 
-// 알림 조회
 onMounted(async()=>{
+  // 알림 전체 조회
   try{
-    const response = await alarmAll()
-    alarms.value = response.data.dataBody;
-    console.log(alarms.value)
-  }catch(error){
+    const resposne = await alarmAll()
+    alarms.value = resposne.data.dataBody
+  }catch(error){}
+
+  // SSE 연결 API
+  const lastEventId = ref("")
+  try {
+    const result = await alarmSubscribe(lastEventId.value)
+    result.addEventListener("sse", (event) => {
+      const eventData = JSON.parse(event.data)
+      if (eventData.id !== null) {
+        alarms.value = [...alarms.value, eventData]
+      }
+    })
+  } catch (error) {
     console.log(error)
   }
 })

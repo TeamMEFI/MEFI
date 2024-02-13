@@ -2,8 +2,6 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import { userLogin, userSignup, userLogout } from '@/api/user.js'
-import { alarmSubscribe } from '@/api/alarm'
-
 
 // user store
 // login, signup, user info, 토큰 관리
@@ -33,10 +31,6 @@ export const useUserStore = defineStore('user', () => {
         userInfo.value = response.data.dataBody
         localStorage.setItem("accessToken", response.headers.accesstoken)
         localStorage.setItem("refreshToken", response.headers.refreshtoken)
-
-        // sse 연결 api
-        const lastEventId = ref("")
-        await alarmSubscribe(lastEventId.value)
         
         // main 화면으로 이동
         router.push({name:"main"})
