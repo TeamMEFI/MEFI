@@ -114,19 +114,16 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import SearchDoc from '@/components/docs/SearchDoc.vue'
 import { createConference } from '@/api/conference'
-const starthours = ref([
-  '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'
-])
+
+const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
-const endhours = ref([
-  '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'
-])
+const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
 const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const typeschedule = ref(['회의'])
 const selectvalue = ref('회의')
-const route = useRoute()
-const teamId = ref(route.params?.teamid)
+
 const props = defineProps({
+  teamid: Number,
   date: String
 })
 const documentState = ref({
@@ -135,12 +132,12 @@ const documentState = ref({
 })
 const title = ref('')
 const description = ref('')
-const date = ref(route.query?.date)
-const selectSh = ref('')
-const selectSm = ref('')
-const selectEh = ref('')
-const selectEm = ref('')
-const conferenceReservation = async () => {
+const selectSh = ref('08')
+const selectSm = ref('00')
+const selectEh = ref('22')
+const selectEm = ref('00')
+
+const reservateConference = async () => {
   if (!selectSh.value || !selectSh.value || !selectSh.value || !selectSh.value) {
     alert("회의 시간을 설정해주세요.")
     return false;
@@ -149,9 +146,9 @@ const conferenceReservation = async () => {
     title: title.value,
     description: description.value,
     thumbnailUrl: '',
-    callStart: date.value + 'T' + selectSh.value + ':' + selectSm.value + ':00.000Z',
-    callEnd: date.value + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',
-    teamId: teamId.value
+    callStart: props.date + 'T' + selectSh.value + ':' + selectSm.value + ':00.000Z',
+    callEnd: props.date + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',
+    teamId: props.teamid
   }
   await createConference(
     conferenceCreateReqDto,

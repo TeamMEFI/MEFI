@@ -128,6 +128,7 @@ const schedule = async () => {
       data,(response) => {
         eventdata.value = response.data.dataBody
         // cal.value = mergeEvents(cal.value, eventdata.value)
+        console.log(response.data.dataBody)
       },
       (error)=>{
           console.log(error)
