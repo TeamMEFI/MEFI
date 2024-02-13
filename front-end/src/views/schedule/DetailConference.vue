@@ -1,15 +1,15 @@
 <template>
-  <v-card class="h-100 pa-10">
-    <v-card-title class="d-flex h-5 align-center pa-2">
+  <v-card class="h-100 pa-5">
+    <v-card-title class="d-flex align-center pa-2">
       <p class="text-h5 font-weight-black">회의 예약</p>
       <v-spacer></v-spacer>
       <template v-if="role === 'LEADER'">
-        <template v-if="modify">
+        <template v-if="documentState.state === 'modify'">
           <v-btn @click="modifyConference">회의 정보 수정하기</v-btn>
         </template>
         <template v-else>
-          <v-btn @click="modify = !modify">회의 정보 수정하기</v-btn>
-          <v-btn @click="cancelConference">회의 예약 삭제하기</v-btn>
+          <v-btn class="mx-1" @click="documentState.state = 'modify'">회의 정보 수정하기</v-btn>
+          <v-btn class="mx-1" @click="cancelConference">회의 예약 삭제하기</v-btn>
           <v-btn
             @click="
               router.push({
@@ -33,8 +33,7 @@
         >
       </template>
     </v-card-title>
-    <v-card-item class="pa-3 h-40">
-      <v-container>
+    <v-card-item class="pa-3">
         <v-row>
           <v-col cols="6">
             <p>일정 종류</p>
@@ -133,13 +132,12 @@
             ></v-text-field>
           </v-col>
         </v-row>
-      </v-container>
     </v-card-item>
-    <v-card-title class="d-flex h-5 align-center pa-2">
+    <v-card-title class="d-flex align-center pa-2">
       <p class="text-h5 font-weight-black">회의 관련 문서</p>
     </v-card-title>
-    <div class="h-50 pa-3">
-      <SearchDoc :documentState="documentState" />
+    <div class="pa-3">
+      <SearchDoc :documentState="documentState" :changeDone="changeDone" />
     </div>
   </v-card>
 </template>
@@ -161,11 +159,12 @@ const router = useRouter()
 const teamId = ref(route.params?.teamid)
 const conferenceId = ref(route.params?.conferenceid)
 const props = defineProps({
-  date: String
+  date: String,
 })
 const documentState = ref({
   state: 'detail',
-  conferenceId: conferenceId.value
+  conferenceId: conferenceId.value,
+  role: ''
 })
 const title = ref('')
 const description = ref('')
@@ -175,7 +174,6 @@ const selectSm = ref('')
 const selectEh = ref('')
 const selectEm = ref('')
 const role = ref('')
-const modify = ref(false)
 
 const modifyConference = () => {
   modify.value = false
@@ -202,7 +200,6 @@ const getConferenceDetail = () => {
     conferenceId.value,
     (response) => {
       const responseData = response.data?.dataBody
-      console.log(responseData)
       title.value = responseData?.title
       description.value = responseData?.description
       const callStart = responseData?.callStart.slice(11).split(':')
@@ -228,6 +225,7 @@ const checkRole = async () => {
   await selectTeam(
     (response) => {
       role.value = response.data.dataBody.find((data) => data.teamId == teamId.value).role
+      documentState.value.role = role.value
     },
     (error) => {
       console.log(error)
