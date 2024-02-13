@@ -15,10 +15,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
-
-
-
-
 const vuetify = createVuetify({
   components,
   directives,
@@ -30,25 +26,18 @@ const vuetify = createVuetify({
     },
   },
 });
-
 const app = createApp(App);
 const pinia = createPinia();
-
 pinia.use(piniaPluginPersistedstate);
 library.add(fas)
 library.add(far)
 library.add(fab)
-
-
-
 app.use(router);
 app.use(pinia);
 app.use(vuetify)
 app.component('font-awesome-icon', FontAwesomeIcon)
-
 import { useSettingStore } from './stores/setting';
 import { useUserStore } from './stores/user';
 const settingStore = useSettingStore()
 const userStore = useUserStore()
-
 app.mount("#app");

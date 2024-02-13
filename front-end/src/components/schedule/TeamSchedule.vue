@@ -1,19 +1,8 @@
 <template>
-  <div class="w-100 h-100 ma-0 pa-0">
-    <template v-for="schedule in scheduleList" :key="schedule">
-      <div
-        class="conference-title"
-        type="button"
-        @click="
-          router.push({
-            name: 'detailconference',
-            params: { teamid: props.teamId, conferenceid: schedule['id'] }
-          })
-        "
-      >
-        {{ schedule.title }}
+  <div class="bg-white h-100 w-100 elevation-3 pa-0 rounded-lg" @click="clickday">
+      <div class="w-100 h-100 d-flex flex-column">
+  
       </div>
-    </template>
   </div>
 </template>
 <script setup>
@@ -23,43 +12,37 @@ import { getConferenceHistory } from '@/api/conference'
 
 const route = useRoute()
 const router = useRouter()
+const emit = defineEmits(['clickDay'])
 const props = defineProps({
   teamId: Number,
   scheduleDate: String
 })
-const teamId = ref(route.params.id)
-// 검색 API 호출 함수
-// 검색 결과 값 List
-const scheduleList = ref([])
-const getHistory = () => {
-  getConferenceHistory(
-    { start: props.scheduleDate, end: props.scheduleDate },
-    teamId.value,
-    (response) => {
-      const responseData = response.data?.dataBody
-      console.log(responseData)
+console.log(props)
+const final = ref([])
 
-      scheduleList.value = responseData.map((conference) => {
-        if (conference.title === '') {
-          const date = conference.callStart.slice(0, 10)
-          const time = conference.callStart.slice(11, 16)
-          conference.title = `${date} ${time}`
-        }
+// 일자 선택
+const clickday = () => {
+  emit('clickDay', props.scheduleDate)
+}
 
-        return conference
-      })
-    },
-    (error) => {
-      const errorCode = error.response.data.dataHeader?.resultCode
-      const errorMessage = error.response.data.dataHeader?.resultMessage
+const schedule = async () => {
+  const date = props.scheduleDate.replaceAll('-','')
+  await selectTeamSchedule(
+      props.teamId, date, (response) => {
+        console.log(response.data.dataBody)
 
-      if (errorCode === 'C-001' || errorCode === 'G-001') {
-        alert(errorMessage)
-        router.replace({ name: 'notFound' })
+      },
+      (error)=>{
+          console.log(error)
       }
-    }
   )
 }
+
+watchEffect((props, (newvalue) => {
+  console.log('check')
+  schedule()
+}))
+
 
 watch(() => props.scheduleDate, () => {
   getHistory()

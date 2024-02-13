@@ -122,6 +122,10 @@ const summary = ref('')
 const description = ref('')
 
 const create = async () => {
+    if (!selectSh.value || !selectSh.value || !selectSh.value || !selectSh.value) {
+        alert("회의 시간을 설정해주세요.")
+        return false;
+    }
     const data = {
         startedTime : props.date + 'T' + selectSh.value + ':' + selectSm.value + ':00.000Z',
         endTime : props.date + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',
