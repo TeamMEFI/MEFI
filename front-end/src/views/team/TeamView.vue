@@ -29,6 +29,7 @@ import TeamMateList from '@/components/team/TeamMateList.vue'
 const props = defineProps({
   id: Number
 })
+console.log(props)
 </script>
 
 <style scoped></style>

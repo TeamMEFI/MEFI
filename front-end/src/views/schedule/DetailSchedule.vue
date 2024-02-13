@@ -28,6 +28,7 @@
                                 variant="outlined"
                                 density="compact"
                                 hide-details="true"
+                                v-model="selecttype"
                             ></v-select>
                         </v-col>
                         <v-col cols="6">
@@ -104,16 +105,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { deleteSchedule, modifySchedule } from '@/api/schedule';
+import { deleteSchedule, modifySchedule, selectScheduleDetail } from '@/api/schedule';
 const router = useRouter()
 const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
 const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const typeschedule = ref(['회의', '출장'])
-
+const selecttype = ref('')
 const selectSh = ref('08')
 const selectSm = ref('00')
 const selectEh = ref('22')
@@ -124,6 +125,25 @@ const props = defineProps({
 })
 const summary = ref('')
 const description = ref('')
+
+const detail = async () => {
+    await selectScheduleDetail(
+        props.scheduleid,(response) => {
+            console.log(response.data.dataBody)
+            const data = response.data.dataBody
+            selectSh.value = data.startedTime.slice(11,13)
+            selectSm.value = data.startedTime.slice(14,16)
+            selectEh.value = data.endTime.slice(11,13)
+            selectEm.value = data.endTime.slice(14,16)
+            selecttype.value = data.type === "BUSINESSTRIP" ? '출장' : '회의'
+            summary.value = data.summary
+            description.value = data.description
+        },
+        (error) => {
+            console.log(error)
+        }
+    )
+}
 
 const modify = async () => {
     const data = {
@@ -147,7 +167,7 @@ const modify = async () => {
             console.log(error)
         }
     )
-  }
+}
 
 const deletes = async () => {
     await deleteSchedule(
@@ -161,6 +181,10 @@ const deletes = async () => {
     )
 }
 
+
+onMounted(() => {
+    detail()
+})
 </script>
 
 <style lang="scss" scoped>

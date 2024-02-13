@@ -42,6 +42,6 @@ library.add(fab)
 
 app.use(router);
 app.use(pinia);
-app.use(vuetify)
-app.component('font-awesome-icon', FontAwesomeIcon)
+app.use(vuetify);
+app.component('font-awesome-icon', FontAwesomeIcon);
 app.mount("#app");
