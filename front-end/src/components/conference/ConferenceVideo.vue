@@ -30,7 +30,7 @@
           @click="expandVideo(sub.stream.connection.connectionId)"
         />
       </div>
-      <v-overlay persistent :model-value="chatOverlay" class="bg-transparent align-end justify-end">
+      <v-overlay :model-value="chatOverlay" class="bg-transparent align-end justify-end">
         <v-btn size="small" elevation="0" @click="exitChatBox" style="position: absolute; right: 0"
           ><font-awesome-icon :icon="['fas', 'xmark']" style="color: #000000" />
         </v-btn>
@@ -48,9 +48,9 @@
             rows="1"
             row-height="1"
             v-model="chatInput"
-            @keydown.ctrl.enter="sendChat(chatInput)"
+            @keydown.enter="sendChat(chatInput)"
           ></v-textarea>
-          <v-btn @click="sendChat(chatInput)" rounded="sm">SEND</v-btn>
+          <v-btn @click="sendChat(chatInput)" rounded="lg">SEND</v-btn>
         </div>
       </v-overlay>
     </div>

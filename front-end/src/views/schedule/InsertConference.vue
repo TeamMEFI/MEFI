@@ -1,9 +1,9 @@
 <template>
-  <v-card class="h-100 pa-10">
+  <v-card class="h-100 pa-5">
     <v-card-title class="d-flex h-5 align-center pa-2">
       <p class="text-h5 font-weight-black">회의 예약</p>
       <v-spacer></v-spacer>
-      <v-btn @click="reservateConference">회의 예약하기</v-btn>
+      <v-btn @click="conferenceReservation">회의 예약하기</v-btn>
     </v-card-title>
     <v-card-item class="px-0">
       <v-container>
@@ -33,40 +33,16 @@
           <v-col cols="6">
             <v-row>
               <v-col cols="3">
-                <v-select
-                  v-model="selectSh"
-                  :items="starthours"
-                  variant="outlined"
-                  density="compact"
-                  hide-details="true"
-                ></v-select>
+                <v-select v-model="selectSh" :items="starthours" variant="outlined" density="compact" hide-details="true"></v-select>
               </v-col>
               <v-col cols="3">
-                <v-select
-                  v-model="selectSm"
-                  :items="startmins"
-                  variant="outlined"
-                  density="compact"
-                  hide-details="true"
-                ></v-select>
+                <v-select v-model="selectSm" :items="startmins" variant="outlined" density="compact" hide-details="true"></v-select>
               </v-col>
               <v-col cols="3">
-                <v-select
-                  v-model="selectEh"
-                  :items="endhours"
-                  variant="outlined"
-                  density="compact"
-                  hide-details="true"
-                ></v-select>
+                <v-select v-model="selectEh" :items="endhours" variant="outlined" density="compact" hide-details="true"></v-select>
               </v-col>
               <v-col cols="3">
-                <v-select
-                  v-model="selectEm"
-                  :items="endmins"
-                  variant="outlined"
-                  density="compact"
-                  hide-details="true"
-                ></v-select>
+                <v-select v-model="selectEm" :items="endmins" variant="outlined" density="compact" hide-details="true"></v-select>
               </v-col>
             </v-row>
           </v-col>
@@ -81,22 +57,10 @@
         </v-row>
         <v-row>
           <v-col cols="6">
-            <v-text-field
-              v-model="title"
-              label="title"
-              variant="outlined"
-              density="compact"
-              required
-            ></v-text-field>
+            <v-text-field v-model="title" label="title" variant="outlined" density="compact" required></v-text-field>
           </v-col>
           <v-col cols="6">
-            <v-text-field
-              v-model="description"
-              label="description"
-              variant="outlined"
-              density="compact"
-              required
-            ></v-text-field>
+            <v-text-field v-model="description" label="description" variant="outlined" density="compact" required></v-text-field>
           </v-col>
         </v-row>
       </v-container>
@@ -111,10 +75,12 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import SearchDoc from '@/components/docs/SearchDoc.vue'
 import { createConference } from '@/api/conference'
-const router = useRouter();
+
+const route = useRoute()
+const router = useRouter()
 const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
@@ -126,7 +92,6 @@ const props = defineProps({
   teamid: Number,
   date: String
 })
-console.log(props)
 const documentState = ref({
   state: 'create',
   conferenceId: undefined
@@ -139,10 +104,11 @@ const selectEh = ref('')
 const selectEm = ref('')
 
 const conferenceReservation = async () => {
-  if (!selectSh.value || !selectSh.value || !selectSh.value || !selectSh.value) {
-    alert("회의 시간을 설정해주세요.")
-    return false;
+  if (!selectSh.value || !selectSh.value || !selectEh.value || !selectEh.value) {
+    alert('회의 시간을 설정해주세요.')
+    return false
   }
+
   const conferenceCreateReqDto = {
     title: title.value,
     description: description.value,
@@ -151,17 +117,20 @@ const conferenceReservation = async () => {
     callEnd: props.date + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',
     teamId: props.teamid
   }
+
   await createConference(
     conferenceCreateReqDto,
     (response) => {
-      const conferenceId = response.data.dataBody;
-      documentState.value.state = "done";
-      documentState.value.conferenceId = conferenceId;
+      const conferenceId = response.data.dataBody
+      documentState.value.state = 'done'
+      documentState.value.conferenceId = conferenceId
     },
     (error) => {
       console.log(error)
     }
   )
+  
+  router.push({ name: 'team', params: { id: route.params?.teamid } })
 }
 </script>
 <style scoped></style>
