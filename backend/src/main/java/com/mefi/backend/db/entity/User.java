@@ -46,24 +46,24 @@ public class User {
     private String imgUrl;
 
     // 리프레시 토큰
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "token_id")
     private Token token;
 
     // 이메일 인증
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private EmailAuth emailAuth;
 
     // 개인일정
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PrivateSchedule> schedules = new ArrayList<>();
 
     // 알림
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Noti> notis = new ArrayList<>();
 
     // 팀과 연결 테이블
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserTeam> userTeams = new ArrayList<>();
 
     // 회의와 연결 테이블
