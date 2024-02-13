@@ -1,25 +1,24 @@
 <template>
-  <div class="bg-white h-100 w-100 elevation-3 pa-0 rounded-lg" @click="clickday">
+  <div class="bg-white h-100 w-100" @click="clickday">
       <div class="w-100 h-100 d-flex flex-column">
-  
+        <div v-for="conf in data" @click="router.push({name:'detailconference', params:{ teamid : props.teamId, conferenceid: conf.id}})">
+          <p>{{ conf.title }}</p>
+          <p>{{ conf.callStart.slice(11,16) }} ~ {{ conf.callEnd.slice(11,16) }}</p>
+        </div>
       </div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getConferenceHistory } from '@/api/conference'
-import { selectTeamSchedule } from '@/api/schedule';
-
-const route = useRoute()
-const router = useRouter()
 const emit = defineEmits(['clickDay'])
 const props = defineProps({
   teamId: Number,
   scheduleDate: String
 })
-console.log(props)
-const final = ref([])
+const router = useRouter();
+const data = ref([])
 
 // 일자 선택
 const clickday = () => {
@@ -28,10 +27,10 @@ const clickday = () => {
 
 const schedule = async () => {
   const date = props.scheduleDate.replaceAll('-','')
-  await selectTeamSchedule(
+  await getConferenceHistory(
       props.teamId, date, (response) => {
-        console.log(response.data.dataBody)
-
+          data.value = response.data.dataBody
+          console.log(response.data.dataBody)
       },
       (error)=>{
           console.log(error)
@@ -39,13 +38,10 @@ const schedule = async () => {
   )
 }
 
-watch(() => props.scheduleDate, () => {
+watchEffect((props, (newvalue) => {
   schedule()
-})
+}))
 
-onMounted(() => {
-  schedule()
-})
 </script>
 <style scoped>
 .conference-title {

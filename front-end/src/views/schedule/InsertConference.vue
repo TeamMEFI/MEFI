@@ -3,7 +3,7 @@
     <v-card-title class="d-flex h-5 align-center pa-2">
       <p class="text-h5 font-weight-black">회의 예약</p>
       <v-spacer></v-spacer>
-      <v-btn @click="conferenceReservation">회의 예약하기</v-btn>
+      <v-btn @click="reservateConference">회의 예약하기</v-btn>
     </v-card-title>
     <v-card-item class="px-0">
       <v-container>
@@ -111,10 +111,10 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import SearchDoc from '@/components/docs/SearchDoc.vue'
 import { createConference } from '@/api/conference'
-
+const router = useRouter();
 const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
@@ -126,6 +126,7 @@ const props = defineProps({
   teamid: Number,
   date: String
 })
+console.log(props)
 const documentState = ref({
   state: 'create',
   conferenceId: undefined

@@ -29,6 +29,11 @@ const props = defineProps({
 })
 const userStore = useUserStore()
 
+const nowdate = ref(new Date())
+const year  = ref(nowdate.value.getFullYear())
+const month = ref(nowdate.value.getMonth())
+const date = ref(nowdate.value.getDate())
+
 const route = useRoute()
 const teamId = ref(route.params?.teamid)
 const conferenceId = ref(route.params?.conferenceid)
@@ -134,7 +139,8 @@ const deleteContent = () => {
 const createPDF = () => {
   // editorContainer을 canvas객체로 변환
   html2canvas(editorContainer.value).then((canvas) => {
-    const filename = 'Meeting_' + Date.now() + '.pdf'
+    const filename =
+      'Meeting_' + String(year.value) + '-' + String(month.value + 1).padStart(2, '0') + '-' + String(date.value).padStart(2, '0') + '.pdf'
     const doc = new jsPDF('p', 'mm', 'a4') // jsPDF 객체 생성
     const imgData = canvas.toDataURL('image/png') // canvas를 .png 이미지로 변환
     const imgWidth = 210
@@ -167,14 +173,15 @@ const createPDF = () => {
     // 공동 작업 문서를 pdf(binary) 형식으로 보냄
     // 백엔드와 소통하여 axios 연결할 예정
     const formData = new FormData()
-    const file = doc.output('blob', filename)
+    const file = new File([doc.output('blob')], filename, { type: 'application/pdf' })
+    console.log(file)
 
     const fileRequestDto = new Blob(
       [
         JSON.stringify({
           teamId: teamId.value,
           conferenceId: conferenceId.value,
-          fileName: filename,
+          fileName: 'DOCUMENT.pdf',
           type: 'DOCUMENT'
         })
       ],
@@ -187,13 +194,13 @@ const createPDF = () => {
     createFile(
       formData,
       (response) => {
-        console.log(response.data)
+        console.log(response.data?.dataBody)
       },
       (error) => {
         console.log(error)
       }
     ).then(() => {
-      router.push({ name: 'home' })
+      router.push({ name: 'team', params: { id: teamId.value } })
     })
   })
 }

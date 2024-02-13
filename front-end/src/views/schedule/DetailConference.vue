@@ -5,7 +5,7 @@
       <v-spacer></v-spacer>
       <template v-if="role === 'LEADER'">
         <template v-if="modify">
-          <v-btn @click="modify = !modify">회의 정보 수정하기</v-btn>
+          <v-btn @click="modifyConference">회의 정보 수정하기</v-btn>
         </template>
         <template v-else>
           <v-btn @click="modify = !modify">회의 정보 수정하기</v-btn>
@@ -176,6 +176,11 @@ const selectEh = ref('')
 const selectEm = ref('')
 const role = ref('')
 const modify = ref(false)
+
+const modifyConference = () => {
+  modify.value = false
+  documentState.value.state = 'done'
+}
 
 const cancelConference = () => {
   cancelMeeting(

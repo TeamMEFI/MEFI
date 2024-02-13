@@ -5,39 +5,36 @@
     rounded="lg"
     border
     elevation="0"
-    :class="[isDragged ? 'dragged' : '', 'pa-5']"
+    :class="[isDragged ? 'dragged' : '', 'px-3']"
     @dragenter.prevent="onDragenter"
     @dragover.prevent="onDragenter"
     @dragleave.prevent="onDragleave"
     @drop.prevent="onDrop"
   >
-    <div v-if="fileList.length + addedFileList.length > 0">
+    <v-infinite-scroll v-if="fileList.length + addedFileList.length > 0">
       <!-- 업로드된 리스트 -->
-      <div
-        class="d-flex justify-space-between file-upload-list"
-        v-for="file in fileList"
-        :key="file.fileName"
-      >
+      <div class="d-flex justify-space-between file-upload-list" v-for="file in fileList" :key="file.fileName">
         <a class="file-name">{{ file.fileName }}</a>
         <div class="d-flex">
-          <v-btn @click="saveFile(file.fileName)">다운</v-btn>
-          <v-btn @click="eraseFile(file.fileName)">삭제</v-btn>
+          <v-btn size="sm" @click="saveFile(file.fileName)">다운</v-btn>
+          <v-btn size="sm" @click="eraseFile(file.fileName)">삭제</v-btn>
         </div>
       </div>
       <!-- 업로드할 리스트 -->
-      <div
-        class="d-flex justify-space-between file-upload-list"
-        v-for="addedFile in addedFileList"
-        :key="addedFile.fileName"
-      >
+      <div class="d-flex justify-space-between file-upload-list" v-for="addedFile in addedFileList" :key="addedFile.fileName">
         <a>{{ addedFile.name }}</a>
         <div class="d-flex">
           <!-- <v-btn disabled>추가됨</v-btn> -->
-          <v-btn @click="removeFile(addedFile.name)">삭제</v-btn>
+          <v-btn size="sm" @click="removeFile(addedFile.name)">삭제</v-btn>
         </div>
       </div>
+      <div class="text-center py-2">추가할 문서를 여기로 옮겨주세요.</div>
+      <template v-slot:loading></template>
+    </v-infinite-scroll>
+    <div v-else class="d-flex h-100 flex-column align-center justify-center">
+      <div>관련 문서가 없습니다.</div>
+      <div>추가할 문서를 여기에 옮겨주세요.</div>
     </div>
-    <div v-else>관련 문서가 없습니다.</div>
   </v-sheet>
 </template>
 
@@ -80,7 +77,7 @@ const uploadFile = (file) => {
       JSON.stringify({
         teamId: teamId.value,
         conferenceId: conferenceId.value,
-        fileName: 'attach.pdf',
+        fileName: 'ATTACHMENT.pdf',
         type: 'ATTACHMENT'
       })
     ],
@@ -152,25 +149,28 @@ const removeFile = (fileName) => {
   addedFileList.value = addedFileList.value.filter((addedFile) => addedFile.name !== fileName)
 }
 
-watch(() => props.documentState.state, () => {
-  if (props.documentState.state === "detail") {
-    fetchFiles()
+watch(
+  () => props.documentState.state,
+  () => {
+    if (props.documentState.state === 'detail') {
+      fetchFiles()
+    }
+
+    if (props.documentState.state === 'done') {
+      conferenceId.value = props.documentState.conferenceId
+
+      addedFileList.value.forEach((addedFile) => {
+        uploadFile(addedFile)
+      })
+
+      addedFileList.value = []
+    }
   }
-
-  if (props.documentState.state === "done") {
-    conferenceId.value = props.documentState.conferenceId
-
-    addedFileList.value.forEach((addedFile) => {
-      uploadFile(addedFile);
-    });
-
-    addedFileList.value = []
-  }
-})
+)
 
 onMounted(() => {
   console.log(props.documentState.state)
-  if (props.documentState.state === "detail") {
+  if (props.documentState.state === 'detail') {
     fetchFiles()
   }
 })
@@ -209,5 +209,14 @@ const onDrop = (event) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+::-webkit-scrollbar {
+  width: 0px; /* 스크롤바의 너비 설정 */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* 스크롤바의 색상 설정 */
+  border-radius: 10px; /* 스크롤바의 모서리 반경 설정 */
 }
 </style>

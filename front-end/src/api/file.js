@@ -10,6 +10,7 @@ const getFiles = async (param, conferenceId, success, fail) => {
 const createFile = async (param, success, fail) => {
   interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
   interceptor.defaults.headers['Content-Type'] = 'multipart/form-data'
+  console.log(...param)
   await interceptor.post(`/file`, param).then(success).catch(fail)
 }
 

@@ -6,11 +6,7 @@
     <!-- 내 카메라가 켜졌을 때 화상회의 열기 -->
     <div id="session" v-if="mainStreamManager">
       <!-- isSide ref 변수에 따라 class를 동적 할당하여 스타일 변경 -->
-      <div
-        id="video-container"
-        ref="videos"
-        :class="['bg-grey-darken-4', isSide ? 'videos' : 'upSideVideos']"
-      >
+      <div id="video-container" ref="videos" :class="['bg-grey-darken-4', isSide ? 'videos' : 'upSideVideos']">
         <UserVideo
           :stream-manager="mainStreamManager"
           :class="[
@@ -38,14 +34,7 @@
         <v-btn size="small" elevation="0" @click="exitChatBox" style="position: absolute; right: 0"
           ><font-awesome-icon :icon="['fas', 'xmark']" style="color: #000000" />
         </v-btn>
-        <v-infinite-scroll
-          load
-          id="chatBox"
-          ref="chatBox"
-          class="bg-white px-4 rounded-sm"
-          width="50vw"
-          height="50vh"
-        >
+        <v-infinite-scroll load id="chatBox" ref="chatBox" class="bg-white px-4 rounded-sm" width="50vw" height="50vh">
           <template v-for="chat in chats">
             <div>{{ chat }}</div>
           </template>
@@ -76,6 +65,7 @@ import { OpenVidu } from 'openvidu-browser'
 import { ref, onBeforeUnmount, onMounted, defineProps, onUpdated, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { checkDone, makeToken, makeSession } from '@/api/video'
+import { detailConference } from '@/api/conference'
 import { useUserStore } from '@/stores/user'
 import UserVideo from './UserVideo.vue'
 const router = useRouter()
@@ -305,11 +295,7 @@ const joinSession = () => {
         console.log('Session screen connected')
       })
       .catch((error) => {
-        console.warn(
-          'There was an error connecting to the session for screen share:',
-          error.code,
-          error.message
-        )
+        console.warn('There was an error connecting to the session for screen share:', error.code, error.message)
       })
   })
   // type이 chat인 signal을 받을 때 chats 배열에 data 삽입
@@ -323,6 +309,7 @@ const joinSession = () => {
   sessionCamera.value.on('signal:conferenceDone', (event) => {
     leaveSession()
   })
+
   window.addEventListener('beforeunload', leaveSession)
 }
 // 세션 퇴장
@@ -369,24 +356,51 @@ const publishScreenShare = () => {
     console.error('Screen Share: Access Denied')
   })
 }
-const getToken = async (sessionId) => {
-  await createSession(sessionId)
-  return await createToken(createdSessionId.value)
-}
-const createSession = async (sessionId) => {
-  await makeSession(
-    { customSessionId: sessionId },
-    teamId.value,
+
+const getConferenceDetail = async () => {
+  await detailConference(
+    { conferenceId: conferenceId.value },
+    conferenceId.value,
     (response) => {
-      createdSessionId.value = response?.data.dataBody
+      const responseData = response.data?.dataBody
+      createdSessionId.value = responseData?.thumbnailUrl
     },
     (error) => {
       const errorCode = error.response.data.dataHeader?.resultCode
       const errorMessage = error.response.data.dataHeader?.resultMessage
 
-      if (errorCode === 'G-003') {
+      if (errorCode === 'C-001' || errorCode === 'G-006') {
         alert(errorMessage)
-        // router.replace({ name: 'notFound' })
+        router.replace({ name: 'notFound' })
+      }
+    }
+  )
+}
+
+const getToken = async (sessionId) => {
+  console.log(props.videoStatus.createdSessionId)
+  if (props.videoStatus.role === 'LEADER') {
+    await createSession(sessionId)
+    return await createToken(createdSessionId.value)
+  } else {
+    await getConferenceDetail()
+    return await createToken(createdSessionId.value)
+  }
+}
+const createSession = async (sessionId) => {
+  await makeSession(
+    { customSessionId: sessionId },
+    teamId.value,
+    conferenceId.value,
+    (response) => {
+      createdSessionId.value = response?.data.dataBody
+    },
+    (error) => {
+      const errorCode = error.response.data.dataHeader?.resultCode
+
+      if (errorCode === 'G-003') {
+        alert('회의가 아직 생성되지 않았습니다.')
+        router.go(-1)
       }
     }
   )
@@ -400,7 +414,10 @@ const createToken = async (sessionId) => {
       createdToken = response?.data.dataBody.token
     },
     (error) => {
-      console.error(error)
+      if (error.response.status === 404) {
+        alert('아직 회의가 시작되지 않았습니다.')
+        router.go(-1)
+      }
     }
   )
   return createdToken
@@ -416,7 +433,7 @@ const checkConferenceDone = async (sessionId) => {
       if (response.status === 204) {
         emit('endConference')
       } else {
-        router.push({ name: 'home' })
+        router.push({ name: 'team', params: { id: teamId.value } })
       }
     },
     (error) => {

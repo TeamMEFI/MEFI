@@ -1,7 +1,5 @@
 import { InterceptorAxios } from "@/util/http-axios";
-import { localAxios } from "@/util/http-commons";
 
-const local = localAxios();
 const interceptor = InterceptorAxios();
 
 async function setHeaders() {

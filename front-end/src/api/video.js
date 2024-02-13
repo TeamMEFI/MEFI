@@ -2,10 +2,10 @@ import { InterceptorAxios } from '@/util/http-axios'
 
 const interceptor = InterceptorAxios()
 
-const makeSession = async (param, teamId, success, fail) => {
+const makeSession = async (param, teamId, conferenceId, success, fail) => {
   interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
   await interceptor
-    .post(`/openvidu/api/sessions/${teamId}`, param)
+    .post(`/openvidu/api/sessions/${teamId}?conferenceId=${conferenceId}`, param)
     .then(success)
     .catch(fail)
 }

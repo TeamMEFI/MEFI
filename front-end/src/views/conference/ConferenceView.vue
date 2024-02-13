@@ -1,13 +1,9 @@
 <template>
   <v-app v-if="userStore.userInfo !== null" class="bg-grey-darken-4">
     <div :class="['conference-view', layoutType]">
-      <v-infinite-scroll
-        id="conference-video"
-        class="ma-0 pa-0"
-        tag="div"
-        :height="layoutType.slice(-1) === '3' ? '' : '90vh'"
-      >
+      <v-infinite-scroll id="conference-video" class="ma-0 pa-0" tag="div" :height="layoutType.slice(-1) === '3' ? '' : '90vh'">
         <ConferenceVideo
+          v-if="videoStatus.role"
           :videoStatus="videoStatus"
           @end-conference="changeConferenceState"
           @exit-chatBox="changeChatOverlay"
@@ -21,38 +17,21 @@
     <v-bottom-sheet inset v-model="sheet">
       <template v-slot:activator="{ props }">
         <div class="text-center" style="position: fixed; bottom: 0; right: 50vw; width: 0px">
-          <FontAwesomeIcon
-            v-bind="props"
-            type="button"
-            class="bg-grey-darken-4 pa-1 rounded-xl"
-            :icon="['fas', 'chevron-up']"
-          />
+          <FontAwesomeIcon v-bind="props" type="button" class="bg-grey-darken-4 pa-1 rounded-xl" :icon="['fas', 'chevron-up']" />
         </div>
       </template>
       <v-list class="d-flex justify-space-around px-2 bg-grey-darken-4 rounded-lg">
         <v-list-item type="button" align="center" @click="changeCameraStatus">
-          <font-awesome-icon
-            v-if="videoStatus.cameraStatus"
-            :icon="['fas', 'video']"
-            style="color: #ffffff"
-          />
+          <font-awesome-icon v-if="videoStatus.cameraStatus" :icon="['fas', 'video']" style="color: #ffffff" />
           <font-awesome-icon v-else :icon="['fas', 'video-slash']" style="color: #ffffff" />
           <p class="text-overline">카메라</p>
         </v-list-item>
         <v-list-item type="button" align="center" @click="changeVoiceStatus">
-          <font-awesome-icon
-            v-if="videoStatus.voiceStatus"
-            :icon="['fas', 'microphone']"
-            style="color: #ffffff"
-          />
+          <font-awesome-icon v-if="videoStatus.voiceStatus" :icon="['fas', 'microphone']" style="color: #ffffff" />
           <font-awesome-icon v-else :icon="['fas', 'microphone-slash']" style="color: #ffffff" />
           <p class="text-overline">마이크</p>
         </v-list-item>
-        <v-list-item
-          type="button"
-          align="center"
-          @click="videoStatus.screenShared = !videoStatus.screenShared"
-        >
+        <v-list-item type="button" align="center" @click="videoStatus.screenShared = !videoStatus.screenShared">
           <font-awesome-icon :icon="['fas', 'share']" style="color: #ffffff" />
           <p class="text-overline">화면공유</p>
         </v-list-item>
@@ -71,21 +50,11 @@
           <font-awesome-icon :icon="['fas', 'comments']" style="color: #ffffff" />
           <p class="text-overline">채팅창</p>
         </v-list-item>
-        <v-list-item
-          v-if="role === 'LEADER'"
-          type="button"
-          class="text-center"
-          @click="doneConference"
-        >
+        <v-list-item v-if="role === 'LEADER'" type="button" class="text-center" @click="doneConference">
           <font-awesome-icon :icon="['fas', 'person-running']" style="color: #ffffff" />
           <p class="text-overline">회의 종료</p>
         </v-list-item>
-        <v-list-item
-          v-else
-          type="button"
-          class="text-center"
-          @click="videoStatus.leaveSession = !videoStatus.leaveSession"
-        >
+        <v-list-item v-else type="button" class="text-center" @click="videoStatus.leaveSession = !videoStatus.leaveSession">
           <font-awesome-icon :icon="['fas', 'person-running']" style="color: #ffffff" />
           <p class="text-overline">나가기</p>
         </v-list-item>
@@ -102,7 +71,7 @@ import ConferenceVideo from '@/components/conference/ConferenceVideo.vue'
 import ConferenceDocument from '@/components/conference/ConferenceDocument.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { selectTeamMate, selectTeam } from '@/api/team'
-import { doneMeeting } from '@/api/conference'
+import { doneMeeting, detailConference } from '@/api/conference'
 
 const route = useRoute()
 const router = useRouter()
@@ -127,7 +96,7 @@ const videoStatus = ref({
   chatLayout: false,
   conferenceDone: false,
   role: '',
-  createdSessionId: '',
+  createdSessionId: ''
 })
 
 const changeCameraStatus = () => {
@@ -148,12 +117,17 @@ const changeOverlay = (layout) => {
   videoStatus.value.layoutType = layout
   settingStore.conferenceLayout = layout
 }
+
 const doneConference = () => {
   doneMeeting(
     { conferenceId: conferenceId.value },
     conferenceId.value,
     (response) => {
-      console.log(response.data)
+      const responseData = response.data?.dataBody
+      
+      if (responseData === 'Success') {
+        videoStatus.value.conferenceDone = true
+      }
     },
     (error) => {
       const errorCode = error.response.data.dataHeader?.resultCode
@@ -197,16 +171,16 @@ onMounted(async () => {
   await checkRole()
   await selectmember()
 
+
   // 이용자가 팀의 멤버가 맞는지 확인하는 메서드
   const isIncluded = teamMembers.value.filter((teamMember) => {
     return teamMember.email === userStore.userInfo?.email
   })
 
-  console.log(teamMembers.value)
-
   if (isIncluded.length === 0) {
     router.replace({ name: 'notFound' })
   }
+
 })
 </script>
 <style scoped>
