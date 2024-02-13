@@ -10,9 +10,9 @@ const detailConference = async (param, conferenceId, success, fail) => {
   interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
   await interceptor.get(`/meeting/detail/${conferenceId}`, param).then(success).catch(fail)
 }
-const getConferenceHistory = async (param, teamId, success, fail) => {
+const getConferenceHistory = async (param, query, success, fail) => {
   interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
-  await interceptor.get(`/meeting/${teamId}`, { params: param }).then(success).catch(fail)
+  await interceptor.get(`/meeting/${param}?start=${query}&end=${query}`).then(success).catch(fail)
 }
 const cancelMeeting = async (param, conferenceId, success, fail) => {
   interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')

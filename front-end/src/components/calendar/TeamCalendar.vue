@@ -33,7 +33,7 @@
       </v-col>
     </v-row>
     <v-row class="d-flex align-center justify-center h-75">
-      <v-col v-for="day in cal" class="day h-100" style="flex-grow: 0;">
+      <v-col v-for="day in cal" class="day h-100 pa-0" style="flex-grow: 0;">
         <TeamSchedule :schedule-date="String(day.year) +'-'+ String(day.month + 1).padStart(2,'0') +'-'+ String(day.date).padStart(2,'0')" :team-id="props.teamId" @click-day="(data) => choicedate=data"/>
       </v-col>
     </v-row>
