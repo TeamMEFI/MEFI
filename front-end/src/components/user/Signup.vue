@@ -19,7 +19,7 @@
                     <!-- 이메일 인증 모달창 -->
                     <template v-slot:append-inner>    
                         <v-btn variant="flat" :disabled="email_check"  @click="emailCheck()">인증
-                            <v-dialog v-model="emailDialog">
+                            <v-dialog persistent v-model="emailDialog">
                                 <Email @close="emailDialog = false" :email="email" @success="emailSuccess"></Email>
                             </v-dialog>
                         </v-btn>

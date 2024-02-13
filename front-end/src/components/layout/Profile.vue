@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import TeamCreateDialog from '@/components/team/TeamCreateDialog.vue'
 import { useRouter } from 'vue-router'
 import { selectTeam } from '@/api/team.js'
@@ -65,6 +65,10 @@ const select = async () => {
         }
     )
 }
+
+watch(() => dialog.value, () => {
+  select()
+})
 
 onMounted(() => {
   if (store.userInfo !== null) {
