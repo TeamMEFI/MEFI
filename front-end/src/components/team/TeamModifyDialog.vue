@@ -247,6 +247,7 @@ const selectTeamDetail= async () => {
     await detailTeam(
         props.teamId,(response) => {
             teamName.value = response.data.dataBody.teamName
+            teamDescription.value = response.data.dataBody.teamDescription
         },
         (error)=>{
             console.log(error)
@@ -255,12 +256,11 @@ const selectTeamDetail= async () => {
 }
 // 팀 정보 수정
 const updateTeam = async () => {
-    console.log(teamName.value, teamDescription.value)
     const param = {
         teamId : props.teamId,
         data : {
-            teamName : teamName.value,
-            teamDescription : teamDescription.value,
+            name : teamName.value,
+            description : teamDescription.value,
         }
     }
     await modifyTeam(
