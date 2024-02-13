@@ -12,6 +12,11 @@ async function selectSchedule(query, success, fail){
     await interceptor.get(`/schedule?${query}`).then(success).catch(fail);
 }
 
+async function selectScheduleDetail(param, success, fail){
+    await setHeaders();
+    await interceptor.get(`/schedule/detail/${param}`).then(success).catch(fail);
+}
+
 async function selectTeamSchedule(param, query, success, fail){
     await setHeaders();
     await interceptor.get(`/schedule/${param}?day=${query}`).then(success).catch(fail);
@@ -33,4 +38,4 @@ async function modifySchedule(param, success, fail){
 }
 
 
-export { selectSchedule, createSchedule, deleteSchedule, modifySchedule, selectTeamSchedule }
+export { selectSchedule, createSchedule, deleteSchedule, modifySchedule, selectTeamSchedule, selectScheduleDetail }

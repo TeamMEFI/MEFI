@@ -73,6 +73,7 @@ onMounted(() => {
 });
 
 const goTeamPage = (id) => {
+  console.log('check')
   router.push({name: 'team', params: { id }})
 }
 </script>
