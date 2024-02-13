@@ -89,7 +89,7 @@ const modalUserInfo = ref(false)
 const changeStatus = (color) => {
   store.userInfo.status = color
   modalUserStatus.value = false
-}
+} 
 
 // 알림 정보
 const props = defineProps({
