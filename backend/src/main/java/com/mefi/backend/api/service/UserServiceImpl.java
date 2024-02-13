@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).get();
 
         // 변경할 프로필 이미지 존재하는지 확인
-        String imgUrl = userModifyAllReqDto.getImgUrl();
+        String imgUrl = user.getImgUrl();
         String imgName = imgUrl.substring(imgUrl.lastIndexOf("/")+1);
 
         if(profileImg!=null){

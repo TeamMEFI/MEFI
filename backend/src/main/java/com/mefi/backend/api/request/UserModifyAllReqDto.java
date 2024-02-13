@@ -13,7 +13,4 @@ public class UserModifyAllReqDto {
 
     // 직책
     private String position;
-
-    // 프로필 이미지
-    private String imgUrl;
 }
