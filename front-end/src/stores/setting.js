@@ -10,8 +10,9 @@ export const useSettingStore = defineStore('setting', () => {
     
     const alarmSound = ref(false)
 
-    const alarm = ref(false)
+    const alarmFlag = ref(false)
+    const alarmContent = ref("")
 
-  return { conferenceLayout, alarmPermission, alarmSound, alarm }
+  return { conferenceLayout, alarmPermission, alarmSound, alarmFlag, alarmContent }
   }, { persist: true }
 )

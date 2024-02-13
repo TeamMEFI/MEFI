@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
-import { userLogin, userSignup } from '@/api/user.js'
+import { userLogin, userSignup, userLogout } from '@/api/user.js'
 import { alarmSubscribe } from '@/api/alarm'
 
 
@@ -31,7 +31,6 @@ export const useUserStore = defineStore('user', () => {
       user,
       async (response) => {
         userInfo.value = response.data.dataBody
-        console.log(userInfo.value)
         localStorage.setItem("accessToken", response.headers.accesstoken)
         localStorage.setItem("refreshToken", response.headers.refreshtoken)
 
@@ -56,10 +55,15 @@ export const useUserStore = defineStore('user', () => {
 
   // 로그아웃 함수
   // localStorage 삭제
-  const logout = () => {
-    userInfo.value = null
-    localStorage.clear()
-    router.push({name:'login'})
+  const logout = async () => {
+    await userLogout(
+      (res)=>{console.log(res)},
+      (err)=>{console.log(err)}
+    ).then( async ()=>{
+      userInfo.value = null
+      localStorage.clear()
+      await router.push({name:'login'})
+    })
   }
 
   return { signup, login, logout, userInfo }

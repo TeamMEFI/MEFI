@@ -7,6 +7,9 @@ const interceptor = InterceptorAxios()
 async function userLogin(param, success, fail) {
   await local.post(`/users/login`, param).then(success).catch(fail)
 }
+async function userLogout(success, fail) {
+  await interceptor.post('/users/logout').then(success).catch(fail)
+}
 async function userSignup(param, success, fail) {
   await local.post(`/users`, param).then(success).catch(fail)
 }
@@ -54,5 +57,6 @@ export {
   userDelete,
   sendemailcode,
   passwordFind,
-  passwordChange
+  passwordChange,
+  userLogout
 }
