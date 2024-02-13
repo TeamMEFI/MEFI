@@ -24,7 +24,6 @@
           />
         </div>
       </template>
-
       <v-list class="d-flex justify-space-around px-2 bg-grey-darken-4 rounded-lg">
         <v-list-item type="button" align="center" @click="changeCameraStatus">
           <font-awesome-icon
@@ -77,38 +76,31 @@
         </v-list-item>
       </v-list>
     </v-bottom-sheet>
+    <v-btn @click="doneConferecne">doneMeeting 테스트</v-btn>
   </v-app>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useSettingStore } from '@/stores/setting'
-
 import ConferenceVideo from '@/components/conference/ConferenceVideo.vue'
 import ConferenceDocument from '@/components/conference/ConferenceDocument.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { selectTeamMate } from '@/api/team'
-
+import { doneMeeting } from '@/api/conference'
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const settingStore = useSettingStore()
-
 const teamId = ref(route.params?.teamid)
 const conferenceId = ref(route.params?.conferenceid)
-
 const teamMembers = ref([])
-
 // bottom sheet 변수
 const sheet = ref(false)
-
 // overlay 설정 변수
 const layoutType = ref(settingStore.conferenceLayout)
-
 const conferenceState = ref(true)
-
 const videoStatus = ref({
   layoutType: settingStore.conferenceLayout,
   screenShared: false,
@@ -117,30 +109,37 @@ const videoStatus = ref({
   leaveSession: false,
   chatLayout: false
 })
-
 const changeCameraStatus = () => {
   videoStatus.value.cameraStatus = !videoStatus.value.cameraStatus
 }
-
 const changeVoiceStatus = () => {
   videoStatus.value.voiceStatus = !videoStatus.value.voiceStatus
 }
-
 const changeChatOverlay = () => {
   videoStatus.value.chatLayout = !videoStatus.value.chatLayout
 }
-
 const changeConferenceState = () => {
   conferenceState.value = false
 }
-
 // overlay 설정 변경 메서드
 const changeOverlay = (layout) => {
   layoutType.value = layout
   videoStatus.value.layoutType = layout
   settingStore.conferenceLayout = layout
 }
-
+const doneConferecne = () => {
+  doneMeeting({}, conferenceId.value, (response) => {
+    console.log(response.data)
+  }, (error) => {
+    const errorCode = error.response.data.dataHeader?.resultCode
+      const errorMessage = error.response.data.dataHeader?.resultMessage
+      
+      if (errorCode === "C-001" || errorCode === "G-001") {
+        alert(errorMessage)
+        router.replace({name: "notFound"})
+      }
+  })
+}
 const selectmember = async () => {
   await selectTeamMate(
     teamId.value,
@@ -154,58 +153,48 @@ const selectmember = async () => {
     }
   )
 }
-
 onMounted(async () => {
   await selectmember()
-
   // 이용자가 팀의 멤버가 맞는지 확인하는 메서드
   const isIncluded = teamMembers.value.filter((teamMember) => {
     return teamMember.email === userStore.userInfo?.email
   })
-
   if (isIncluded.length === 0) {
     router.replace({ name: 'notFound' })
   }
 })
 </script>
-
 <style scoped>
 /* 레이아웃 배치 공통 스타일 */
 .conference-view {
   display: flex;
 }
-
 /* 1번 레이아웃 배치 스타일 */
 .conference-view1 {
   justify-content: center;
   margin: 40px 0;
 }
-
 /* 2번 레이아웃 배치 스타일 */
 .conference-view2 {
   flex-direction: row-reverse;
   justify-content: center;
   margin: 40px 0;
 }
-
 /* 3번 레이아웃 배치 스타일 */
 .conference-view3 {
   flex-direction: column;
   align-items: center;
 }
-
 #conference-video {
   display: flex;
   margin: 0 20px;
   border-radius: 10px;
 }
-
 #conference-document {
   margin: 0 20px;
   width: 60%;
   background-color: white;
 }
-
 /* 사용하지 말 것 */
 @keyframes rotate {
   to {
@@ -213,16 +202,13 @@ onMounted(async () => {
     transform: scale(1.5);
   }
 }
-
 .toRight {
   animation: rotate 3s linear infinite;
   transform-origin: 50% 50%;
 }
-
 ::-webkit-scrollbar {
   width: 0px; /* 스크롤바의 너비 설정 */
 }
-
 ::-webkit-scrollbar-thumb {
   background-color: #888; /* 스크롤바의 색상 설정 */
   border-radius: 10px; /* 스크롤바의 모서리 반경 설정 */

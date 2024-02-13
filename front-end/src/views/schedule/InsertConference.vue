@@ -3,7 +3,7 @@
     <v-card-title class="d-flex h-5 align-center pa-2">
       <p class="text-h5 font-weight-black">회의 예약</p>
       <v-spacer></v-spacer>
-      <v-btn @click="reservateConference">회의 예약하기</v-btn>
+      <v-btn @click="conferenceReservation">회의 예약하기</v-btn>
     </v-card-title>
     <v-card-item class="px-0">
       <v-container>
@@ -109,32 +109,30 @@
     </div>
   </v-card>
 </template>
-
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import SearchDoc from '@/components/docs/SearchDoc.vue'
-
 import { createConference } from '@/api/conference'
-
-const starthours = ref(['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'])
+const starthours = ref([
+  '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'
+])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
-const endhours = ref(['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'])
+const endhours = ref([
+  '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'
+])
 const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const typeschedule = ref(['회의'])
 const selectvalue = ref('회의')
-
 const route = useRoute()
 const teamId = ref(route.params?.teamid)
 const props = defineProps({
   date: String
 })
-
 const documentState = ref({
   state: 'create',
   conferenceId: undefined
 })
-
 const title = ref('')
 const description = ref('')
 const date = ref(route.query?.date)
@@ -142,13 +140,11 @@ const selectSh = ref('')
 const selectSm = ref('')
 const selectEh = ref('')
 const selectEm = ref('')
-
-const reservateConference = async () => {
+const conferenceReservation = async () => {
   if (!selectSh.value || !selectSh.value || !selectSh.value || !selectSh.value) {
     alert("회의 시간을 설정해주세요.")
     return false;
   }
-
   const conferenceCreateReqDto = {
     title: title.value,
     description: description.value,
@@ -157,7 +153,6 @@ const reservateConference = async () => {
     callEnd: date.value + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',
     teamId: teamId.value
   }
-
   await createConference(
     conferenceCreateReqDto,
     (response) => {
@@ -171,5 +166,4 @@ const reservateConference = async () => {
   )
 }
 </script>
-
 <style scoped></style>
