@@ -78,8 +78,11 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SearchDoc from '@/components/docs/SearchDoc.vue'
 import { createConference } from '@/api/conference'
+<<<<<<< HEAD
 
 const route = useRoute()
+=======
+>>>>>>> fe/MainPage/CSS-refactoring
 const router = useRouter()
 const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
