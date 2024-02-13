@@ -5,7 +5,7 @@
       <div class="d-flex flex-row justify-center alien-center my-5">
         <label for="photo">
           <img
-            class="cursor-pointer"
+            :style="{cursor: disable ? 'default' : 'pointer' }"
             :src="previewPhoto"
             style="
               object-fit: cover;
