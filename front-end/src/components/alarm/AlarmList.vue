@@ -27,23 +27,24 @@ import AlarmMain from './alarmDetail/AlarmMain.vue';
 import { ref } from 'vue';
 import { alarmReadAll, alarmReadOne } from '@/api/alarm'
 
+const emit = defineEmits(['close', 'removeAlarm', 'removeAlarms'])
+
 // 알림 상세 조회
 const openAlarm = async (alarm) => {
     modalAlarm.value = true
     propsAlarm.value = alarm
-    // 읽음 처리 api
-    console.log('component', alarm)
-    // await alarmReadOne(alarm.id,
-    // (res)=>{
-    //     console.log('component')
-    //     console.log(res)
-    // },
-    // (err)=>{
-    //     console.log(err)
-    // })
+    
+    // 알림 읽음 처리 API
+    await alarmReadOne(alarm.id)
 }
-const closeAlarm = () => {
+
+// 단일 알림 조회 모달창 닫기
+const closeAlarm = (alarmId) => {
     modalAlarm.value = false
+
+    // front alarms remove
+    console.log(alarmId)
+    emit('removeAlarm', alarmId)
 }
 
 // 알림 모달 제어
@@ -51,11 +52,10 @@ const modalAlarm = ref(false)
 
 // 알림 상세 조회
 const propsAlarm = ref({
-    // 백이랑 맞춰야함
     id:0,
-    title:'',
-    writer:'',
-    day:''
+    message:'',
+    sender:'',
+    createdTime:''
 })
 
 // 알림 정보
@@ -63,62 +63,16 @@ const props = defineProps({
     alarms:Array,
 })
 
-// 더미 데이터
-const alarms = [
-    {
-        id:1,
-        title:'title01',
-        writer:'writer01',
-        day:'00-00-00'
-    },
-    {
-        id:2,
-        title:'title01',
-        writer:'writer01',
-        day:'00-00-00'
-    },
-    {
-        id:3,
-        title:'title01',
-        writer:'writer01',
-        day:'00-00-00'
-    },
-    {
-        id:4,
-        title:'title01',
-        writer:'writer01',
-        day:'00-00-00'
-    },
-    {
-        id:5,
-        title:'title01',
-        writer:'writer01',
-        day:'00-00-00'
-    },
-    {
-        id:6,
-        title:'title01',
-        writer:'writer01',
-        day:'00-00-00'
-    },
-]
-
 // 안 읽은 알림 전체 조회 창 닫기
-const emit = defineEmits(['close'])
 const closeModal = () => {
     emit('close')
 }
 
 // 알림 전체 읽음
 const readAll = async () =>{
-    console.log('전체 읽음')
-    // api alarm all
-    // await alarmReadAll (
-    //     (res)=>{
-    //         console.log(res)
-    //     },
-    //     (err)=>{console.log(err)}
-    // )
+    await alarmReadAll ();
+
+    emit('removeAlarms');
 }
 </script>
 

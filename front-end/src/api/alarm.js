@@ -14,7 +14,10 @@ async function alarmSubscribe(lastEventId){
     const SSE = new EventSource(
         `${VITE_APP_API_URL}/api/alarm/subscribe?lastEventId=${lastEventId}`,
         { 
-            headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+            headers: { 
+                Authorization: `Bearer ${localStorage.getItem('accessToken')}` ,
+                'Content-Type': 'text/event-stream' 
+            },
             heartbeatTimeout: 120000
         }
     )
@@ -22,10 +25,6 @@ async function alarmSubscribe(lastEventId){
 
     SSE.addEventListener("sse", (event)=>{
         console.log(event.data)
-        // 알림창 띄우기
-        console.log(settingStore.alarm)
-        settingStore.alarm = true
-        console.log(settingStore.alarm)
     })
 
     SSE.onmessage = (event)=>{
@@ -51,24 +50,13 @@ async function alarmAll(){
 // 알림 전체 읽음
 async function alarmReadAll(){
     interceptor.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
-    try{
-        const response = interceptor.patch('/alarm/all')
-        return response;
-    }catch(error){
-        throw error;
-    }
+    await interceptor.patch('/alarm/all').then((res)=>{console.log(res)}).catch((err)=>{console.log(err)})
 }
 
 // 알림 읽음
 async function alarmReadOne(alarmId){
-    console.log('api')
     interceptor.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
-    try{
-        const response = interceptor.patch(`/alarm/all/${alarmId}`)
-        return response;
-    }catch(error){
-        throw error;
-    }
+    await interceptor.patch(`/alarm/${alarmId}`).then((res)=>{console.log(res)}).catch((err)=>{console.log(err)})
 }
 
 export{
