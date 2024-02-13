@@ -21,4 +21,7 @@ public interface ConferenceService {
 
     // 회의 종료
     void doneMeeting(Long userId, Long conferenceId);
+
+    // 회의 Session ID 업데이트
+    void updateSession(Long conferenceId, String sessionId);
 }

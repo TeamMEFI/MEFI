@@ -241,6 +241,17 @@ public class ConferenceServiceImpl implements ConferenceService {
         log.info("\n회의 상태 변경 완료 : {}", conference.getStatus());
     }
 
+    @Override
+    @Transactional
+    public void updateSession(Long conferenceId, String sessionId){
+        // 회의 존재 여부 확인
+        Conference conference = conferenceRepository.findById(conferenceId).orElseThrow(()->new Exceptions(ErrorCode.CONFERENCE_NOT_EXIST));
+
+        // 회의 세션 ID 업데이트
+        conference.saveConferenceSessionId(sessionId);
+    }
+
+
     public String makeMessage(String sender, String conferenceName, int type){
         if(type==1)
             return String.format("팀[%s]에 회의 %s가 예약되었습니다.", sender, conferenceName);

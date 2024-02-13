@@ -64,4 +64,9 @@ public class Conference {
     public void doneConferenceStatus() {
         this.status = ConferenceStatus.DONE;
     }
+
+    // 회의 세션 ID 변경 메서드
+    public void saveConferenceSessionId(String sessionId){
+        this.thumbnailUrl = sessionId;
+    }
 }
