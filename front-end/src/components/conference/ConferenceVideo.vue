@@ -30,28 +30,31 @@
           @click="expandVideo(sub.stream.connection.connectionId)"
         />
       </div>
-      <v-overlay :model-value="chatOverlay" class="bg-transparent align-end justify-end">
-        <v-btn size="small" elevation="0" @click="exitChatBox" style="position: absolute; right: 0"
-          ><font-awesome-icon :icon="['fas', 'xmark']" style="color: #000000" />
+      <v-overlay :model-value="chatOverlay" class="bg-transparent align-end justify-end" height="100vh">
+        <v-btn size="large" elevation="0" @click="exitChatBox" style="position: absolute; right: 0;">
+          <font-awesome-icon :icon="['fas', 'xmark']" style="color: #000000" />
         </v-btn>
-        <v-infinite-scroll load id="chatBox" ref="chatBox" class="bg-white px-4 rounded-sm" width="50vw" height="50vh">
+        <v-infinite-scroll load id="chatBox" ref="chatBox" class="bg-white px-4 rounded-lg" width="35vw" height="100%">
           <template v-for="chat in chats">
             <div>{{ chat }}</div>
           </template>
-          <template v-slot:loading></template>
+          <template v-slot:loading>
+            
+          </template>
+          <v-divider :thickness="1"></v-divider>
+          <div class="d-flex bg-white px-4 align-center rounded-lg">
+            <v-textarea
+              density="compact"
+              class="mt-4 mr-2"
+              auto-grow
+              rows="1"
+              row-height="1"
+              v-model="chatInput"
+              @keydown.enter="sendChat(chatInput)"
+            ></v-textarea>
+            <v-btn @click="sendChat(chatInput)" elevation="0" border rounded="lg">SEND</v-btn>
+          </div>
         </v-infinite-scroll>
-        <v-divider :thickness="1"></v-divider>
-        <div class="d-flex bg-white px-4 align-center rounded-sm">
-          <v-textarea
-            class="bg-white mt-4 mr-2"
-            auto-grow
-            rows="1"
-            row-height="1"
-            v-model="chatInput"
-            @keydown.enter="sendChat(chatInput)"
-          ></v-textarea>
-          <v-btn @click="sendChat(chatInput)" rounded="lg">SEND</v-btn>
-        </div>
       </v-overlay>
     </div>
     <!-- 내 카메라 아직 켜지지 않았으면 로딩 스피너 출력 -->
@@ -312,6 +315,7 @@ const joinSession = () => {
 
   window.addEventListener('beforeunload', leaveSession)
 }
+
 // 세션 퇴장
 const leaveSession = async () => {
   if (sessionCamera.value) sessionCamera.value.disconnect()
@@ -325,6 +329,7 @@ const leaveSession = async () => {
   OVCamera.value = null
   checkConferenceDone(sessionId.value)
 }
+
 // 화면 공유
 const publishScreenShare = () => {
   // 화면 공유 초기 설정
@@ -378,15 +383,15 @@ const getConferenceDetail = async () => {
 }
 
 const getToken = async (sessionId) => {
-  console.log(props.videoStatus.createdSessionId)
   if (props.videoStatus.role === 'LEADER') {
     await createSession(sessionId)
-    return await createToken(createdSessionId.value)
+    return await createToken()
   } else {
     await getConferenceDetail()
-    return await createToken(createdSessionId.value)
+    return await createToken()
   }
 }
+
 const createSession = async (sessionId) => {
   await makeSession(
     { customSessionId: sessionId },
@@ -405,23 +410,29 @@ const createSession = async (sessionId) => {
     }
   )
 }
-const createToken = async (sessionId) => {
+
+const createToken = async () => {
   let createdToken
+
   await makeToken(
-    { sessionId: `${sessionId}` },
+    { sessionId: `${createdSessionId.value}` },
     teamId.value,
     (response) => {
-      createdToken = response?.data.dataBody.token
+      createdToken = response.data?.dataBody.token
     },
     (error) => {
+      console.log(error.response)
+
       if (error.response.status === 404) {
         alert('아직 회의가 시작되지 않았습니다.')
         router.go(-1)
       }
     }
   )
+  
   return createdToken
 }
+
 // 회의가 종료되었는지 확인하는 메서드
 // response.status가 200이면 회의 진행 중
 // response.status가 503이면 회의 종료
@@ -441,10 +452,12 @@ const checkConferenceDone = async (sessionId) => {
     }
   )
 }
+
 const emit = defineEmits(['endConference', 'exitChatBox'])
 const exitChatBox = () => {
   emit('exitChatBox')
 }
+
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', leaveSession)
 })

@@ -1,7 +1,7 @@
 <template>
   <v-card class="h-100 pa-5">
     <v-card-title class="d-flex align-center pa-2">
-      <p class="text-h5 font-weight-black">회의 예약</p>
+      <p class="text-h5 font-weight-black">회의 상세 정보</p>
       <v-spacer></v-spacer>
       <template v-if="role === 'LEADER'">
         <template v-if="documentState.state === 'modify'">
