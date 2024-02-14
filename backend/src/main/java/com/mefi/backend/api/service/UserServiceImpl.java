@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
 
         if(profileImg!=null){
             // 기존 이미지 삭제
-            if(imgName != "anonymous.png"){ // 기본 이미지는 삭제하지 않는다
+            if(!("anonymous.png".equals(imgName))){ // 기본 이미지는 삭제하지 않는다
                 fileService.deleteProfile(user.getImgUrl());
             }
 
