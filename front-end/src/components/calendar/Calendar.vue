@@ -4,49 +4,63 @@
       <v-col cols="4">
         <v-row>
           <v-col cols="3" class="d-flex justify-center align-center">
-            <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
+            <v-btn icon="mdi-chevron-left" @click="clickprev" variant="text"></v-btn>
           </v-col>
           <v-col cols="6" class="d-flex justify-center align-center">
-            <p> {{ year }} {{ listofmonthword[month] }}</p>
+            <p>
+              <span>{{ year }}</span>
+              <span style="font-size: large; margin-left: 10px;">{{ listofmonthword[month] }}</span>
+            </p>
           </v-col>
           <v-col cols="3" class="d-flex justify-center align-center">
-            <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
+            <v-btn icon="mdi-chevron-right" @click="clicknext" variant="text"></v-btn>
           </v-col>
         </v-row>
       </v-col>
       <v-spacer></v-spacer>
-      <v-btn @click="router.push({ name: 'insertschedule', params: {date: choicedate}})">
-        <p class="font-weight-black text-h6">개인 일정 생성</p>
+      <v-btn @click="router.push({ name: 'insertschedule', params: {date: choicedate}})" 
+        color="#45566F"
+        variant="outlined"
+        rounded="xl"
+        class="mr-10"
+      >
+        + 일정 생성
       </v-btn>
     </v-row>
-  </v-container>
-  <v-sheet class="mt-5 elevation-5 w-100 ma-0 pa-0 w-100">
-    <v-row class="d-flex align-center justify-center ma-0">
-      <v-col v-for="i in weekday" class="day-header ma-0" style="flex-grow: 1;">
-        <div>
-          {{ dayofweek[i] }}
-        </div>
-      </v-col>
-    </v-row>
-    <v-row v-for="week in cal" class="d-flex align-center justify-center ma-0">
-      <v-col v-for="i in weekday" 
-            class="day pa-2" 
-            style="flex-grow: 0;" 
-            :class="[week[i]['type']], { 'clicked': week[i]['fulldate'] === choicedate }"
-            @click="clickday(week[i])">
-          <div >
-              {{ week[i]['date'] }}
-              <template v-for="(item, index) in week[i]['event']" >
-                <div v-if="index < 3" class="text-start rounded-lg my-1" :class="item.type">
-                  <p class="font-weight-bold">{{ item.summary }}</p>
-                </div>
 
-              </template>
+    <!-- 달력 -->
+    <div style="border-radius: 10px; margin-top: 5px; border-radius: 10px;">
+
+      <!-- 요일 -->
+      <v-row class="d-flex align-center justify-center ma-0">
+        <v-col v-for="i in weekday" class="day-header ma-0">
+          <div>
+            {{ dayofweek[i] }}
           </div>
-      </v-col>
-    </v-row>
-  </v-sheet>
-  
+        </v-col>
+      </v-row>
+
+      <!-- 날짜 -->
+      <v-row v-for="week in cal" :key="week" class="d-flex align-center justify-center ma-0">
+        <v-col v-for="i in weekday" 
+          class="day pa-0 cursor-pointer"
+          :key="i"
+          @click="clickday(week[i])"
+          :class="[week[i]['type']], { 'clicked': week[i]['fulldate'] === choicedate }"
+        >
+          <div style="margin: 10px;">
+            <span>{{ week[i]['date'] }}</span>
+          </div>
+          <!-- 일정 -->
+          <template v-for="(item, index) in week[i]['event']" >
+            <div v-if="index < 3" class="text-start " :class="item.type" :key="index">
+              <p style="text-align: center;">{{ item.summary }}</p>
+            </div>
+          </template>
+        </v-col>
+      </v-row>
+    </div>
+  </v-container>
 </template>
 
 <script setup>
@@ -229,28 +243,29 @@ const clickday = (data) => {
     min-width: calc(100%/7);
     min-height: 115px;
     max-height: 115px;
-    text-align: center;
     border: 1px solid #e0e0e0;
 }
-.day-header {
-  max-width: calc(100%/7);
-  min-width: calc(100%/7);
-  background-color: #d2d2d2;
-  text-align: center;
-}
 .not_current {
-  background-color: #f5f5f5;
-  color: #b0a0b0;
+  /* 해당 month의 day가 아닌 day */
+  background-color: #f7f7f7;
+  color: #d6d6d6;
 }
 
 .clicked {
-  background-color: rgb(197, 234, 247); /* 클릭된 일자의 배경색 */
+  /* 클릭 일자 */
+  background-color: rgba(147, 221, 255, 0.207);
 }
 
 .CONFERENCE {
-  background-color: rgba(189, 255, 151, 0.578);
+  /* 회의 */
+  background-color: rgb(172, 175, 255);
+  padding: 1px;
+  color: #2d2d2d;
 }
 .BUSINESSTRIP {
-  background-color: rgba(255, 190, 190, 0.571);
+  /* 출장 */
+  background-color: rgb(158, 202, 255);
+  padding: 1px;
+  color: #2d2d2d;
 }
 </style>
