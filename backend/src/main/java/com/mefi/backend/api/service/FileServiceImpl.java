@@ -59,8 +59,7 @@ public class FileServiceImpl implements FileService {
             amazonS3Client.putObject(bucket, key, multipartFile.getInputStream(), objectMetadata);
 
             // 파일 엔티티 생성 및 연관관계 맺어줌
-            String fileUrl = amazonS3Client.getUrl(bucket, key).toString();
-            MeetingFile meetingFile = new MeetingFile(fileName, fileUrl, type);
+            MeetingFile meetingFile = new MeetingFile(fileName, type);
             Conference conference = conferenceRepository.findById(conferenceId).get();
             meetingFile.setConference(conference);
             fileRepository.save(meetingFile);

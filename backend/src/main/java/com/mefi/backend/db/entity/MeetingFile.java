@@ -18,9 +18,6 @@ public class MeetingFile {
     @Column(name = "file_name")
     private String fileName;
 
-    @Column(name = "file_url", length = 1000)
-    private String fileUrl;
-
     @Enumerated(EnumType.STRING)
     private MeetingFileType type;
 
@@ -29,9 +26,8 @@ public class MeetingFile {
     private Conference conference;
 
     @Builder
-    public MeetingFile(String fileName, String fileUrl, MeetingFileType type){
+    public MeetingFile(String fileName, MeetingFileType type){
         this.fileName = fileName;
-        this.fileUrl = fileUrl;
         this.type = type;
     }
 
