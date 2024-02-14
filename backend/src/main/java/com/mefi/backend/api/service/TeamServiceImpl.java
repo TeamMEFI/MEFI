@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,11 +35,12 @@ public class TeamServiceImpl implements TeamService{
 
     @Override
     @Transactional
-    public void createTeam(Long leaderId, TeamReqDto teamReqDto) throws Exception {
+    public void createTeam(Long leaderId, TeamReqDto teamReqDto){
         // 팀 생성
         Team team = Team.builder()
                 .name(teamReqDto.getTeamName())
                 .description(teamReqDto.getTeamDescription())
+                .time(LocalDateTime.now())
                 .build();
 
         // 리더 추가

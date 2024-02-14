@@ -30,20 +30,23 @@ public class JWTUtil {
     // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
+
+            log.info("\n토큰 서명 확인 중");
             Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+            log.info("\n토큰 서명 확인 완료");
             return true;
 
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
+            log.info("\n잘못된 JWT 서명입니다.");
 
         } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
+            log.info("\n만료된 JWT 토큰입니다.");
 
         } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰 입니다.");
+            log.info("\n지원되지 않는 JWT 토큰 입니다.");
 
         } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
+            log.info("\nJWT 토큰이 잘못되었습니다.");
         }
 
         return false;

@@ -68,17 +68,11 @@ public class ScheduleServiceImpl implements  ScheduleService{
     }
 
     @Override
-    public List<ScheduleCalResDto> getPrivateSchedule(Long userId, String start, String end) {
+    public List<ScheduleCalResDto> getPrivateSchedule(Long userId, LocalDateTime start, LocalDateTime end) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new Exceptions(ErrorCode.USER_NOT_EXIST));
 
-        // 문자열을 LocalDateTime으로 변환
-        LocalDateTime s = LocalDateTime.parse(start + "000000.000", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
-        LocalDateTime e = LocalDateTime.parse(end + "235959.999", DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
-
-        log.info("\nstart {} , end {}", s, e);
-
-        List<PrivateSchedule> result = scheduleRepository.findByUserAndStartedTimeBetweenOrderByStartedTime(user, s, e);
+        List<PrivateSchedule> result = scheduleRepository.findByUserAndStartedTimeBetweenOrderByStartedTime(user, start, end);
 
         List<ScheduleCalResDto> list = new ArrayList<>();
 

@@ -1,22 +1,22 @@
 <template>
     <div class="bg-white h-100 w-100 elevation-3 pa-0 rounded-lg">
-        <v-toolbar class="elevation-1 rounded-t-lg" >
+        <v-toolbar height="40" class="elevation-1 rounded-t-lg" >
             <v-toolbar-title class="font-weight-bold text-h5">Schedule</v-toolbar-title>
         </v-toolbar>
         <div class="w-100 h-cal d-flex">
-          <div class="w-25 d-flex flex-column">
-            <div v-for="hour in hours" :key="hour" :style="{height : (100/14) + '%'}">
+          <div class="w-25 h-100 d-flex flex-column">
+            <div v-for="hour in hours" :key="hour" class="time-bar">
               <div class="h-100 w-100 d-flex justify-center align-center">
-                {{ hour }}
+                <p class="font-weight-bold">{{ hour }}</p>
               </div>
               <v-divider></v-divider>
             </div>
           </div>
-          <div class="w-75 d-flex flex-column">
+          <div class="w-75 h-100 d-flex flex-column">
             <div v-for="hour in final" :key="hour" :style="{height : getheight(hour['duration'])}" :class="hour['type']">
-                <div v-if="hour['type'] != 'none'" @click="detailSchedule(hour['id'])" class="w-100 h-100">
-                  <p>시간 {{ hour['startedTime'].slice(11,16) }} ~ {{ hour['endTime'].slice(11,16) }}</p>
-                  <p>요약 : {{ hour['summary'] }}</p>
+                <div v-if="hour['type'] != 'none'" @click="detailSchedule(hour['id'])" class="w-100 h-100 pa-3">
+                  <p class="font-weight-bold">시간 {{ hour['startedTime'].slice(11,16) }} ~ {{ hour['endTime'].slice(11,16) }}</p>
+                  <p class="font-weight-bold mt-3">{{ hour['summary'] }}</p>
                 </div>
             </div>
           </div>
@@ -111,6 +111,7 @@ const detailSchedule = (data) => {
 
 watchEffect((props, (newvalue) => {
   final.value = drowingtime(tabletimes, props.scheduleData)
+  console.log(final.value)
 }))
 
 
@@ -118,11 +119,22 @@ watchEffect((props, (newvalue) => {
 
 <style scoped>
 
+.CONFERENCE {
+  background-color: rgba(189, 255, 151, 0.578);
+  border-radius: 7%;
+}
+
 .BUSINESSTRIP {
-  background-color: burlywood;
+  background-color: rgba(255, 190, 190, 0.571);
+  border-radius: 7%;
 }
 
 .dispatch {
   background-color: bisque;
+}
+
+.time-bar{
+  height : calc(100% / 14);
+  border-right: 1px solid #d0d0f0; 
 }
 </style>

@@ -112,19 +112,22 @@ public class UserServiceImpl implements UserService {
 
             // 새로운 이미지 업로드
             imgUrl = fileService.createProfile(profileImg);
+            imgName = imgUrl.substring(imgUrl.lastIndexOf("/")+1);
             log.info("Updated Profile Image : {}", profileImg.getOriginalFilename());
         }
 
-        
         // 전체 수정
         user.updateAll(userModifyAllReqDto.getName(),
                 userModifyAllReqDto.getDept(),
                 userModifyAllReqDto.getPosition(),
                 imgUrl);
 
+        // 프로필 이미지 조회
+        byte[] profileImgFile = fileService.downloadFile(-1L, imgName);
+
         // 변경된 유저 정보 Dto에 담기
         UserModifyAllResDto userModifyAllResDto = new UserModifyAllResDto(
-                user.getEmail(),user.getName(),user.getDept(),user.getPosition(),user.getImgUrl());
+                user.getEmail(),user.getName(),user.getDept(),user.getPosition(),profileImgFile);
 
         return userModifyAllResDto;
     }

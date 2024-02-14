@@ -5,13 +5,13 @@
       <HeaderVue :alarms="alarms" @remove-alarm="removeAlarm" @remove-alarms="removeAlarms"/>
     </v-app-bar>
     
-    <div class="d-flex w-100 wrapper pa-0 h-100">
+    <div class="d-flex w-100 wrapper pa-0 h-cal h-cal-position">
       <!-- 사이드바 -->
-      <div class="bg-white border-right h-cal mt-5 pt-5" style="width: 240px;">
+      <div class="bg-white border-right h-100 sidebar">
         <ProfileVue />
       </div>
       <!-- 메인 컨텐츠 -->
-      <RouterView class="bg-white w-100 h-cal ml-2 mt-10 rounded" />
+      <RouterView class="bg-white w-100 h-100 rounded" />
     </div>
 
   </v-layout>

@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0">
+  <v-container class="pa-0 d-flex flex-column justify-center">
     <v-row class="d-flex align-center justify-start ma-2">
       <v-col cols="4">
         <v-row>
@@ -19,31 +19,34 @@
         <p class="font-weight-black text-h6">개인 일정 생성</p>
       </v-btn>
     </v-row>
-    <v-row class="d-flex align-center justify-center">
-      <v-col v-for="i in weekday" class="day-header" style="flex-grow: 0;">
+  </v-container>
+  <v-sheet class="mt-5 elevation-5 w-100 ma-0 pa-0 w-100">
+    <v-row class="d-flex align-center justify-center ma-0">
+      <v-col v-for="i in weekday" class="day-header ma-0" style="flex-grow: 1;">
         <div>
           {{ dayofweek[i] }}
         </div>
       </v-col>
     </v-row>
-    <v-row v-for="week in cal" class="d-flex align-center justify-center">
+    <v-row v-for="week in cal" class="d-flex align-center justify-center ma-0">
       <v-col v-for="i in weekday" 
-            class="day" 
+            class="day pa-2" 
             style="flex-grow: 0;" 
-
             :class="[week[i]['type']], { 'clicked': week[i]['fulldate'] === choicedate }"
             @click="clickday(week[i])">
           <div >
               {{ week[i]['date'] }}
-              <template v-for="item in week[i]['event']">
-                <div>
-                  {{ item.summary }}
+              <template v-for="(item, index) in week[i]['event']" >
+                <div v-if="index < 3" class="text-start rounded-lg my-1" :class="item.type">
+                  <p class="font-weight-bold">{{ item.summary }}</p>
                 </div>
+
               </template>
           </div>
       </v-col>
     </v-row>
-  </v-container>
+  </v-sheet>
+  
 </template>
 
 <script setup>
@@ -220,29 +223,34 @@ const clickday = (data) => {
 }
 </script>
 
-
- 
 <style scoped>
 .day {
-    max-width: calc(95%/7);
-    min-width: calc(95%/7);
-    min-height: 110px;
-    max-height: 110px;
-    border: 1px solid black;
+    max-width: calc(100%/7);
+    min-width: calc(100%/7);
+    min-height: 115px;
+    max-height: 115px;
     text-align: center;
-    flex-grow: initial !important;
+    border: 1px solid #e0e0e0;
 }
 .day-header {
-  max-width: calc(95%/7);
-  min-width: calc(95%/7);
-  background-color: #f2f2f2;
-  border: 0.2px solid #495464;
+  max-width: calc(100%/7);
+  min-width: calc(100%/7);
+  background-color: #d2d2d2;
+  text-align: center;
 }
 .not_current {
-  background-color: #e0e0e0;
+  background-color: #f5f5f5;
+  color: #b0a0b0;
 }
 
 .clicked {
-  background-color: lightblue; /* 클릭된 일자의 배경색 */
+  background-color: rgb(197, 234, 247); /* 클릭된 일자의 배경색 */
+}
+
+.CONFERENCE {
+  background-color: rgba(189, 255, 151, 0.578);
+}
+.BUSINESSTRIP {
+  background-color: rgba(255, 190, 190, 0.571);
 }
 </style>

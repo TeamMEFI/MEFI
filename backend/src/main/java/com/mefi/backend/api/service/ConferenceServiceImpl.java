@@ -1,6 +1,7 @@
 package com.mefi.backend.api.service;
 
 import com.mefi.backend.api.request.ConferenceCreateReqDto;
+import com.mefi.backend.api.request.ConferenceModifyAllReqDto;
 import com.mefi.backend.api.request.ScheduleReqDto;
 import com.mefi.backend.api.response.ConferenceResDto;
 import com.mefi.backend.api.response.ConferenceDetailResDto;
@@ -71,7 +72,7 @@ public class ConferenceServiceImpl implements ConferenceService {
                 conferenceCreateReqDto.getCallStart(),
                 conferenceCreateReqDto.getCallEnd(),
                 ScheduleType.CONFERENCE,
-                team.getId()+"의 회의",
+                team.getName()+"의 회의",
                 conferenceCreateReqDto.getDescription());
 
         // 팀원 목록 조회
@@ -251,10 +252,91 @@ public class ConferenceServiceImpl implements ConferenceService {
         conference.saveConferenceSessionId(sessionId);
     }
 
-
     public String makeMessage(String sender, String conferenceName, int type){
         if(type==1)
             return String.format("팀[%s]에 회의 %s가 예약되었습니다.", sender, conferenceName);
         return String.format("팀[%s]의 회의 %s가 취소되었습니다.", sender, conferenceName);
+    }
+
+    // 회의 정보 전체 수정
+    @Override
+    @Transactional
+    public void modifyAllMeeting(Long leaderId, Long conferenceId, ConferenceModifyAllReqDto conferenceModifyAllReqDto) {
+
+        // 회의 존재 여부 확인
+        if(!conferenceRepository.findById(conferenceId).isPresent())
+            throw new Exceptions(ErrorCode.CONFERENCE_NOT_EXIST);
+
+        Conference conference = conferenceRepository.findById(conferenceId).get();
+
+        log.info("\n회의 조회 : OK");
+
+        // 팀 존재 여부 확인
+        if(!teamRepository.findById(conference.getTeam().getId()).isPresent())
+            throw new Exceptions(ErrorCode.TEAM_NOT_EXIST);
+
+        Team team = teamRepository.findById(conference.getTeam().getId()).get();
+
+        // 해당 팀의 리더인지 확인
+        teamService.checkRole(leaderId, team.getId());
+
+        log.info("\n팀 존재 여부 & 팀의 리더인지 확인 : OK");
+
+        // 회의 상태가 TODO가 아닌 경우 처리
+        if(!ConferenceStatus.TODO.equals(conference.getStatus()))
+            throw new Exceptions(ErrorCode.CONFERENCE_NOT_EXIST);
+
+        log.info("\n회의 상태 확인 : OK");
+
+        // 개인 일정 ScheduleReqDto 생성
+        ScheduleReqDto scheduleReqDto = new ScheduleReqDto(
+                conferenceModifyAllReqDto.getCallStart(),
+                conferenceModifyAllReqDto.getCallEnd(),
+                ScheduleType.CONFERENCE,
+                team.getName()+"의 회의",
+                conferenceModifyAllReqDto.getDescription());
+
+        log.info("\n개인 일정 생성 : OK");
+
+        // 팀원들 개인 일정에서 회의 수정
+        List<MemberResDto> members = teamService.getMemberList(leaderId, team.getId());
+
+        // 팀원 모두에게 알림 전송
+        String sender = team.getName();
+        String message =  makeMessage(sender, conference.getTitle(),-1);
+        notiService.sendNotiForTeam(team.getId(), sender, message);
+
+        log.info("\n알림 전송 : OK");
+        
+        // 팀원 순회
+        for(MemberResDto member: members) {
+
+            // 유저 조회
+            if(!userRepository.findById(member.getId()).isPresent())
+                throw new Exceptions(ErrorCode.USER_NOT_EXIST);
+
+            User user = userRepository.findById(member.getId()).get();
+
+            // 해당 시간 개인 일정 조회
+            List<PrivateSchedule> privateSchedules =
+                    scheduleRepository.findByUserAndStartedTimeBetweenOrderByStartedTime(
+                            user,conference.getCallStart(),conference.getCallEnd());
+
+            log.info("\n팀원 개인 일정 조회 : OK, {}개",privateSchedules.size());
+
+            // 일정 수정
+            privateSchedules.get(0).changeDetail(scheduleReqDto.getSummary(), scheduleReqDto.getDescription(), scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime());
+
+            log.info("\n 팀원 : {}, {}", user.getId(),user.getName());
+            log.info("\n 개인 일정 수정 완료 : OK");
+        }
+
+        // 회의 정보 전체 수정
+        conference.updateAll(conferenceModifyAllReqDto.getCallStart(),
+                conferenceModifyAllReqDto.getCallEnd(),
+                conferenceModifyAllReqDto.getTitle(),
+                conferenceModifyAllReqDto.getDescription());
+
+        log.info("\n회의 정보 수정 완료 : OK");
     }
 }

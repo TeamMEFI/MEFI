@@ -7,12 +7,12 @@ import com.mefi.backend.api.service.FileService;
 import com.mefi.backend.common.util.JWTUtil;
 import com.mefi.backend.db.entity.Token;
 import com.mefi.backend.db.entity.User;
-import com.mefi.backend.db.repository.FileRepository;
 import com.mefi.backend.db.repository.TokenRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
@@ -78,12 +79,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
 
-        System.out.println("login success");
+        log.info("\nlogin success");
 
         // 로그인된 유저 확인 및 유저 엔티티 생성
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
 
+        log.info("\nToken 발급 시작");
+        
         // JWT 발급 (아이디, 직책, 만료 기간)
         // accessToken, refreshToken 생성
         // accessToken : 테스트 - 1시간, 추후 - Duration.ofHours(1)
@@ -91,6 +94,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String accessToken = jwtUtil.createJwt(user.getEmail(), null, 60*60*1000L);
         String refreshToken = jwtUtil.createJwt(user.getEmail(), null, 7*24*60*60*1000L);
 
+        log.info("\nToken 발급 완료");
+        
         // 유저 식별 아이디로 토큰 조회
         Optional<Token> token = tokenRepository.findByUserId(user.getId());
 
@@ -116,6 +121,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             tokenRepository.save(newToken);
         }
 
+        log.info("\nToken 저장 완료");
+
+
+        log.info("\n로그인 응답 Dto 생성 시작");
         // 응답에 저장 (헤더, 상태)
         response.addHeader("accessToken",accessToken);
         response.addHeader("refreshToken",refreshToken);
@@ -133,6 +142,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(reposenBody));
         response.getWriter().flush();
+
+        log.info("\n로그인 응답 Dto 생성 완료");
     }
 
     // 로그인 실패시 실행하는 메소드
@@ -141,6 +152,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         //로그인 실패시 401 응답 코드 반환
         response.setStatus(401);
-        System.out.println("login fail : request = " + request);
+
+        log.info("\nlogin fail : request = {}", request);
     }
 }

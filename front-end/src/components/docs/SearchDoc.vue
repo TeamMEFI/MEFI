@@ -5,7 +5,7 @@
     rounded="lg"
     border
     elevation="0"
-    :class="[isDragged ? 'dragged' : '', 'px-3']"
+    :class="[isDragged ? 'dragged' : '', 'px-4']"
     @dragenter.prevent="onDragenter"
     @dragover.prevent="onDragenter"
     @dragleave.prevent="onDragleave"
@@ -13,27 +13,25 @@
   >
     <v-infinite-scroll v-if="fileList.length + addedFileList.length > 0">
       <!-- 업로드된 리스트 -->
-      <div class="d-flex justify-space-between file-upload-list" v-for="file in fileList" :key="file.fileName">
+      <div class="d-flex justify-space-between align-center file-upload-list" v-for="file in fileList" :key="file.fileName">
         <a class="file-name">{{ file.fileName }}</a>
-        <div class="d-flex">
-          <v-btn size="sm" @click="saveFile(file.fileName)">다운</v-btn>
-          <v-btn size="sm" @click="eraseFile(file.fileName)">삭제</v-btn>
+        <div class="d-flex my-1">
+          <v-btn class="px-2 py-1 mx-1 border" size="sm" @click="saveFile(file.fileName)">다운</v-btn>
+          <v-btn class="px-2 py-1 border" size="sm" @click="eraseFile(file.fileName)">삭제</v-btn>
         </div>
       </div>
       <!-- 업로드할 리스트 -->
       <div class="d-flex justify-space-between file-upload-list" v-for="addedFile in addedFileList" :key="addedFile.fileName">
         <a>{{ addedFile.name }}</a>
         <div class="d-flex">
-          <!-- <v-btn disabled>추가됨</v-btn> -->
           <v-btn size="sm" @click="removeFile(addedFile.name)">삭제</v-btn>
         </div>
       </div>
-      <div class="text-center py-2">추가할 문서를 여기로 옮겨주세요.</div>
-      <template v-slot:loading></template>
+      <template v-slot:loading>{{ props.documentState.state === 'modify' ? "추가할 문서를 여기로 옮겨주세요." : "" }}</template>
     </v-infinite-scroll>
     <div v-else class="d-flex h-100 flex-column align-center justify-center">
       <div>관련 문서가 없습니다.</div>
-      <div>추가할 문서를 여기에 옮겨주세요.</div>
+      <div>{{ props.documentState.state === 'modify' ? "추가할 문서를 여기로 옮겨주세요." : "" }}</div>
     </div>
   </v-sheet>
 </template>
@@ -42,6 +40,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getFiles, createFile, downloadFile, deleteFile } from '@/api/file.js'
+import router from '@/router';
 
 const route = useRoute()
 const teamId = ref(route.params?.teamid)
@@ -70,6 +69,10 @@ const fetchFiles = () => {
 }
 
 const uploadFile = (file) => {
+  const fileName = sanitizeFilename(file.name)
+  const uploadFile = new File([file], fileName, {type: 'Blob'})
+  console.log(uploadFile)
+  
   const formData = new FormData()
 
   const fileRequestDto = new Blob(
@@ -84,7 +87,7 @@ const uploadFile = (file) => {
     { type: 'application/json' }
   )
 
-  formData.append('file', file)
+  formData.append('file', uploadFile)
   formData.append('fileRequestDto', fileRequestDto)
 
   createFile(
@@ -96,6 +99,11 @@ const uploadFile = (file) => {
       console.log(error)
     }
   )
+}
+
+function sanitizeFilename(filename) {
+    const sanitizedFilename = filename.replace(/[<>[\\\]^`{|}"]/g, '_');
+    return sanitizedFilename;
 }
 
 const saveFile = (fileName) => {
@@ -134,7 +142,7 @@ const eraseFile = (fileName) => {
     {
       fileName: fileName
     },
-    546,
+    conferenceId.value,
     (response) => {
       alert('문서가 삭제되었습니다.')
       fetchFiles()
@@ -149,9 +157,12 @@ const removeFile = (fileName) => {
   addedFileList.value = addedFileList.value.filter((addedFile) => addedFile.name !== fileName)
 }
 
+const emit = defineEmits(['changeDone'])
+
 watch(
   () => props.documentState.state,
   () => {
+    console.log(props.documentState.state)
     if (props.documentState.state === 'detail') {
       fetchFiles()
     }
@@ -164,13 +175,15 @@ watch(
       })
 
       addedFileList.value = []
+
+      router.go(0)
     }
   }
 )
 
 onMounted(() => {
   console.log(props.documentState.state)
-  if (props.documentState.state === 'detail') {
+  if (props.documentState.state !== 'create') {
     fetchFiles()
   }
 })
@@ -201,7 +214,7 @@ const onDrop = (event) => {
 .dragged {
   border: 1px dashed #495464;
   background-color: #f7f9ff;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .file-name {
