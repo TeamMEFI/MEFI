@@ -19,21 +19,21 @@
       </v-row>
       <v-row>
         <v-col cols="6">
-          <v-select label="Choice Type" :items="typeschedule" variant="outlined" density="compact" hide-details="true"></v-select>
+          <v-select label="Choice Type" v-model="selecttype" :items="typeschedule" variant="outlined" density="compact" hide-details="true"></v-select>
         </v-col>
         <v-col cols="6">
           <v-row>
             <v-col cols="3">
-              <v-select v-model="selectSh" :items="startpossiblehours" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectSh" :items="starthours" variant="outlined" density="compact" hide-details="true"></v-select>
             </v-col>
             <v-col cols="3">
-              <v-select v-model="selectSm" :items="startpossiblemins" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectSm" :items="startmins" variant="outlined" density="compact" hide-details="true"></v-select>
             </v-col>
             <v-col cols="3">
-              <v-select v-model="selectEh" :items="endpossiblehours" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectEh" :items="endhours" variant="outlined" density="compact" hide-details="true"></v-select>
             </v-col>
             <v-col cols="3">
-              <v-select v-model="selectEm" :items="endpossiblemins" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectEm" :items="endmins" variant="outlined" density="compact" hide-details="true"></v-select>
             </v-col>
           </v-row>
         </v-col>
@@ -62,101 +62,51 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { createSchedule } from '@/api/schedule.js'
+
 const router = useRouter()
 const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
 const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const typeschedule = ref(['회의', '출장'])
-
+const selecttype = ref(null)
 const selectSh = ref('08')
 const selectSm = ref('00')
 const selectEh = ref('22')
 const selectEm = ref('00')
-const props = defineProps({
-  date: String
-})
 const summary = ref('')
 const description = ref('')
 
-// 선택한 종료 시간에 따라 시작 시간 입력 방지
-const startpossiblehours = computed(() => {
-  return starthours.value.filter((hour) => {
-    if (hour > selectEh.value) {
-      return false
-    } else {
-      return true
-    }
-  })
+const props = defineProps({
+  date: String
 })
 
-// 선택한 시작 시간에 따라 종료 시간 입력 방지
-const endpossiblehours = computed(() => {
-  return endhours.value.filter((hour) => {
-    if (selectSm.value > selectEm.value) {
-      if (hour == selectEh.value) {
-        return false
-      } else {
-        return true
-      }
-    }
-
-    if (hour < selectSh.value) {
-      return false
-    } else {
-      return true
-    }
-  })
-})
-
-// 선택한 종료 시간에 따라 시작 시간 입력 방지
-const startpossiblemins = computed(() => {
-  return startmins.value.filter((min) => {
-    if (selectSh.value == selectEh.value) {
-      if (min < selectEm.value) {
-        return true
-      } else {
-        return false
-      }
-    }
-
-    return true
-  })
-})
-
-// 선택한 시작 시간에 따라 종료 시간 입력 방지
-const endpossiblemins = computed(() => {
-  return endmins.value.filter((min) => {
-    if (selectSh.value == selectEh.value) {
-      if (min > selectSm.value) {
-        return true
-      } else {
-        return false
-      }
-    }
-
-    return true
-  })
-})
 
 const create = async () => {
   if (!summary.value) {
     alert('일정 요약을 설정해주세요.')
     return false
   }
-
+  if (selecttype.value === null) {
+    alert('일정 타입을 선택해주세요.')
+    return false
+  }
   if (!selectSh.value || !selectSh.value || !selectSh.value || !selectSh.value) {
     alert('일정 시간을 설정해주세요.')
+    return false
+  }
+  
+  if (new Date(props.date + ' ' + selectSh.value +':'+ selectSm.value) >= new Date(props.date + ' ' + selectEh.value +':'+ selectEm.value)) {
+    alert('일정 시간에 오류가 있습니다. 확인 후 생성하세요!')
     return false
   }
   const data = {
     startedTime: props.date + 'T' + selectSh.value + ':' + selectSm.value + ':00.000Z',
     endTime: props.date + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',
-    type: typeschedule.value == '회의' ? 'CONFERENCE' : 'BUSINESSTRIP',
+    type: selecttype.value === '회의' ? 'CONFERENCE' : 'BUSINESSTRIP',
     summary: summary.value,
     description: description.value
   }
-
   await createSchedule(
     data,
     (response) => {

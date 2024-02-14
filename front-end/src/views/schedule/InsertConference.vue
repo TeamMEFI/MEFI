@@ -32,16 +32,16 @@
         <v-col cols="6">
           <v-row>
             <v-col cols="3">
-              <v-select v-model="selectSh" :items="startpossiblehours" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectSh" :items="starthours" variant="outlined" density="compact" hide-details="true"></v-select>
             </v-col>
             <v-col cols="3">
-              <v-select v-model="selectSm" :items="startpossiblemins" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectSm" :items="startmins" variant="outlined" density="compact" hide-details="true"></v-select>
             </v-col>
             <v-col cols="3">
-              <v-select v-model="selectEh" :items="endpossiblehours" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectEh" :items="endhours" variant="outlined" density="compact" hide-details="true"></v-select>
             </v-col>
             <v-col cols="3">
-              <v-select v-model="selectEm" :items="endpossiblemins" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectEm" :items="endmins" variant="outlined" density="compact" hide-details="true"></v-select>
             </v-col>
           </v-row>
         </v-col>
@@ -86,66 +86,12 @@ const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18'
 const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const typeschedule = ref(['회의'])
 const selectvalue = ref('회의')
-
-// 선택한 종료 시간에 따라 시작 시간 입력 방지
-const startpossiblehours = computed(() => {
-  return starthours.value.filter((hour) => {
-    if (hour > selectEh.value) {
-      return false
-    } else {
-      return true
-    }
-  })
-})
-
-// 선택한 시작 시간에 따라 종료 시간 입력 방지
-const endpossiblehours = computed(() => {
-  return endhours.value.filter((hour) => {
-    if (selectSm.value > selectEm.value) {
-      if (hour == selectEh.value) {
-        return false
-      } else {
-        return true
-      }
-    }
-
-    if (hour < selectSh.value) {
-      return false
-    } else {
-      return true
-    }
-  })
-})
-
-// 선택한 종료 시간에 따라 시작 시간 입력 방지
-const startpossiblemins = computed(() => {
-  return startmins.value.filter((min) => {
-    if (selectSh.value == selectEh.value) {
-      if (min < selectEm.value) {
-        return true
-      } else {
-        return false
-      }
-    }
-
-    return true
-  })
-})
-
-// 선택한 시작 시간에 따라 종료 시간 입력 방지
-const endpossiblemins = computed(() => {
-  return endmins.value.filter((min) => {
-    if (selectSh.value == selectEh.value) {
-      if (min > selectSm.value) {
-        return true
-      } else {
-        return false
-      }
-    }
-
-    return true
-  })
-})
+const title = ref('')
+const description = ref('')
+const selectSh = ref('08')
+const selectSm = ref('00')
+const selectEh = ref('22')
+const selectEm = ref('00')
 
 const props = defineProps({
   teamid: Number,
@@ -157,21 +103,19 @@ const documentState = ref({
   conferenceId: undefined
 })
 
-const title = ref('')
-const description = ref('')
-const selectSh = ref('08')
-const selectSm = ref('00')
-const selectEh = ref('22')
-const selectEm = ref('00')
-
 const conferenceReservation = async () => {
   if (!title.value) {
-    alert('일정 제목을 설정해주세요.')
+    alert('회의 제목을 설정해주세요.')
     return false
   }
 
   if (!selectSh.value || !selectSh.value || !selectEh.value || !selectEh.value) {
     alert('회의 시간을 설정해주세요.')
+    return false
+  }
+
+  if (new Date(props.date + ' ' + selectSh.value +':'+ selectSm.value) >= new Date(props.date + ' ' + selectEh.value +':'+ selectEm.value)) {
+    alert('회의 시간에 오류가 있습니다. 확인 후 생성하세요!')
     return false
   }
 
