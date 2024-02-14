@@ -7,7 +7,6 @@
           <p class="font-weight-bold ma-3">{{ conf.callStart.slice(11,16) }} ~ {{ conf.callEnd.slice(11,16) }}</p>
         </div>
       </div>
-    </div>
   </div>
 </template>
 <script setup>
