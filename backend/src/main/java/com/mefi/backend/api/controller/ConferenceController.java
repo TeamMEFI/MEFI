@@ -1,6 +1,7 @@
 package com.mefi.backend.api.controller;
 
 import com.mefi.backend.api.request.ConferenceCreateReqDto;
+import com.mefi.backend.api.request.ConferenceModifyAllReqDto;
 import com.mefi.backend.api.response.ConferenceResDto;
 import com.mefi.backend.api.response.ConferenceDetailResDto;
 import com.mefi.backend.api.service.ConferenceService;
@@ -114,8 +115,26 @@ public class ConferenceController {
         log.info("\n회의 종료 URL 맵핑: {}", conferenceId);
         log.info("\n회의 종료자 : {}", userDetails.getUserId());
 
-        // 회의 취소
+        // 회의 종료
         conferenceService.doneMeeting(userDetails.getUserId(), conferenceId);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,"Success"));
+    }
+
+    @Operation(summary = "회의 정보 전체 수정", description = "api/meeting/modify/{conferenceId}\n\n 리더는 회의 정보를 전체 수정 할 수 있다.")
+    @PutMapping("/modify/{conferenceId}")
+    @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
+    public ResponseEntity<? extends BaseResponseBody> modifyAllMeeting(Authentication authentication,
+                                                                  @Parameter(name = "conferenceId", description = "회의 번호")
+                                                                  @PathVariable("conferenceId") Long conferenceId,
+                                                                    @RequestBody ConferenceModifyAllReqDto conferenceModifyAllReqDto) {
+        // 로그인된 유저 정보 조회
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        log.info("\n회의 전체 수정 URL 맵핑: {}", conferenceId);
+        log.info("\n회의 수정자 : {}", userDetails.getUserId());
+
+        // 회의 전체 수정
+        conferenceService.modifyAllMeeting(userDetails.getUserId(), conferenceId, conferenceModifyAllReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0,"Success"));
     }
 }

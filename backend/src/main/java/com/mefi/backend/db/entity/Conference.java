@@ -69,4 +69,12 @@ public class Conference {
     public void saveConferenceSessionId(String sessionId){
         this.thumbnailUrl = sessionId;
     }
+
+    // 회의 정보 전체 수정
+    public void updateAll(LocalDateTime callStart, LocalDateTime callEnd, String title, String description) {
+        this.callStart = callStart;
+        this.callEnd = callEnd;
+        this.title = title;
+        this.description = description;
+    }
 }
