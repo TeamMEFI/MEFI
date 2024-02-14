@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar title="MEFI" color="#495464" class="w-100">
+  <v-toolbar color="#495464" class="w-100">
     <v-spacer></v-spacer>
 
     <!-- 알림 -->

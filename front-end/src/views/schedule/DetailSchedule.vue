@@ -3,10 +3,10 @@
     <v-card-title class="d-flex align-center pa-2">
       <p class="text-h5 font-weight-black">일정 상세</p>
       <v-spacer></v-spacer>
-      <v-btn @click="modify">일정 수정하기</v-btn>
-      <v-btn @click="deletes">일정 삭제하기</v-btn>
+      <v-btn class="mx-1" @click="modify">일정 수정하기</v-btn>
+      <v-btn class="mx-1" @click="deletes">일정 삭제하기</v-btn>
     </v-card-title>
-    <v-card-item class="pa-3 h-40">
+    <v-card-item class="pa-3">
       <v-row>
         <v-col cols="6">
           <p>일정 종류</p>
