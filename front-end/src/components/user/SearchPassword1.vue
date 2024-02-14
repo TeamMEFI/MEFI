@@ -15,7 +15,7 @@
             ></v-text-field>
 
             <!-- 이메일 api 던지고, url 받은 클라이언트가 사이트로 다시 연결 -->
-            <v-btn :disabled="email_check" @click="goSearchPassword" class="w-100" variant="flat" color="#45566F">다음</v-btn>
+            <v-btn  rounded="lg" :disabled="email_check" @click="goSearchPassword" class="w-100 pa-1" variant="flat" color="#45566F">다음</v-btn>
         </v-form>
     </v-sheet>
 </template>
