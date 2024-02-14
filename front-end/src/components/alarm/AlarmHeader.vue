@@ -4,8 +4,8 @@
         <div class="d-flex flex-row">
             <!-- 전체 읽음 체크박스 -->
             <div class="d-flex align-items-center mr-2" @click.stop>
-                <input type="checkbox" id="checkbox" v-model="allread" class="pa-0 ma-0" @click.stop>
-                <label for="checkbox" @click.stop>전체읽음</label>
+                <label class="text-center"><span><input type="checkbox" id="checkbox" v-model="allread" @click.stop> 전체읽음</span></label>
+                <!-- <label for="checkbox" @click.stop>전체읽음</label> -->
             </div>
             <!-- 닫힘 버튼 -->
             <span @click.stop="close" class="cursor-pointer mx-2" style="font-size: large;">X</span>

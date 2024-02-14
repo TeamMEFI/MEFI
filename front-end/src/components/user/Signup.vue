@@ -1,12 +1,15 @@
 <template>
     <!-- 회원 가입 -->
     <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" min-width="500" style="border-radius: 10px;">
+
         <!-- 로그 -->
-        <div class="d-flex justify-center">
-            <span style="font-size: xx-large; font-weight: bolder;">MEFI</span>
+        <div class="d-flex justify-center mb-5">
+            <span style="font-weight:bolder;" class="text-h3">MEFI</span>
         </div>
+
         <!-- 회원 가입 입력창 -->
         <v-form @submit.prevent="signup" class="d-flex flex-column justify-center">
+
             <!-- 이메일 입력창 -->
             <div class="d-flex flex-row justify-center align-center">
                 <v-text-field
@@ -15,18 +18,18 @@
                     variant="outlined"
                     type="email"
                     :rules="rule_email"
-                >
-                    <!-- 이메일 인증 모달창 -->
+                    class="mb-1"
+                ><!-- 이메일 인증 모달창 -->
                     <template v-slot:append-inner>    
-                        <v-btn variant="flat" :disabled="email_check"  @click="emailCheck()">인증
+                        <font-awesome-icon v-if="email_success===true" :icon="['fas', 'circle-check']" :style="{color: email_success ? '#4CAF50' : '#BDBDBD'}" style="font-size: x-large;"/>
+                        <v-btn v-show="email_success===false && email_check===false" variant="text"  @click="emailCheck()" >
+                            <span>인증</span>
                             <v-dialog persistent v-model="emailDialog">
                                 <Email @close="emailDialog = false" :email="email" @success="emailSuccess"></Email>
                             </v-dialog>
                         </v-btn>
                     </template>
                 </v-text-field>
-
-                <font-awesome-icon :icon="['fas', 'circle-check']" :style="{color: email_success ? '#4CAF50' : '#BDBDBD'}" style="font-size: x-large;"/>
             </div>
 
             <!-- 비밀 번호 입력창 -->
@@ -36,6 +39,7 @@
                 v-model="password"
                 :rules="rule_pass"
                 variant="outlined"
+                class="mb-1"
             ></v-text-field>
 
             <!-- 비밀번호 확인 입력창 -->
@@ -45,6 +49,7 @@
                 v-model="password_check"
                 :rules="rule_pass_check"
                 variant="outlined"
+                class="mb-1"
             ></v-text-field>
 
             <!-- 이름 입력창 -->
@@ -53,6 +58,7 @@
                 v-model="name"
                 :rules="rule_name"
                 variant="outlined"
+                class="mb-1"
             ></v-text-field>
 
             <!-- 부서 입력창 -->
@@ -60,6 +66,7 @@
                 label="부서"
                 v-model="dept"
                 variant="outlined"
+                class="mb-1"
             ></v-text-field>
 
             <!-- 직급 입력창 -->
@@ -67,10 +74,11 @@
                 label="직급"
                 v-model="position"
                 variant="outlined"
+                class="mb-1"
             ></v-text-field>
 
             <!-- 회원 가입 버튼 -->
-            <v-btn type="submit" class="w-100" variant="flat" color="#45566F">회원 가입</v-btn>
+            <v-btn type="submit" class="w-100" style="height: 40px;" variant="flat" color="#45566F" rounded="lg">회원 가입</v-btn>
         </v-form>
     </v-sheet>
 </template>
@@ -80,7 +88,6 @@ import { useUserStore } from "@/stores/user"
 import { ref, watch } from "vue"
 import Email from "./Email.vue";
 import { sendEmailCode } from "@/api/user"
-
 const store = useUserStore();
 
 // 회원가입 시, 입력 받을 정보
@@ -99,6 +106,10 @@ watch(
     ()=>{
         if (regex_email.test(email.value)) {
             email_check.value = false
+        }
+        else{
+            email_check.value = true
+            email_success.value = false
         }
     }
 )
@@ -154,6 +165,7 @@ const signup = async function(){
     }
 }
 
+// 이메일 인증 코드 보내기
 const emailCheck = async () => {
     const param = {
         "email": email.value
@@ -169,7 +181,7 @@ const emailCheck = async () => {
     })
 }
 
-
+// 이메일 인증 코드 확인
 const email_success = ref(false)
 const emailSuccess = () => {
     emailDialog.value = false
