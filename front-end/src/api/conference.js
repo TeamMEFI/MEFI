@@ -22,4 +22,8 @@ const doneMeeting = async (param, conferenceId, success, fail) => {
   interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
   await interceptor.patch(`/meeting/done/${conferenceId}`, { params: param }).then(success).catch(fail)
 }
-export { createConference, detailConference, getConferenceHistory, cancelMeeting, doneMeeting }
+const modifyAllMeeting = async (param, conferenceId, success, fail) => {
+  interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
+  await interceptor.put(`/meeting/modify/${conferenceId}`, param).then(success).catch(fail)
+}
+export { createConference, detailConference, getConferenceHistory, cancelMeeting, doneMeeting, modifyAllMeeting }

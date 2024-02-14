@@ -33,7 +33,7 @@
 
       <!-- 요일 -->
       <v-row class="d-flex align-center justify-center ma-0">
-        <v-col v-for="i in weekday" class="day-header ma-0">
+        <v-col v-for="i in weekday" class="day-header ma-0" :key="i">
           <div>
             {{ dayofweek[i] }}
           </div>

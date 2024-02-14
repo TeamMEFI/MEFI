@@ -1,5 +1,5 @@
 <template>
-    <v-app class="bg-main">
+    <v-app class="bg-main background-image">
         <!-- 로그인 / 회원가입 페이지로 넘어감 -->
         <RouterView></RouterView>
     </v-app>
@@ -14,4 +14,11 @@ router.push({name:'login'})
 </script>
 
 <style scoped>
+.background-image {
+    background-color: #9CD8E2;
+    background-image: url('../../assets/LoginBackground.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 100% 100px;
+}
 </style>

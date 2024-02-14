@@ -45,8 +45,8 @@ const handleMouseOut = () => {
 #video {
   width: 100%;
   height: 100%;
-  /* 가로 1.2 | 세로 1 */
-  aspect-ratio: 1.2;
+  /* 가로 1.35 | 세로 1 */
+  aspect-ratio: 1.35;
   border-radius: 10px;
 }
 

@@ -11,7 +11,7 @@
                 <v-col cols="5" class="h-100">
                     <v-text-field
                     v-model="teamName"
-                    label="Team Name"
+                    label="팀명"
                     variant="outlined"
                     required
                     hide-details
@@ -37,7 +37,7 @@
                 <v-col cols="5">
                     <v-text-field
                     v-model="teamDescription"
-                    label="Team Description"
+                    label="팀 설명"
                     variant="outlined"
                     required
                     hide-details
