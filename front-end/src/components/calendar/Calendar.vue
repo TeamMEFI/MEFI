@@ -7,7 +7,7 @@
             <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
           </v-col>
           <v-col cols="6" class="d-flex justify-center align-center">
-            <p> {{ year }} {{ listofmonthword[month] }}</p>
+            <p class="text-h5 font-weight-bold"> {{ year }} {{ listofmonthword[month] }}</p>
           </v-col>
           <v-col cols="3" class="d-flex justify-center align-center">
             <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
@@ -20,11 +20,11 @@
       </v-btn>
     </v-row>
   </v-container>
-  <v-sheet class="mt-5 elevation-5 w-100 ma-0 pa-0 w-100">
+  <v-sheet class="mt-5 elevation-3 w-100 ma-0 pa-0 w-100 h-80">
     <v-row class="d-flex align-center justify-center ma-0">
       <v-col v-for="i in weekday" class="day-header ma-0" style="flex-grow: 1;">
         <div>
-          {{ dayofweek[i] }}
+          <p class="font-weight-bold">{{ dayofweek[i] }}</p>
         </div>
       </v-col>
     </v-row>
@@ -38,9 +38,8 @@
               {{ week[i]['date'] }}
               <template v-for="(item, index) in week[i]['event']" >
                 <div v-if="index < 3" class="text-start rounded-lg my-1" :class="item.type">
-                  <p class="font-weight-bold">{{ item.summary }}</p>
+                  <p class="mx-3 font-weight-bold">{{ item.summary }}</p>
                 </div>
-
               </template>
           </div>
       </v-col>
@@ -224,20 +223,21 @@ const clickday = (data) => {
 </script>
 
 <style scoped>
-.day {
-    max-width: calc(100%/7);
-    min-width: calc(100%/7);
-    min-height: 115px;
-    max-height: 115px;
-    text-align: center;
-    border: 1px solid #e0e0e0;
-}
 .day-header {
   max-width: calc(100%/7);
   min-width: calc(100%/7);
   background-color: #d2d2d2;
   text-align: center;
 }
+.day {
+    max-width: calc(100%/7);
+    min-width: calc(100%/7);
+    min-height: 120px;
+    max-height: 120px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
 .not_current {
   background-color: #f5f5f5;
   color: #b0a0b0;
@@ -248,9 +248,9 @@ const clickday = (data) => {
 }
 
 .CONFERENCE {
-  background-color: rgba(189, 255, 151, 0.578);
+  background-color: rgba(189, 255, 151, 0.5);
 }
 .BUSINESSTRIP {
-  background-color: rgba(255, 190, 190, 0.571);
+  background-color: rgba(255, 190, 190, 0.6);
 }
 </style>
