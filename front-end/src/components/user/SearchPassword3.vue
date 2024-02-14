@@ -1,11 +1,11 @@
 <template>
     <v-sheet class="w-30 ma-auto pa-12 d-flex flex-column justify-center" min-width="500" style="border-radius: 10px;">
-        <v-form @submit.prevent="chagnePassword" class="d-flex flex-column justify-center">
+        <v-form @submit.prevent="chagnePassword" class="d-flex flex-column justify-center mt-5">
+            
             <!-- 새 비밀번호 입력창 -->
             <v-text-field
                 label="새로운 비밀번호"
                 v-model="password"
-                :rules="rule_pass"
                 variant="outlined"
                 type="password"
                 hide-details="auto"
@@ -15,14 +15,14 @@
             <v-text-field
                 label="새로운 비밀번호 확인"
                 v-model="password_check"
-                :rules="rule_pass_check"
                 variant="outlined"
                 type="password"
                 hide-details="auto"
+                class="mt-3"
             ></v-text-field>
 
             <!-- submit 버튼 -->
-            <v-btn type="submit" class="w-100" variant="flat" color="#45566F">비밀 번호 변경</v-btn>
+            <v-btn rounded="lg" type="submit" class="w-100 pa-1 mt-10" variant="flat" color="#45566F">비밀 번호 변경</v-btn>
         </v-form>
     </v-sheet>
 </template>
