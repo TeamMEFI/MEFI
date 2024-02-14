@@ -36,9 +36,10 @@ public class Team {
     private List<Conference> conferences = new ArrayList<>();
 
     @Builder
-    public Team(String name, String description){
+    public Team(String name, String description, LocalDateTime time){
         this.name = name;
         this.description = description;
+        this.createdTime = time; 
     }
 
     public void addUserTeam(UserTeam teamLeader) {
