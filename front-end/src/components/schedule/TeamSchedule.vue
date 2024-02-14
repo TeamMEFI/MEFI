@@ -1,16 +1,17 @@
 <template>
   <div class="bg-white h-100 w-100" @click="clickday">
       <div class="w-100 h-100 d-flex flex-column">
-        <div v-for="conf in data" @click="router.push({name:'detailconference', params:{ teamid : props.teamId, conferenceid: conf.id}})">
-          <p>{{ conf.title }}</p>
-          <p>{{ conf.callStart.slice(11,16) }} ~ {{ conf.callEnd.slice(11,16) }}</p>
+        <p class="font-weight-bold ma-4">{{ props.scheduleDate }}</p>
+        <div v-for="conf in data" @click="router.push({name:'detailconference', params:{ teamid : props.teamId, conferenceid: conf.id}})" class="text-start CONFERENCE ma-1 rounded-lg">
+          <p class="font-weight-bold ma-3">{{ conf.title }}</p>
+          <p class="font-weight-bold ma-3">{{ conf.callStart.slice(11,16) }} ~ {{ conf.callEnd.slice(11,16) }}</p>
         </div>
       </div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 import { getConferenceHistory } from '@/api/conference'
 const emit = defineEmits(['clickDay'])
 const props = defineProps({
@@ -52,5 +53,9 @@ watchEffect((props, (newvalue) => {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
+}
+
+.CONFERENCE {
+  background-color: rgba(189, 255, 151, 0.5);
 }
 </style>

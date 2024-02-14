@@ -1,13 +1,13 @@
 <template>
-  <v-container class="pa-0 h-100">
-    <v-row class="d-flex align-center justify-start ma-3">
+  <v-container class="pa-0 d-flex flex-column justify-center">
+    <v-row class="d-flex align-center justify-start ma-2">
       <v-col cols="4">
         <v-row>
           <v-col cols="3" class="d-flex justify-center align-center">
             <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
           </v-col>
           <v-col cols="6" class="d-flex justify-center align-center">
-            <p> {{ year }} {{ listofmonthword[month] }} </p>
+            <p class="text-h5 font-weight-bold"> {{ year }} {{ listofmonthword[month] }}</p>
           </v-col>
           <v-col cols="3" class="d-flex justify-center align-center">
             <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
@@ -25,22 +25,21 @@
         <p class="font-weight-black text-h6">회의 예약</p>
       </v-btn>
     </v-row>
-    <v-row class="d-flex align-center justify-center">
-      <v-col v-for="i in weekday" class="day-header" style="flex-grow: 0;">
+  </v-container>
+  <v-sheet class="mt-5 elevation-3 w-100 ma-0 pa-0 h-80">
+    <v-row class="d-flex align-center justify-center ma-0">
+      <v-col v-for="i in weekday" class="day-header ma-0" style="flex-grow: 1;">
         <div>
-          {{ dayofweek[i] }}
+          <p class="font-weight-bold">{{ dayofweek[i] }}</p>
         </div>
       </v-col>
     </v-row>
-    <v-row class="d-flex align-center justify-center h-75">
-      <v-col v-for="day in cal" class="day h-100 pa-0" style="flex-grow: 0;">
+    <v-row class="d-flex align-center justify-center ma-0 schedule">
+      <v-col v-for="day in cal" class="h-100 day pa-2" style="flex-grow: 0;">
         <TeamSchedule :schedule-date="String(day.year) +'-'+ String(day.month + 1).padStart(2,'0') +'-'+ String(day.date).padStart(2,'0')" :team-id="props.teamId" @click-day="(data) => choicedate=data"/>
       </v-col>
     </v-row>
-    <v-row >
-
-    </v-row>
-  </v-container>
+  </v-sheet>
 </template>
 
 <script setup>
@@ -77,9 +76,8 @@ const choicedate = ref(String(year.value) +'-'+ String(month.value+1).padStart(2
 //   return Math.ceil((currentDate + firstDay) / 7);
 // };
 
-// const week = getWeek(new Date('2024-01-31'));
+// const week = getWeek(new Date() + '주차');
 // console.log(week + "주차");
-// 2주차
 const select = async () => {
     await selectTeam(
         (response) => {
@@ -123,11 +121,12 @@ const makeWeekCalendar = (year, month, date) => {
     });
     currentDate.setDate(currentDate.getDate() + 1);
   }
+  console.log(week)
   return week
 };
 
 
-// 이전달 이동
+// 이전주 이동
 const clickprev = () => {
   date.value -= 7
   const resource = new Date(year.value, month.value, 0).getDate()
@@ -143,7 +142,7 @@ const clickprev = () => {
   cal.value = makeWeekCalendar(year.value, month.value, date.value)
 }
 
-// 다음달 이동
+// 다음주 이동
 const clicknext = () => {
   date.value += 7
   const resource = new Date(year.value, month.value+1, 0).getDate()
@@ -168,20 +167,24 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.day {
-    max-width: calc(95%/7);
-    min-width: calc(95%/7);
-    border: 1px solid black;
-    text-align: center;
-    flex-grow: initial !important;
-}
 .day-header {
-  max-width: calc(95%/7);
-  min-width: calc(95%/7);
-  background-color: #f2f2f2;
-  border: 0.2px solid #495464;
+  max-width: calc(100%/7);
+  min-width: calc(100%/7);
+  background-color: #d2d2d2;
+  text-align: center;
+}
+
+.day {
+  max-width: calc(100%/7);
+  min-width: calc(100%/7);
+  text-align: center;
+  border: 1px solid #e0e0e0;
 }
 .not_current {
   background-color: #e0e0e0;
+}
+
+.schedule {
+  height: 94% !important;
 }
 </style>

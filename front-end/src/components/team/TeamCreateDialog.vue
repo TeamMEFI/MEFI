@@ -1,48 +1,36 @@
 <template>
-    <v-card class="bgcolor-setting w-100 h-100">
+    <v-card class="bgcolor-setting w-100 h-100 rounded-lg">
         <v-card-title class="ma-0 pa-0">
-            <v-toolbar color="#2A4770" >
-                <v-toolbar-title class="font-weight-bold text-h5">Team Create</v-toolbar-title>
+            <v-toolbar>
+                <v-toolbar-title class="font-weight-bold text-h5">팀 생성</v-toolbar-title>
                 <v-spacer></v-spacer>
             </v-toolbar>
         </v-card-title>
-        <v-card-text>
-            <v-container class="h-85">
-                <v-row>
-                    <v-col cols="5">
-                        <v-text-field
-                        v-model="teamName"
-                        label="Team Name"
-                        variant="solo"
-                        required
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="7">
-                        <v-text-field
-                        v-model="teamDescription"
-                        label="Team Description"
-                        variant="solo"
-                        required
-                        ></v-text-field>
-                    </v-col>
-                </v-row>
-                <v-row class="h-100">
-                    <v-col cols="5" class="h-100">
-                        <div class="bg-white h-100 elevation-3">
-                            <v-toolbar color="#2A4770" >
-                                <v-toolbar-title class="font-weight-bold text-h5">New Join</v-toolbar-title>
-                                <v-text-field
-                                    density="compact"
-                                    v-model="searchName"
-                                    variant="solo"
-                                    append-inner-icon="mdi-magnify"
-                                    single-line
-                                    hide-details
-                                    @click:append-inner="onClick"
-                                    @keyup.enter="onClick"
-                                    class="me-3"
-                                ></v-text-field>
-                            </v-toolbar>
+        <v-card-text class="h-75">
+            <v-row class="h-100 ma-0">
+                <v-col cols="5" class="h-100">
+                    <v-text-field
+                    v-model="teamName"
+                    label="팀명"
+                    variant="solo"
+                    required
+                    ></v-text-field>
+                    <div class="h-80 w-100 elevation-1 rounded-lg mt-5">
+                        <v-toolbar class="rounded-t-lg" height="50">
+                            <v-toolbar-title class="font-weight-bold text-h5">멤버 추가</v-toolbar-title>
+                            <v-text-field
+                                density="compact"
+                                v-model="searchName"
+                                variant="solo"
+                                append-inner-icon="mdi-magnify"
+                                single-line
+                                hide-details
+                                @click:append-inner="onClick"
+                                @keyup.enter="onClick"
+                                class="me-3"
+                            ></v-text-field>
+                        </v-toolbar>
+                        <div class="w-100 h-cal auto-scroll">
                             <v-list>
                                 <v-list-item
                                     v-for="user in searchList"
@@ -54,21 +42,20 @@
                                 </v-list-item>
                             </v-list>
                         </div>
-                    </v-col>
-                    <v-col cols="2" class="d-flex justify-space-evenly flex-column align-center">
-                        <v-btn icon @click="addMember">
-                            <v-icon>mdi-account-plus</v-icon>
-                        </v-btn>
-                        <v-btn icon @click="excludeMember">
-                            <v-icon>mdi-account-minus</v-icon>
-                        </v-btn>
-                    </v-col>
-                    <v-col cols="5" class="h-100">
-                        <div class="bg-white h-100 elevation-3">
-                            <v-toolbar color="#2A4770" >
-                                <v-toolbar-title class="font-weight-bold text-h5">Added</v-toolbar-title>
-                                <v-spacer></v-spacer>
-                            </v-toolbar>
+                    </div>
+                </v-col>
+                <v-col cols="5">
+                    <v-text-field
+                    v-model="teamDescription"
+                    label="팀 설명"
+                    variant="solo"
+                    required
+                    ></v-text-field>
+                    <div class="h-80 w-100 elevation-1 rounded-lg mt-5">
+                        <v-toolbar class="rounded-t-lg" height="50">
+                            <v-toolbar-title class="font-weight-bold text-h5">추가 현황</v-toolbar-title>
+                        </v-toolbar>
+                        <div class="w-100 h-cal auto-scroll">
                             <v-list>
                                 <v-list-item
                                     v-for="selectuser in selectedUsers"
@@ -79,9 +66,22 @@
                                 </v-list-item>
                             </v-list>
                         </div>
-                    </v-col>
-                </v-row>
-            </v-container>
+                    </div>
+                </v-col>
+                <v-col cols="2" class="d-flex flex-column justify-start align-center h-100">
+                    <v-btn width="100" class="ma-3" @click="create" color="primary">
+                        <p class="font-weight-bold">생성</p>
+                    </v-btn>
+                    <v-btn @click="addMember" width="100" class="ma-3 mt-15">
+                        <v-icon>mdi-account-plus</v-icon>
+                        <p class="font-weight-bold">멤버 추가</p>
+                    </v-btn>
+                    <v-btn @click="excludeMember"  width="100" class="ma-3">
+                        <v-icon>mdi-account-minus</v-icon>
+                        <p class="font-weight-bold">멤버 제거</p>
+                    </v-btn>
+                </v-col>
+            </v-row>
         </v-card-text>
         <v-card-actions>
             <v-spacer></v-spacer>
@@ -92,13 +92,7 @@
             >
             Close
             </v-btn>
-            <v-btn
-            variant="text"
-            class="text-h5"
-            @click="create"
-            >
-            Save
-            </v-btn>
+
         </v-card-actions>
     </v-card>
 </template>
@@ -185,8 +179,6 @@ const excludeMember = () => {
 const clickUser = (user) => {
     user.isSelect = !user.isSelect
 }
-
-
 
 </script>
 
