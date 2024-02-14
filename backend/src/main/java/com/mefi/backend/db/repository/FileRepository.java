@@ -20,9 +20,4 @@ public interface FileRepository extends JpaRepository<MeetingFile, Long> {
     // 특정 회의와 관련된 파일 메타 데이터 조회
     @Query("select m from MeetingFile m where m.conference.id = :conferenceId")
     List<MeetingFile> findByConferenceId(@Param("conferenceId") Long conferenceId);
-
-//    // 회의 조회
-//    // TODO : Conference 기능 구현 후 사라져야 하는 메소드
-//    @Query("select c from Conference c where c.id = : conferenceId")
-//    Conference findConference(@Param("conferenceId") Long conferenceId);
 }

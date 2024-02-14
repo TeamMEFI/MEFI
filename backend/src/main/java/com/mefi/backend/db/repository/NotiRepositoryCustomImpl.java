@@ -31,7 +31,6 @@ public class NotiRepositoryCustomImpl implements NotiRepositoryCustom {
     @Override
     public void deleteEmitterById(String emitterId) {
         emitters.remove(emitterId);
-        log.info("Removed Emitter ID : {}", emitterId);
     }
 
     @Override
@@ -45,7 +44,6 @@ public class NotiRepositoryCustomImpl implements NotiRepositoryCustom {
         );
     }
 
-//    @Scheduled(cron="0 0 0 * * ?")
     @Override
     public void deleteEventCacheByUserId() {
         // 3개월이 지난 EventCache는 삭제

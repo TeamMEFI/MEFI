@@ -11,6 +11,7 @@ import com.mefi.backend.common.model.BaseResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,16 +35,13 @@ public class ScheduleController {
     @PostMapping
     @Operation(summary = "개인 일정 등록", description = "새로운 개인 일정 정보를 받아 DB에 저장한다.")
     @ApiResponse(responseCode = "201", description = "성공 시 상태 코드 201와 SUCCESS 반환")
-    public ResponseEntity<? extends BaseResponseBody> createSchedule(Authentication authentication, @RequestBody ScheduleReqDto scheduleReqDto){
+    public ResponseEntity<? extends BaseResponseBody> createSchedule(Authentication authentication, @Valid @RequestBody ScheduleReqDto scheduleReqDto){
         // 로그인 된 유저 정보 조회
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-        log.info("User ID : {}", user.getUserId());
 
         // 일정 등록
-        log.info("Schedule start : {}", scheduleReqDto.getStartedTime());
-        log.info("Schedule end : {}", scheduleReqDto.getEndTime());
         scheduleService.createSchedule(user.getUserId(), scheduleReqDto);
-
+        log.info("[Created] New Schedule : {}", scheduleReqDto.getSummary());
         // 반환
         return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponseBody.of(0, "SUCCESS"));
     }
