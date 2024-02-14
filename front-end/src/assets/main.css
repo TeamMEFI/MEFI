@@ -170,3 +170,18 @@ a {
 html::-webkit-scrollbar {
   display: none;
 }
+
+.CONFERENCE {
+  /* 회의 */
+  background-color: rgba(172, 175, 255, 0.55);
+  padding: 1px;
+  color: #2d2d2d;
+  border-radius: 7%;
+}
+.BUSINESSTRIP {
+  /* 출장 */
+  background-color: rgb(158, 202, 255, 0.55);
+  padding: 1px;
+  color: #2d2d2d;
+  border-radius: 7%;
+}

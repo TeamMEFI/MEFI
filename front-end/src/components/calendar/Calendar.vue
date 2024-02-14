@@ -8,8 +8,8 @@
           </v-col>
           <v-col cols="6" class="d-flex justify-center align-center">
             <p>
-              <span>{{ year }}</span>
-              <span style="font-size: large; margin-left: 10px;">{{ listofmonthword[month] }}</span>
+              <span class="text-h6 font-weight-bold">{{ year }}</span>
+              <span class="ms-3 text-h5">{{ listofmonthword[month] }}</span>
             </p>
           </v-col>
           <v-col cols="3" class="d-flex justify-center align-center">
@@ -29,7 +29,7 @@
     </v-row>
 
     <!-- 달력 -->
-    <div style="border-radius: 10px; margin-top: 5px; border-radius: 10px;">
+    <div style="border-radius: 10px; margin-top: -10px; border-radius: 10px;">
 
       <!-- 요일 -->
       <v-row class="d-flex align-center justify-center ma-0">
@@ -46,15 +46,15 @@
           class="day pa-0 cursor-pointer"
           :key="i"
           @click="clickday(week[i])"
-          :class="[week[i]['type']], { 'clicked': week[i]['fulldate'] === choicedate }"
+          :class="[week[i]['type']]"
         >
-          <div style="margin: 10px;">
+          <div class="ma-3 rounded-circle w-10" :class="{ 'clicked': week[i]['fulldate'] === choicedate }">
             <span>{{ week[i]['date'] }}</span>
           </div>
           <!-- 일정 -->
           <template v-for="(item, index) in week[i]['event']" >
-            <div v-if="index < 3" class="text-start " :class="item.type" :key="index">
-              <p style="text-align: center;">{{ item.summary }}</p>
+            <div v-if="index < 2" class="text-start my-1 mx-3 ps-4 rounded-lg" :class="item.type" :key="index">
+              <p class="text-algin-start">{{ item.summary }}</p>
             </div>
           </template>
         </v-col>
@@ -254,18 +254,5 @@ const clickday = (data) => {
 .clicked {
   /* 클릭 일자 */
   background-color: rgba(147, 221, 255, 0.207);
-}
-
-.CONFERENCE {
-  /* 회의 */
-  background-color: rgb(172, 175, 255);
-  padding: 1px;
-  color: #2d2d2d;
-}
-.BUSINESSTRIP {
-  /* 출장 */
-  background-color: rgb(158, 202, 255);
-  padding: 1px;
-  color: #2d2d2d;
 }
 </style>
