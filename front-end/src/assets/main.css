@@ -37,6 +37,11 @@ a {
   background-color: #45566F;
 }
 
+.sidebar{
+  min-width: 250px;
+  max-width: 250px;
+}
+
 /* main 위치 이동... 기존 profile side가 너무 좁아서 늘리는 과정에서 파생됨. */
 .w-10 {
   width: 10% !important;
@@ -123,8 +128,13 @@ a {
   height: 95% !important;
 }
 
+.h-cal-position {
+  position: absolute;
+  top: 40px;
+}
+
 .h-cal {
-  height: calc(100% - 64px) !important;
+  height: calc(100% - 40px) !important;
 }
 
 .v-main {
