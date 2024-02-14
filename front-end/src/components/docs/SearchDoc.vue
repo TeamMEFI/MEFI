@@ -5,13 +5,13 @@
     rounded="lg"
     border
     elevation="0"
-    :class="[isDragged ? 'dragged' : '', 'px-4']"
+    :class="[isDragged ? 'dragged' : '', 'px-4', 'py-2']"
     @dragenter.prevent="onDragenter"
     @dragover.prevent="onDragenter"
     @dragleave.prevent="onDragleave"
     @drop.prevent="onDrop"
   >
-    <v-infinite-scroll v-if="fileList.length + addedFileList.length > 0">
+    <v-infinite-scroll v-if="fileList.length + addedFileList.length > 0" height="35vh">
       <!-- 업로드된 리스트 -->
       <div class="d-flex justify-space-between align-center file-upload-list" v-for="file in fileList" :key="file.fileName">
         <a class="file-name">{{ file.fileName }}</a>
@@ -24,7 +24,7 @@
       <div class="d-flex justify-space-between file-upload-list" v-for="addedFile in addedFileList" :key="addedFile.fileName">
         <a>{{ addedFile.name }}</a>
         <div class="d-flex">
-          <v-btn size="sm" @click="removeFile(addedFile.name)">삭제</v-btn>
+          <v-btn class="px-2 py-1 border"  size="sm" @click="removeFile(addedFile.name)">삭제</v-btn>
         </div>
       </div>
       <template v-slot:loading>{{ props.documentState.state === 'modify' ? "추가할 문서를 여기로 옮겨주세요." : "" }}</template>
@@ -204,6 +204,11 @@ const onDragleave = (event) => {
 }
 
 const onDrop = (event) => {
+  if (props.documentState.state === 'detail') {
+    alert('권한이 없거나 수정 중이 아닙니다.')
+    return
+  }
+
   isDragged.value = false
   const files = event.dataTransfer.files[0]
   addedFileList.value.push(files)
