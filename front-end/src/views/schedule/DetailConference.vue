@@ -198,7 +198,9 @@ const modifyConference = () => {
         router.replace({ name: 'notFound' })
       }
     }
-  )
+  ).then(() => {
+    router.go(0)
+  })
 
 }
 

@@ -385,10 +385,10 @@ const getConferenceDetail = async () => {
 const getToken = async (sessionId) => {
   if (props.videoStatus.role === 'LEADER') {
     await createSession(sessionId)
-    return await createToken()
+    return await createToken(createdSessionId.value)
   } else {
     await getConferenceDetail()
-    return await createToken()
+    return await createToken(createdSessionId.value)
   }
 }
 
@@ -411,25 +411,22 @@ const createSession = async (sessionId) => {
   )
 }
 
-const createToken = async () => {
-  let createdToken
+const createToken = async (sessionId) => {
+  let createdToken;
 
   await makeToken(
-    { sessionId: `${createdSessionId.value}` },
+    { sessionId: sessionId },
     teamId.value,
     (response) => {
       createdToken = response.data?.dataBody.token
     },
     (error) => {
-      console.log(error.response)
-
       if (error.response.status === 404) {
         alert('아직 회의가 시작되지 않았습니다.')
         router.go(-1)
       }
     }
   )
-  
   return createdToken
 }
 

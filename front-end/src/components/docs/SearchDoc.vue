@@ -175,8 +175,6 @@ watch(
       })
 
       addedFileList.value = []
-
-      router.go(0)
     }
   }
 )

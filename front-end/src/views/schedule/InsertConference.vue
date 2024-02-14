@@ -79,6 +79,7 @@ import { createConference } from '@/api/conference'
 
 const route = useRoute()
 const router = useRouter()
+
 const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
@@ -86,14 +87,26 @@ const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45',
 const typeschedule = ref(['회의'])
 const selectvalue = ref('회의')
 
+const startpossiblehours = computed(() => {
+  return starthours.value.filter((hours) => {
+    if (hours > selectEh) {
+      return false
+    } else {
+      return true
+    }
+  })
+})
+
 const props = defineProps({
   teamid: Number,
   date: String
 })
+
 const documentState = ref({
   state: 'create',
   conferenceId: undefined
 })
+
 const title = ref('')
 const description = ref('')
 const selectSh = ref('')
@@ -131,9 +144,9 @@ const conferenceReservation = async () => {
     (error) => {
       console.log(error)
     }
-  )
-
-  router.push({ name: 'team', params: { id: route.params?.teamid } })
+  ).then(() => {
+    router.push({ name: 'team', params: { id: route.params?.teamid } })
+  })
 }
 </script>
 <style scoped></style>

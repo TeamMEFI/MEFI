@@ -13,7 +13,7 @@ const makeSession = async (param, teamId, conferenceId, success, fail) => {
 const makeToken = async (param, teamId, success, fail) => {
   interceptor.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
   await interceptor
-    .post(`/openvidu/api/sessions/${teamId}/connections`, null, {params : param})
+    .post(`/openvidu/api/sessions/${teamId}/connections?sessionId=${param.sessionId}`)
     .then(success)
     .catch(fail)
 }
