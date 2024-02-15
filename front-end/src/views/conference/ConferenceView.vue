@@ -14,7 +14,7 @@
         <ConferenceDocument :conferenceState="conferenceState" />
       </div>
     </div>
-    <v-bottom-sheet inset v-model="sheet">
+    <v-bottom-sheet inset v-model="sheet" :scrim="false" >
       <template v-slot:activator="{ props }">
         <div class="text-center" style="position: fixed; bottom: 0; right: 50vw; width: 0px">
           <FontAwesomeIcon v-bind="props" type="button" class="bg-grey-darken-4 pa-1 rounded-xl" :icon="['fas', 'chevron-up']" />

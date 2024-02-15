@@ -30,30 +30,30 @@
           @click="expandVideo(sub.stream.connection.connectionId)"
         />
       </div>
-      <v-overlay :model-value="chatOverlay" class="bg-transparent align-end justify-end" height="100%">
-        <v-btn size="large" elevation="0" @click="exitChatBox" style="position: absolute; right: 0;">
-          <font-awesome-icon :icon="['fas', 'xmark']" style="color: #000000" />
-        </v-btn>
-        <v-infinite-scroll load id="chatBox" ref="chatBox" class="bg-white px-4 rounded-lg" width="35vw" height="50vh">
-          <template v-for="chat in chats">
-            <div>{{ chat }}</div>
-          </template>
-          <template v-slot:loading>
-            
-          </template>
+      <v-overlay persistent :scrim="false" no-click-animation :model-value="chatOverlay" class="bg-transparent align-end justify-end">
+        <div class="w-100 bg-transparent" elevation="0">
+          <v-btn size="large" class="bg-blue-grey-darken-4 rounded-lg" elevation="0" @click="exitChatBox" style="position: absolute; right: 0">
+            <font-awesome-icon :icon="['fas', 'xmark']" style="color: #ffffff" />
+          </v-btn>
+        </div>
+        <v-infinite-scroll load id="chatBox" ref="chatBox" class="bg-blue-grey-darken-4 pt-10 px-5 rounded-t-lg" width="400px" height="50vh">
+          <div v-for="chat in chats" class="d-flex justify-end">
+            <div style="font-size: 16px" :class="['chat-box', chat.split('-')[0] === userEmail ? 'right-chat' : 'left-chat']">{{ chat.split('-')[0] === userEmail ? chat.split(':')[1] : chat.split('-')[1] }}</div>
+          </div>
+          <template v-slot:loading></template>
         </v-infinite-scroll>
         <v-divider :thickness="1"></v-divider>
-        <div class="d-flex bg-white px-4 align-center rounded-lg">
+        <div class="d-flex bg-blue-grey-darken-4 px-4 align-center rounded-b-lg">
           <v-textarea
-            density="compact"
-            class="mt-4 mr-2"
+            class="bg-blue-grey-darken-4 mt-4 mr-2"
             auto-grow
             rows="1"
             row-height="1"
+            density="compact"
             v-model="chatInput"
             @keydown.enter="sendChat(chatInput)"
           ></v-textarea>
-          <v-btn @click="sendChat(chatInput)" elevation="0" border rounded="lg">SEND</v-btn>
+          <v-btn @click="sendChat(chatInput)" rounded="lg">SEND</v-btn>
         </div>
       </v-overlay>
     </div>
@@ -101,6 +101,7 @@ const subscribers = ref([])
 // Join form
 const sessionId = ref(`meficonference-${teamId.value}-${conferenceId.value}`)
 const createdSessionId = ref('')
+const userEmail = ref(userStore?.userInfo.email)
 const userName = ref(userStore?.userInfo.name)
 onMounted(() => {
   joinSession()
@@ -197,7 +198,7 @@ const sendChat = (content) => {
   // 세션 내의 참가자에게 'chat' 타입의 시그널을 임의의 데이터와 보냄
   sessionCamera.value
     .signal({
-      data: `${userName.value}: ${content}`,
+      data: `${userEmail.value}-${userName.value}: ${content}`,
       to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
       type: 'chat' // The type of message (optional)
     })
@@ -412,7 +413,7 @@ const createSession = async (sessionId) => {
 }
 
 const createToken = async (sessionId) => {
-  let createdToken;
+  let createdToken
 
   await makeToken(
     { sessionId: sessionId },
@@ -524,6 +525,28 @@ onBeforeUnmount(() => {
   align-items: center;
   padding: 20px;
 }
+
+.left-chat {
+  padding: 10px 20px;
+  margin: 10px 0;
+  color: black;
+  background-color: white;
+  border-radius: 10px;
+  max-width: 200px;
+  margin-right: auto;
+  word-break: break-all;
+}
+
+.right-chat {
+  padding: 10px 20px;
+  margin: 10px 0;
+  color: black;
+  background-color: white;
+  border-radius: 10px;
+  max-width: 200px;
+  word-break: break-all;
+}
+
 /* 캠돌리기 파티 */
 @keyframes rotate {
   to {
