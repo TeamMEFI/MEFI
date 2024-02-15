@@ -1,5 +1,6 @@
 package com.mefi.backend.db.repository;
 
+import com.mefi.backend.db.entity.Team;
 import com.mefi.backend.db.entity.UserTeam;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -27,4 +28,6 @@ public interface TeamUserRepository extends JpaRepository<UserTeam, Long>, TeamU
     // 멤버 PK 조회
     @Query("SELECT ut.user.id FROM UserTeam ut WHERE  ut.team.id = :teamId")
     List<Long> findByUserId(@Param("teamId") Long teamId);
+
+    List<UserTeam> findAllByTeamId(Long teamId);
 }
