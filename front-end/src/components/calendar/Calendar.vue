@@ -51,7 +51,7 @@
           @click="clickday(week[i])"
           :class="[week[i]['type']]"
         >
-          <div class="ma-3 rounded-circle w-10" :class="{ 'clicked': week[i]['fulldate'] === choicedate }">
+          <div class="ma-3 rounded-lg w-15 text-center" :class="{ 'clicked': week[i]['fulldate'] === choicedate }">
             <span>{{ week[i]['date'] }}</span>
           </div>
 
@@ -261,6 +261,7 @@ const clickday = (data) => {
 
 .clicked {
   /* 클릭 일자 */
-  background-color: rgba(147, 221, 255, 0.207);
+  background-color: rgba(0, 110, 255, 0.5);
+  color: #ffffff;
 }
 </style>

@@ -78,6 +78,7 @@ public class User {
         this.dept = dept;
         this.position = position;
         this.imgUrl = imgUrl;
+        this.createdTime = LocalDateTime.now();
     }
 
     public void updatePassword(String password) {
