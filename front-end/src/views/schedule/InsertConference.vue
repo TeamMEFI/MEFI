@@ -134,12 +134,11 @@ const conferenceReservation = async () => {
       const conferenceId = response.data.dataBody
       documentState.value.state = 'done'
       documentState.value.conferenceId = conferenceId
+      router.push({ name: 'team', params: { id: route.params?.teamid } })
     },
     (error) => {
       const errorCode = error.response.data.dataHeader?.resultCode
       const errorMessage = error.response.data.dataHeader?.resultMessage
-
-      errorCode === 'C-001' 
       if (errorCode === 'G-006') {
         alert(errorMessage)
         router.replace({ name: 'notFound' })
@@ -149,7 +148,7 @@ const conferenceReservation = async () => {
       }
     }
   ).then(() => {
-    router.push({ name: 'team', params: { id: route.params?.teamid } })
+    
   })
 }
 </script>

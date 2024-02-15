@@ -192,7 +192,6 @@ const modifyConference = () => {
     (error) => {
       const errorCode = error.response.data.dataHeader?.resultCode
       const errorMessage = error.response.data.dataHeader?.resultMessage
-      errorCode === 'C-001' 
       if (errorCode === 'G-006') {
         alert(errorMessage)
         router.replace({ name: 'notFound' })
