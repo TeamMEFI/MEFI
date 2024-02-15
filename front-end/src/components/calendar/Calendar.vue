@@ -1,5 +1,6 @@
 <template>
   <v-container class="pa-0 d-flex flex-column justify-center">
+    <!-- 달력 년/월 표시 및 일정 추가 버튼 -->
     <v-row class="d-flex align-center justify-start ma-2">
       <v-col cols="4">
         <v-row>
@@ -53,9 +54,10 @@
           <div class="ma-3 rounded-circle w-10" :class="{ 'clicked': week[i]['fulldate'] === choicedate }">
             <span>{{ week[i]['date'] }}</span>
           </div>
+
           <!-- 일정 -->
           <template v-for="(item, index) in week[i]['event']" >
-            <div v-if="index < 2" class="text-start my-1 mx-3 ps-4 rounded-lg" :class="item.type" :key="index">
+            <div v-if="index < 2" class="text-start my-1 mx-2 px-2 rounded-lg" :class="item.type" :key="index">
               <p class="text-algin-start">{{ item.summary }}</p>
             </div>
           </template>

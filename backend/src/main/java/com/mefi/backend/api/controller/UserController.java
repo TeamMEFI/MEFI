@@ -119,11 +119,15 @@ public class UserController {
     @GetMapping("/search/{keyword}")
     @ApiResponse(responseCode = "200", description = "성공 \n\n 검색 결과 유저 리스트 반환")
     public ResponseEntity<? extends BaseResponseBody> searchUsers(
+            Authentication authentication,
             @Parameter(name = "keyword", description = "검색 키워드")
             @Valid @NotBlank @PathVariable("keyword") String keyword) {
 
+        // 로그인된 유저 정보 조회
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
         // 검색어로 회원 조회
-        List<MemberResDto> searchResultList = userService.getSearchUsers(keyword);
+        List<MemberResDto> searchResultList = userService.getSearchUsers(userDetails.getUserId(),keyword);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(0, searchResultList));
     }
 

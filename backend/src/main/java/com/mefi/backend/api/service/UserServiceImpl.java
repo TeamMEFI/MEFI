@@ -85,8 +85,9 @@ public class UserServiceImpl implements UserService {
 
     // 검색어로 유저 조회
     @Override
-    public List<MemberResDto> getSearchUsers(String keyword) {
-        return userRepository.findByKeyWord(keyword);
+    public List<MemberResDto> getSearchUsers(Long userId, String keyword) {
+
+        return userRepository.findByKeyWord(userId,keyword);
     }
 
     // 회원 정보 전체 수정
