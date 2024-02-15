@@ -111,6 +111,11 @@ const teamName = ref('')
 const teamDescription = ref('')
 
 const create = async () => {
+    if (!teamName.value) {
+        alert('팀명을 입력해주세요.')
+        return false
+    }
+    
     const data = {
         leaderId : leaderId.value,
         teamName : teamName.value,

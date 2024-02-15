@@ -256,6 +256,11 @@ const selectTeamDetail= async () => {
 }
 // 팀 정보 수정
 const updateTeam = async () => {
+    if (!teamName.value) {
+        alert('팀명을 입력해주세요.')
+        return false
+    }
+
     const param = {
         teamId : props.teamId,
         data : {

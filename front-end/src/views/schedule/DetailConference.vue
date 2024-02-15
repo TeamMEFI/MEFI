@@ -63,7 +63,7 @@
             <v-col cols="3">
               <v-select
                 v-model="selectSh"
-                :items="startpossiblehours"
+                :items="starthours"
                 variant="outlined"
                 density="compact"
                 hide-details="true"
@@ -73,7 +73,7 @@
             <v-col cols="3">
               <v-select
                 v-model="selectSm"
-                :items="startpossiblemins"
+                :items="startmins"
                 variant="outlined"
                 density="compact"
                 hide-details="true"
@@ -83,7 +83,7 @@
             <v-col cols="3">
               <v-select
                 v-model="selectEh"
-                :items="endpossiblehours"
+                :items="endhours"
                 variant="outlined"
                 density="compact"
                 hide-details="true"
@@ -93,7 +93,7 @@
             <v-col cols="3">
               <v-select
                 v-model="selectEm"
-                :items="endpossiblemins"
+                :items="endmins"
                 variant="outlined"
                 density="compact"
                 hide-details="true"
@@ -175,67 +175,22 @@ const selectEh = ref('')
 const selectEm = ref('')
 const role = ref('')
 
-// 선택한 종료 시간에 따라 시작 시간 입력 방지
-const startpossiblehours = computed(() => {
-  return starthours.value.filter((hour) => {
-    if (hour > selectEh.value) {
-      return false
-    } else {
-      return true
-    }
-  })
-})
-
-// 선택한 시작 시간에 따라 종료 시간 입력 방지
-const endpossiblehours = computed(() => {
-  return endhours.value.filter((hour) => {
-    if (selectSm.value > selectEm.value) {
-      if (hour == selectEh.value) {
-        return false
-      } else {
-        return true
-      }
-    }
-
-    if (hour < selectSh.value) {
-      return false
-    } else {
-      return true
-    }
-  })
-})
-
-// 선택한 종료 시간에 따라 시작 시간 입력 방지
-const startpossiblemins = computed(() => {
-  return startmins.value.filter((min) => {
-    if (selectSh.value == selectEh.value) {
-      if (min < selectEm.value) {
-        return true
-      } else {
-        return false
-      }
-    }
-
-    return true
-  })
-})
-
-// 선택한 시작 시간에 따라 종료 시간 입력 방지
-const endpossiblemins = computed(() => {
-  return endmins.value.filter((min) => {
-    if (selectSh.value == selectEh.value) {
-      if (min > selectSm.value) {
-        return true
-      } else {
-        return false
-      }
-    }
-
-    return true
-  })
-})
-
 const modifyConference = () => {
+  if (!title.value) {
+    alert('회의 제목을 설정해주세요.')
+    return false
+  }
+
+  if (!selectSh.value || !selectSh.value || !selectEh.value || !selectEh.value) {
+    alert('회의 시간을 설정해주세요.')
+    return false
+  }
+
+  if (new Date(props.date + ' ' + selectSh.value +':'+ selectSm.value) >= new Date(props.date + ' ' + selectEh.value +':'+ selectEm.value)) {
+    alert('회의 시간에 오류가 있습니다. 확인 후 생성하세요!')
+    return false
+  }
+
   const conferenceModifyAllReqDto = {
     callStart: date.value + 'T' + selectSh.value + ':' + selectSm.value + ':00.000Z',
     callEnd: date.value + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',

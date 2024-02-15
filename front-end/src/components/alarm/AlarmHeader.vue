@@ -1,10 +1,10 @@
 <template>
-    <div class="d-flex flex-row justify-space-between pa-2" style="background-color: #45566F; color: white;">
-        <span style="font-size: large;">알림</span>
+    <div class="d-flex justify-space-between pa-2" style="background-color: #45566F; color: white;">
+        <div class="px-2" style="font-size: large;">알림</div>
         <div class="d-flex flex-row">
             <!-- 전체 읽음 체크박스 -->
-            <div class="d-flex align-items-center mr-2" @click.stop>
-                <label class="text-center"><span><input type="checkbox" id="checkbox" v-model="allread" @click.stop> 전체읽음</span></label>
+            <div class="d-flex align-center mr-2" @click.stop>
+                <div type="button" @click="allread = true"> 전체읽음</div>
                 <!-- <label for="checkbox" @click.stop>전체읽음</label> -->
             </div>
             <!-- 닫힘 버튼 -->

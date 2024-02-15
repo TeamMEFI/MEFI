@@ -1,5 +1,5 @@
 <template>
-    <v-card class="w-30 ma-0 pa-0 d-flex flex-column justify-center" min-width="400" style="border-radius: 10px;">
+    <v-card class="w-30 ma-0 pa-0 d-flex flex-column justify-center" min-width="400" rounded="lg">
         <AlarmHeader @close="closeModal" @read-all="readAll"></AlarmHeader> 
         
             <!-- alarms 있을때 -->
