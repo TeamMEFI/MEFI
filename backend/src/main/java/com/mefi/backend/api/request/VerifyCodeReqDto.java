@@ -1,5 +1,6 @@
 package com.mefi.backend.api.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,8 +9,10 @@ import lombok.Setter;
 public class VerifyCodeReqDto {
 
     // 인증 이메일
+    @NotBlank
     private String email;
 
     // 인증 번호
+    @NotBlank
     private String authCode;
 }
