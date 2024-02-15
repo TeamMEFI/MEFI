@@ -35,9 +35,6 @@ public class Conference {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Team team;
 
-    @OneToMany(mappedBy = "conference")
-    private List<UserConference> userConferences = new ArrayList<>();
-
     @OneToMany(mappedBy = "conference", orphanRemoval = true)
     private List<MeetingFile> meetingFiles = new ArrayList<>();
 

@@ -50,10 +50,6 @@ public class User {
     @JoinColumn(name = "token_id")
     private Token token;
 
-    // 이메일 인증
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private EmailAuth emailAuth;
-
     // 개인일정
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PrivateSchedule> schedules = new ArrayList<>();
@@ -65,10 +61,6 @@ public class User {
     // 팀과 연결 테이블
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserTeam> userTeams = new ArrayList<>();
-
-    // 회의와 연결 테이블
-    @OneToMany(mappedBy = "user")
-    private List<UserConference> userConferences = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String name, String dept, String position, String imgUrl) {
