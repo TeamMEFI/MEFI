@@ -33,7 +33,7 @@ const optionChange = (num) => {
 }
 
 .select-item {
-  background-color: #495464;
+  background-color: #616c7c;
   color: white;
 }
 </style>

@@ -5,21 +5,36 @@
       <div class="io-items">
         <p class="pb-2">마이크 설정</p>
         <!-- 마이크 선택 -->
-        <v-select :items="['마이크1', '마이크2', '마이크3']" density="compact"></v-select>
+        <v-select 
+          :items="['마이크1', '마이크2', '마이크3']" 
+          density="compact"
+          variant="outlined"
+          style="max-width: 300px;"
+        ></v-select>
         <!-- 마이크 사운드 조절 -->
         <!-- <v-slider v-model="volumeMic" prepend-icon="mdi-volume-high"></v-slider> -->
       </div>
       <div class="io-items">
         <p class="pb-2">스피커 설정</p>
         <!-- 스피커 설정 -->
-        <v-select :items="['스피커1', '스피커2', '스피커3']" density="compact"></v-select>
+        <v-select 
+          :items="['스피커1', '스피커2', '스피커3']" 
+          density="compact"
+          variant="outlined"
+          style="max-width: 300px;"
+        ></v-select>
         <!-- 스피커 사운드 설정 -->
         <!-- <v-slider v-model="volumeSpeaker" prepend-icon="mdi-volume-high"></v-slider> -->
       </div>
       <div class="io-items">
         <p class="pb-2">카메라 설정</p>
         <!-- 카메라 설정 -->
-        <v-select :items="['카메라1', '카메라2', '카메라3']" density="compact"></v-select>
+        <v-select 
+          :items="['카메라1', '카메라2', '카메라3']" 
+          density="compact"
+          variant="outlined"
+          style="max-width: 300px;"
+        ></v-select>
       </div>
     </div>
   </div>
@@ -38,6 +53,7 @@ const volumeSpeaker = ref(90)
 <style scoped>
 #container {
   padding: 10px;
+  max-width: 400px;
 }
 #io-title {
   margin: 10px;

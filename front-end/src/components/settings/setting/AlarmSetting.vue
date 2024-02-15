@@ -5,32 +5,34 @@
     <div id="alarm-container">
       <!-- 알림 설정 -->
       <div class="alarm-items">
-        <p>알림 설정</p>
+        <p style="margin-right: 40px;">알림 설정</p>
         <!-- 알림 on/off -->
-        <font-awesome-icon
-          type="button"
-          style="font-size: 32px"
-          :icon="alarm ? ['fas', 'toggle-on'] : ['fas', 'toggle-off']"
-          @click="toggleAlarm"
-        />
+        <v-switch
+          v-model="alarm"
+          hide-details
+          inline
+          color="primary"
+          style="position: absolute; right: 40px;"
+        ></v-switch>
       </div>
       <!-- 알림 소리 설정 -->
       <div class="alarm-items">
-        <p>알림 소리</p>
+        <p style="margin-right: 40px;">알림 소리</p>
         <!-- 소리 on/off -->
-        <font-awesome-icon
-          type="button"
-          :icon="sound ? ['fas', 'toggle-on'] : ['fas', 'toggle-off']"
-          style="font-size: 32px"
-          @click="toggleSound"
-        />
+        <v-switch
+          v-model="sound"
+          hide-details
+          inline
+          color="primary"
+          style="position: absolute; right: 40px;"
+        ></v-switch>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useSettingStore } from '@/stores/setting';
 
 const store = useSettingStore();
@@ -43,22 +45,21 @@ const sound = ref(store.alarmSound)
 
 // 작동 : 해당 아이콘 클릭 시 toggle됨
 // 기능 : alarm 설정 on off
-const toggleAlarm = () => {
-  alarm.value = !alarm.value
+watch(()=> alarm.value, () =>{
   store.alarmPermission = !store.alarmPermission
-}
+})
 
 // 작동 : 해당 아이콘 클릭 시 toggle됨
 // 기능 : sound 설정 on off
-const toggleSound = () => {
-  sound.value = !sound.value
+watch(()=> alarm.value, () =>{
   store.alarmSound = !store.alarmSound
-}
+})
 </script>
 
 <style scoped>
 #container {
   padding: 10px;
+  max-width: 400px;
 }
 #alarm-title {
   margin: 10px;
