@@ -143,7 +143,6 @@ const modify = async () => {
     id: props.scheduleid,
     data: data
   }
-  console.log(data)
   await modifySchedule(
     param,
     (response) => {
@@ -151,7 +150,16 @@ const modify = async () => {
       router.back()
     },
     (error) => {
-      console.log(error)
+      const errorCode = error.response.data.dataHeader?.resultCode
+      const errorMessage = error.response.data.dataHeader?.resultMessage
+      errorCode === 'C-001' 
+      if (errorCode === 'G-006') {
+        alert(errorMessage)
+        router.replace({ name: 'notFound' })
+      }
+      if (errorCode === 'I-001') {
+        alert('중복된 시간이 존재합니다. 시간을 확인해 주세요.')
+      }
     }
   )
 }
