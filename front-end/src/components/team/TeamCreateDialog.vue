@@ -127,12 +127,17 @@ const create = async () => {
             emit('closeDialog')
         },
         (error)=>{
-            console.log(error)
+            const errorCode = error.response.data.dataHeader?.resultCode
+            console.log(errorCode)
         }
     )
   }
 
 const onClick = async () => {
+    if ((searchName.value === '') || (searchName.value.replaceAll(' ','') === '')) {
+        alert('검색할 이름 혹은 이메일을 입력하세요!.');
+        return
+    };
     const data = searchName.value
     await userSearch(
         data, (response) => {
