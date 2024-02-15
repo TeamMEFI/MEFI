@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex pa-3 justify-space-between align-center">
-        <p>설정</p>
-        <font-awesome-icon type="button" @click="close" :icon="['fas', 'xmark']" />
+        <p style="font-size: large;">설정</p>
+        <font-awesome-icon type="button" @click="close" :icon="['fas', 'xmark']" style="font-size: large;"/>
     </div>
 </template>
 
