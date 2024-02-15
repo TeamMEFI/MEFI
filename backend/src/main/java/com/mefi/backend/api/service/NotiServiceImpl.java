@@ -126,7 +126,8 @@ public class NotiServiceImpl implements NotiService{
         for(UserTeam user : users){
             // 리더는 제외
             if(user.getRole().equals(UserRole.LEADER)) continue;
-            sendNotiForUser(user.getId(), sender, message);
+            log.info("user : {}", user.getUser().getId());
+            sendNotiForUser(user.getUser().getId(), sender, message);
         }
     }
 
