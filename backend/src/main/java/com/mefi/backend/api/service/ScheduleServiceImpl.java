@@ -37,6 +37,11 @@ public class ScheduleServiceImpl implements  ScheduleService{
         // 유저 조회, 해당 회원이 존재하지 않으면 예외 처리
         User user = userRepository.findById(userId).orElseThrow(()->new Exceptions(ErrorCode.MEMBER_NOT_EXIST));
 
+        // 시간이 겹치는 일정이 존재하면 예외 처리
+        if(scheduleRepository.findDuplicationByUserAndTime(userId, scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime()) > 0){
+            throw new Exceptions(ErrorCode.SCHEDULE_DUPLICATED);
+        }
+
         // 일정 등록
         PrivateSchedule privateSchedule = PrivateSchedule.builder()
                 .user(user)

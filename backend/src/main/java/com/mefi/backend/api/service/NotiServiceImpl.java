@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,18 +40,18 @@ public class NotiServiceImpl implements NotiService{
     @Override
     public SseEmitter createSseConnection(Long userId, String lastEventId) {
         // SSE Emitter ID 생성
-        String emitterId = userId + "_" + System.currentTimeMillis();
+        String emitterId = makeTimeIncludeEventId(String.valueOf(userId));
 
         // SSE Emitter 객체 생성
         SseEmitter sseEmitter = notiRepository.saveEmitter(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         // SSE 콜백 함수 지정
-        sseEmitter.onCompletion(()->notiRepository.deleteEmitterById(emitterId));  // 비동기 처리 완료
-        sseEmitter.onTimeout(()->notiRepository.deleteEmitterById(emitterId));  // 타임 아웃
-        sseEmitter.onError(e->notiRepository.deleteEmitterById(emitterId)); // 오류
+        sseEmitter.onCompletion(()->deleteEmittersForUser(userId));  // 비동기 처리 완료
+        sseEmitter.onTimeout(()->deleteEmittersForUser(userId));  // 타임 아웃
+        sseEmitter.onError(e->deleteEmittersForUser(userId)); // 오류
 
         // 503 에러 방지를 위해 더미 이벤트 전송
-        String eventId = userId + "_" + System.currentTimeMillis();
+        String eventId = makeTimeIncludeEventId(String.valueOf(userId));
         sendNoti(sseEmitter, eventId, emitterId, Noti.builder().message("[Created] Event Stream : userID="+userId).status(false).build());
 
         // 네트워크 오류 등으로 인한 미수신 알림이 있다면 클라이언트에 전송
@@ -136,7 +137,7 @@ public class NotiServiceImpl implements NotiService{
 
         // 특정 사용자의 알림 전체 조회
         List<Noti> notis = notiRepository.findNotiByUserAndStatusIsFalse(user);
-        log.info("읽어온 Data 개수 : {}", notis.size());
+        log.info("Alarm Size : {}", notis.size());
 
         // 엔티티를 DTO로 변환하여 리턴
        return notis.stream()
@@ -156,7 +157,7 @@ public class NotiServiceImpl implements NotiService{
     // 전체 알림 읽음 처리 메소드
     @Transactional
     public int readNotiAll(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new Exceptions(ErrorCode.USER_NOT_EXIST));
         return notiRepository.readNotiAllByUser(user);
     }
 
@@ -165,10 +166,16 @@ public class NotiServiceImpl implements NotiService{
         return userId + "_" + System.currentTimeMillis();
     }
 
+    // 특정 유저의 Emitter 삭제 메소드
+    private void deleteEmittersForUser(Long userId){
+        log.info("[Removed] All Emitters of User : {}", userId);
+        notiRepository.deleteEmittersByUserId(String.valueOf(userId));
+    }
+
     // 매일 새벽 5시마다 3개월 지난 이벤트 캐시를 제거하는 메소드
-    @Scheduled(cron="0 5 * * * ?")
+    @Scheduled(cron="0 0 5 * * ?")
     protected void deleteEventCaches(){
         notiRepository.deleteEventCacheByUserId();
-        log.info(LocalDateTime.now() + "기준으로 3개월 지난 EventCache 삭제 완료");
+        log.info("[Deleted]" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "기준으로 3개월 지난 EventCache 삭제 완료");
     }
 }

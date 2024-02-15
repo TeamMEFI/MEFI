@@ -3,6 +3,7 @@ package com.mefi.backend.db.repository;
 import com.mefi.backend.api.response.ScheduleTimeDto;
 import com.mefi.backend.db.entity.PrivateSchedule;
 import com.mefi.backend.db.entity.User;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,11 @@ public interface ScheduleRepository extends JpaRepository<PrivateSchedule, Long>
             "AND FUNCTION('DAY', s.startedTime) = FUNCTION('DAY', :date) " +
             "ORDER BY s.startedTime")
     List<ScheduleTimeDto> findAllMemberSchedule(@Param("userIds") List<Long> members, @Param("date") LocalDateTime date);
+
+    @Query("SELECT COUNT(s) " +
+            "FROM PrivateSchedule s " +
+            "INNER JOIN s.user u ON u.id = :userId " +
+            "WHERE (s.startedTime < :start AND s.endTime > :start )" +
+            "OR (s.startedTime < :end AND s.endTime > :end)")
+    int findDuplicationByUserAndTime(@Param("userId") Long userId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
