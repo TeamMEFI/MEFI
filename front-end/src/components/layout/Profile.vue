@@ -1,7 +1,7 @@
 <template>
-  <v-infinite-scroll v-if="store.userInfo !== null" class="w-100 h-100 d-flex flex-column aling-center pa-3">
+  <v-infinite-scroll v-if="store.userInfo !== null" class="w-100 h-100 d-flex flex-column  pa-3">
     <div class="d-flex mb-4 align-center">
-      <div class="">
+      <div class="d-flex">
         <img
           class="rounded-circle"
           width="50px"
@@ -11,17 +11,17 @@
         />
       </div>
       <div class="w-75 pl-2">
-        <p class="font-weight-black ma-1">{{ username }}</p>
-        <p class="font-gray ma-1">{{ userdept }}</p>
-        <p class="font-gray ma-1">{{ userposition }}</p>
+        <p class="font-weight-bold ma-1 text-h7">{{ username }}</p>
+        <p class="font-gray ma-1 text-grey-darken-1">{{ userdept }}</p>
+        <p class="font-gray ma-1 text-grey-darken-1">{{ userposition }}</p>
       </div>
     </div>
 
     <v-btn 
-      class="my-4 border elevation-0"
+      class="my-4 border elevation-0 rounded-lg"
       height="60"
       @click="router.push({ name: 'main' })">
-      개인 일정 조회
+      <p class="font-weight-bold">개인 일정 조회</p>
     </v-btn>
     <div class="d-flex mx-2 my-4 justify-space-between align-center">
       <p style="font-weight: bold">팀 목록</p>
