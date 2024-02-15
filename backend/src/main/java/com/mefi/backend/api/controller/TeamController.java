@@ -33,7 +33,7 @@ public class TeamController {
     @PostMapping("")
     @Operation(summary = "팀생성", description = "팀 정보를 받아 팀 생성한다.")
     @ApiResponse(responseCode = "200", description = "성공 \n\n team 식별 아이디 반환")
-    public ResponseEntity<? extends BaseResponseBody> createTeam(Authentication authentication, @RequestBody @Valid TeamReqDto teamReqDto) throws Exception{
+    public ResponseEntity<? extends BaseResponseBody> createTeam(Authentication authentication, @RequestBody @Valid TeamReqDto teamReqDto){
 
         // 현재 사용자 식별 ID 불러옴
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
