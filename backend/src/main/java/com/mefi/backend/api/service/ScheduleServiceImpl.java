@@ -120,7 +120,7 @@ public class ScheduleServiceImpl implements  ScheduleService{
         }
 
         // 시간이 겹치는 일정이 존재하면 예외 처리
-        if(scheduleRepository.findDuplicationByUserAndTime(userId, scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime()) > 0){
+        if(scheduleRepository.findDuplicationByUserAndTime(userId, scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime()) > 1){
             throw new Exceptions(ErrorCode.SCHEDULE_DUPLICATED);
         }
 

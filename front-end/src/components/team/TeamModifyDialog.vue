@@ -130,10 +130,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted } from 'vue';
 import { selectTeamMate, addTeamMate, excludeTeamMate, changeLeader, detailTeam, deleteTeam, modifyTeam } from '@/api/team.js';
 import { userSearch } from '@/api/user.js'
 import { useUserStore } from "@/stores/user"
+import router from '@/router';
 
 const props = defineProps({
   teamId: Number
@@ -150,7 +151,6 @@ const searchName = ref('')
 const members = ref([])
 const store = useUserStore()
 const dialog = ref(false)
-
 
 // 팀원 조회
 const selectmember = async () => {
@@ -169,7 +169,10 @@ const selectmember = async () => {
 
 // 사용자검색
 const search = async () => {
-    if (searchName.value === '') return;
+    if ((searchName.value === '') || (searchName.value.replaceAll(' ','') === '')) {
+        alert('검색할 이름 혹은 이메일을 입력하세요!.');
+        return
+    };
     const data = searchName.value
     await userSearch(
         data, (response) => {

@@ -176,21 +176,6 @@ const selectEm = ref('')
 const role = ref('')
 
 const modifyConference = () => {
-  if (!title.value) {
-    alert('회의 제목을 설정해주세요.')
-    return false
-  }
-
-  if (!selectSh.value || !selectSh.value || !selectEh.value || !selectEh.value) {
-    alert('회의 시간을 설정해주세요.')
-    return false
-  }
-
-  if (new Date(props.date + ' ' + selectSh.value +':'+ selectSm.value) >= new Date(props.date + ' ' + selectEh.value +':'+ selectEm.value)) {
-    alert('회의 시간에 오류가 있습니다. 확인 후 생성하세요!')
-    return false
-  }
-
   const conferenceModifyAllReqDto = {
     callStart: date.value + 'T' + selectSh.value + ':' + selectSm.value + ':00.000Z',
     callEnd: date.value + 'T' + selectEh.value + ':' + selectEm.value + ':00.000Z',
@@ -207,10 +192,13 @@ const modifyConference = () => {
     (error) => {
       const errorCode = error.response.data.dataHeader?.resultCode
       const errorMessage = error.response.data.dataHeader?.resultMessage
-
-      if (errorCode === 'C-001' || errorCode === 'G-001' || errorCode === 'U-001') {
+      errorCode === 'C-001' 
+      if (errorCode === 'G-006') {
         alert(errorMessage)
         router.replace({ name: 'notFound' })
+      }
+      if (errorCode === 'I-001') {
+        alert('중복된 시간이 존재합니다. 시간을 확인해 주세요.')
       }
     }
   ).then(() => {
