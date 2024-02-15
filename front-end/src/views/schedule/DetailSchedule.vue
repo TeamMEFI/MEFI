@@ -4,7 +4,7 @@
       <p class="text-h5 font-weight-black">일정 상세</p>
       <v-spacer></v-spacer>
       <v-btn class="mx-1" @click="modify">일정 수정하기</v-btn>
-      <v-btn v-if="selecttype === 'BUSINESSTRIP'" class="mx-1" @click="deletes">일정 삭제하기</v-btn>
+      <v-btn v-if="selecttype === '출장'" class="mx-1" @click="deletes">일정 삭제하기</v-btn>
     </v-card-title>
     <v-card-item class="pa-3">
       <v-row>

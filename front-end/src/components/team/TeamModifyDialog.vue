@@ -83,6 +83,7 @@
                             v-bind="props"
                             width="100" 
                             class="ma-3"
+                            :disabled="excludememberdata === null"
                             >
                             팀장 위임
                             </v-btn>
