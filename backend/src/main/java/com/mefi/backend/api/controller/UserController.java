@@ -4,7 +4,6 @@ import com.mefi.backend.api.request.*;
 import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.UserModifyAllResDto;
 import com.mefi.backend.api.service.MailServiceImpl;
-import com.mefi.backend.api.service.NotiService;
 import com.mefi.backend.api.service.TokenService;
 import com.mefi.backend.api.service.UserService;
 import com.mefi.backend.common.auth.CustomUserDetails;
@@ -16,10 +15,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Validated
 @Tag(name="1.USER", description="USER API")
 public class UserController {
 
@@ -40,7 +43,7 @@ public class UserController {
     @Operation(summary = "회원가입", description = "/users\n\n 사용자의 정보를 통해 회원가입 한다.")
     @PostMapping("")
     @ApiResponse(responseCode = "201", description = "성공 \n\n Success 반환")
-    public ResponseEntity<? extends BaseResponseBody> join(@RequestBody JoinReqDto joinReqDto) {
+    public ResponseEntity<? extends BaseResponseBody> join(@Valid @RequestBody JoinReqDto joinReqDto) {
 
         // 회원가입
         userService.join(joinReqDto);
@@ -51,7 +54,7 @@ public class UserController {
     @DeleteMapping("")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> withdraw(Authentication authentication,
-                                                               @RequestBody UserWithdrawReqDto userWithdrawReqDto) {
+                                                               @Valid @RequestBody UserWithdrawReqDto userWithdrawReqDto) {
 
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -84,7 +87,7 @@ public class UserController {
     @Operation(summary = "회원가입을 위한 이메일 인증", description = "/users/join/auth\n\n 사용자는 회원가입을 위해 이메일 인증을 한다.")
     @PostMapping("/join/auth")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
-    public ResponseEntity<? extends BaseResponseBody> verifyJoinEmail(@RequestBody VerifyEmailReqDto verifyEmailReqDto) throws Exception {
+    public ResponseEntity<? extends BaseResponseBody> verifyJoinEmail(@Valid @RequestBody VerifyEmailReqDto verifyEmailReqDto) throws Exception {
 
         // 메일 전송 후 코드 받기
         mailService.sendJoinMessage(verifyEmailReqDto.getEmail());
@@ -94,7 +97,7 @@ public class UserController {
     @Operation(summary = "비밀번호 찾기를 위한 이메일 인증", description = "/users/pwd/auth\n\n 사용자는 비밀번호 찾기를 위해 이메일 인증을 한다.")
     @PostMapping("/pwd/auth")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
-    public ResponseEntity<? extends BaseResponseBody> verifyPasswordRecoveryEmail(@RequestBody VerifyEmailReqDto verifyEmailReqDto) throws Exception {
+    public ResponseEntity<? extends BaseResponseBody> verifyPasswordRecoveryEmail(@Valid @RequestBody VerifyEmailReqDto verifyEmailReqDto) throws Exception {
 
         // 메일 전송 후 코드 받기
         mailService.sendPasswordRecoveryMessage(verifyEmailReqDto.getEmail());
@@ -104,7 +107,7 @@ public class UserController {
     @Operation(summary = "이메일 인증 확인", description = "/users/auth/check\n\n 사용자는 이메일 인증 확인을 한다.")
     @PostMapping("/auth/check")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
-    public ResponseEntity<? extends BaseResponseBody> verifyEmailCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
+    public ResponseEntity<? extends BaseResponseBody> verifyEmailCode(@Valid @RequestBody VerifyCodeReqDto verifyCodeReqDto) {
 
         // 인증 코드 확인 후 토큰 반환 (주석 이유 : 추가 로직 필요!)
         // String token = mailService.validateAuthCode(verifyCodeReqDto);
@@ -117,7 +120,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "성공 \n\n 검색 결과 유저 리스트 반환")
     public ResponseEntity<? extends BaseResponseBody> searchUsers(
             @Parameter(name = "keyword", description = "검색 키워드")
-            @PathVariable("keyword") String keyword) {
+            @Valid @NotBlank @PathVariable("keyword") String keyword) {
 
         // 검색어로 회원 조회
         List<MemberResDto> searchResultList = userService.getSearchUsers(keyword);
@@ -129,7 +132,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> modifyUserInfoAll(Authentication authentication,
                         @RequestPart(value="profileImg", required = false) MultipartFile profileImg,
-                        @RequestPart(value="userModifyAllReqDto") UserModifyAllReqDto userModifyAllReqDto) throws IOException {
+                        @RequestPart(value="userModifyAllReqDto") @Valid UserModifyAllReqDto userModifyAllReqDto) throws IOException {
 
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -143,7 +146,7 @@ public class UserController {
     @PatchMapping("/info")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> modifyUserInfo(Authentication authentication,
-                                                                     @RequestBody UserModifyReqDto userModifyReqDto) {
+                                                                     @Valid @RequestBody UserModifyReqDto userModifyReqDto) {
 
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -157,8 +160,7 @@ public class UserController {
     @PatchMapping("/pwd")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     ResponseEntity<? extends BaseResponseBody> modifyUserPassword(Authentication authentication,
-                                                                  @RequestBody UserModifyPasswordReqDto userModifyPasswordReqDto) {
-
+                                                                  @Valid @RequestBody UserModifyPasswordReqDto userModifyPasswordReqDto) {
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
@@ -170,7 +172,7 @@ public class UserController {
     @Operation(summary = "찾기 인증 후 비밀번호 수정", description = "/users/pwd/recovery \n\n 사용자는 비밀번호 찾기 인증 후 비밀번호를 수정한다.")
     @PatchMapping("/pwd/recovery")
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
-    ResponseEntity<? extends BaseResponseBody> recoveryUserPassword(@RequestBody UserPasswordRecoveryReqDto userPasswordRecoveryReqDto) {
+    ResponseEntity<? extends BaseResponseBody> recoveryUserPassword(@Valid @RequestBody UserPasswordRecoveryReqDto userPasswordRecoveryReqDto) {
 
         // 회원 비밀번호 수정
         userService.recoveryUserPassword(userPasswordRecoveryReqDto);
