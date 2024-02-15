@@ -5,13 +5,14 @@
       <v-spacer></v-spacer>
       <template v-if="role === 'LEADER'">
         <template v-if="documentState.state === 'modify'">
-          <v-btn @click="modifyConference">회의 정보 수정하기</v-btn>
+          <v-btn @click="modifyConference" color="#45566F" rounded="xl">회의 정보 수정하기</v-btn>
         </template>
         <template v-else>
-          <v-btn class="mx-1" @click="documentState.state = 'modify'">회의 정보 수정하기</v-btn>
-          <v-btn class="mx-1" @click="cancelConference">회의 예약 삭제하기</v-btn>
+          <v-btn class="mx-1" color="#45566F" rounded="xl" @click="documentState.state = 'modify'">회의 정보 수정하기</v-btn>
+          <v-btn class="mx-1" color="#45566F" rounded="xl" variant="outlined" @click="cancelConference" >회의 예약 삭제하기</v-btn>
           <v-btn
             class="mx-1"
+            color="#45566F" rounded="xl" variant="outlined"
             @click="
               router.push({
                 name: 'conference',
@@ -24,6 +25,7 @@
       </template>
       <template v-else>
         <v-btn
+          color="#45566F" rounded="xl" variant="outlined"
           @click="
             router.push({
               name: 'conference',
@@ -188,6 +190,7 @@ const modifyConference = () => {
     conferenceId.value,
     (response) => {
       documentState.value.state = 'done'
+      router.push({ name: 'team', params: { id: teamId.value } })
     },
     (error) => {
       const errorCode = error.response.data.dataHeader?.resultCode
@@ -196,14 +199,18 @@ const modifyConference = () => {
         alert(errorMessage)
         router.replace({ name: 'notFound' })
       }
-      if (errorCode === 'I-001') {
+      if (errorCode === "C-001") {
+        alert('이미 종료됐거나 취소된 회의입니다.')
+      }
+      if (errorCode === 'S-002') {
         alert('중복된 시간이 존재합니다. 시간을 확인해 주세요.')
       }
+      else {
+        console.log(error)
+        alert('잘못된 입력이 존재합니다.')
+      }
     }
-  ).then(() => {
-    router.go(0)
-  })
-
+  )
 }
 
 const cancelConference = () => {
@@ -216,6 +223,9 @@ const cancelConference = () => {
     },
     (error) => {
       console.log(error)
+      if (errorCode === "C-001") {
+        alert('이미 종료됐거나 취소된 회의입니다.')
+      }
     }
   )
 }

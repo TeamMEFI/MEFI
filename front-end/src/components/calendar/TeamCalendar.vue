@@ -33,6 +33,7 @@
       </v-dialog>  
       <v-btn
         @click="router.push({ name: 'insertconference', params: { teamid : props.teamId, date : choicedate } })"
+        :disabled="role === 'MEMBER'"
         color="#45566F"
         variant="outlined"
         rounded="xl"

@@ -75,31 +75,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { deleteSchedule, modifySchedule, selectScheduleDetail } from '@/api/schedule'
 
 const router = useRouter()
 
-const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
+const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
+const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
+const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 
-const endhours = computed(()=>{
-  if (selectSh.value !== null){
-    return starthours.value.slice(starthours.value.indexOf(selectSh.value))
-  }
-})
-
-const endmins = computed(()=>{
-  if(selectSh<selectEh){
-    return startmins
-  }
-  else{
-    return startmins.value.slice(startmins.value.indexOf(selectSm.value))
-  }
-})
-
-
+const disabled = ref(true)
 const typeschedule = ref(['회의', '출장'])
 const selecttype = ref('')
 const selectSh = ref('08')
@@ -224,7 +211,6 @@ onMounted(() => {
   detail()
 })
 
-const disabled = ref(true)
 
 const back = () => {
   selecttype.value = st_typeschedule.value
