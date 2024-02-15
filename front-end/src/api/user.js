@@ -42,7 +42,6 @@ async function userModify(param, success, fail) {
   await interceptor.put(`/users/info`, param).then(success).catch(fail)
 }
 async function userDelete(param, success, fail) {
-  console.log('delete api ', param, localStorage.getItem('accessToken'))
   interceptor.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
   await interceptor.delete(`/users`, { data: param }).then(success).catch(fail)
 }
