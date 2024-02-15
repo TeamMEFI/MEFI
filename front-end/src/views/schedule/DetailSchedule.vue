@@ -3,8 +3,15 @@
     <v-card-title class="d-flex align-center pa-2">
       <p class="text-h5 font-weight-black">일정 상세</p>
       <v-spacer></v-spacer>
-      <v-btn class="mx-1" @click="modify">일정 수정하기</v-btn>
-      <v-btn v-if="selecttype === 'BUSINESSTRIP'" class="mx-1" @click="deletes">일정 삭제하기</v-btn>
+      <div v-if="disabled===true">
+        <v-btn class="mx-1" @click="disabled = !disabled" color="#45566F" rounded="xl">수정</v-btn>
+        <v-btn v-if="selecttype !== 'BUSINESSTRIP'" color="#45566F" class="mx-1" @click="deletes" variant="outlined"  rounded="xl">삭제</v-btn>
+      </div>
+      <div v-else>
+        <v-btn class="mx-1" @click="modify" color="#45566F" rounded="xl">저장</v-btn>
+        <v-btn color="#45566F" class="mx-1" @click="back" variant="outlined" rounded="xl">취소</v-btn>
+      </div>
+      
     </v-card-title>
     <v-card-item class="pa-3">
       <v-row>
@@ -27,21 +34,22 @@
             density="compact"
             hide-details="true"
             v-model="selecttype"
+            :disabled="disabled"
           ></v-select>
         </v-col>
         <v-col cols="6">
           <v-row>
             <v-col cols="3">
-              <v-select v-model="selectSh" :items="starthours" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectSh" :items="starthours" variant="outlined" density="compact" hide-details="true" :disabled="disabled"></v-select>
             </v-col>
             <v-col cols="3">
-              <v-select v-model="selectSm" :items="startmins" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectSm" :items="startmins" variant="outlined" density="compact" hide-details="true" :disabled="disabled"></v-select>
             </v-col>
             <v-col cols="3">
-              <v-select v-model="selectEh" :items="endhours" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectEh" :items="endhours" variant="outlined" density="compact" hide-details="true" :disabled="disabled"></v-select>
             </v-col>
             <v-col cols="3">
-              <v-select v-model="selectEm" :items="endmins" variant="outlined" density="compact" hide-details="true"></v-select>
+              <v-select v-model="selectEm" :items="endmins" variant="outlined" density="compact" hide-details="true" :disabled="disabled"></v-select>
             </v-col>
           </v-row>
         </v-col>
@@ -56,10 +64,10 @@
       </v-row>
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="summary" label="Summary" variant="outlined" required></v-text-field>
+          <v-text-field v-model="summary" label="Summary" variant="outlined" required :disabled="disabled"></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="description" label="Description" variant="outlined" required></v-text-field>
+          <v-text-field v-model="description" label="Description" variant="outlined" required :disabled="disabled"></v-text-field>
         </v-col>
       </v-row>
     </v-card-item>
@@ -67,16 +75,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { deleteSchedule, modifySchedule, selectScheduleDetail } from '@/api/schedule'
 
 const router = useRouter()
 
-const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'])
+const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
-const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
-const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
+
+const endhours = computed(()=>{
+  if (selectSh.value !== null){
+    return starthours.value.slice(starthours.value.indexOf(selectSh.value))
+  }
+})
+
+const endmins = computed(()=>{
+  if(selectSh<selectEh){
+    return startmins
+  }
+  else{
+    return startmins.value.slice(startmins.value.indexOf(selectSm.value))
+  }
+})
+
 
 const typeschedule = ref(['회의', '출장'])
 const selecttype = ref('')
@@ -84,14 +106,21 @@ const selectSh = ref('08')
 const selectSm = ref('00')
 const selectEh = ref('22')
 const selectEm = ref('00')
+const summary = ref('')
+const description = ref('')
+
+const st_typeschedule = ref(['회의', '출장'])
+const st_selectSh = ref('08')
+const st_selectSm = ref('00')
+const st_selectEh = ref('22')
+const st_selectEm = ref('00')
+const st_summary = ref('')
+const st_description = ref('')
 
 const props = defineProps({
   scheduleid: Number,
   date: String
 })
-
-const summary = ref('')
-const description = ref('')
 
 const detail = async () => {
   await selectScheduleDetail(
@@ -106,6 +135,15 @@ const detail = async () => {
       selecttype.value = data.type === 'BUSINESSTRIP' ? '출장' : '회의'
       summary.value = data.summary
       description.value = data.description
+
+      st_typeschedule.value = data.type === 'BUSINESSTRIP' ? '출장' : '회의'
+      st_selectSh.value = data.startedTime.slice(11, 13)
+      st_selectSm.value = data.startedTime.slice(14, 16)
+      st_selectEh.value = data.endTime.slice(11, 13)
+      st_selectEm.value = data.endTime.slice(14, 16)
+      st_summary.value = data.summary
+      st_description.value = data.description
+
     },
     (error) => {
       console.log(error)
@@ -157,21 +195,38 @@ const modify = async () => {
 }
 
 const deletes = async () => {
-  await deleteSchedule(
-    props.scheduleid,
-    (response) => {
-      console.log(response)
-      router.back()
-    },
-    (error) => {
-      console.log(error)
-    }
-  )
+  if(window.confirm('일정을 삭제하시겠습니까?')){
+    await deleteSchedule(
+      props.scheduleid,
+      (response) => {
+        console.log(response)
+        router.back()
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
 }
 
 onMounted(() => {
   detail()
 })
+
+const disabled = ref(true)
+
+const back = () => {
+  selecttype.value = st_typeschedule.value
+  selectSh.value = st_selectSh.value
+  selectSm.value = st_selectSm.value
+  selectEh.value = st_selectEh.value
+  selectEm.value = st_selectEm.value
+  summary.value = st_summary.value
+  description.value = st_description.value
+
+  disabled.value = !disabled.value
+}
+
 </script>
 
 <style lang="scss" scoped></style>

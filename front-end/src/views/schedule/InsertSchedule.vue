@@ -3,7 +3,7 @@
     <v-card-title class="d-flex align-center pa-2 my-2">
       <p class="text-h5 font-weight-black">일정 등록</p>
       <v-spacer></v-spacer>
-      <v-btn @click="create">일정 등록하기</v-btn>
+      <v-btn @click="create" color="#45566F" rounded="xl">일정 등록</v-btn>
     </v-card-title>
     <v-card-item class="pa-3">
       <v-row>
