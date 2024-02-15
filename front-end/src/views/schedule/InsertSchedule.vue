@@ -3,7 +3,7 @@
     <v-card-title class="d-flex align-center pa-2 my-2">
       <p class="text-h5 font-weight-black">일정 등록</p>
       <v-spacer></v-spacer>
-      <v-btn @click="create">일정 등록하기</v-btn>
+      <v-btn @click="create" color="#45566F" rounded="xl">일정 등록</v-btn>
     </v-card-title>
     <v-card-item class="pa-3">
       <v-row>
@@ -68,8 +68,8 @@ const starthours = ref(['08', '09', '10', '11', '12', '13', '14', '15', '16', '1
 const startmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
 const endhours = ref(['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'])
 const endmins = ref(['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'])
-const typeschedule = ref(['회의', '출장'])
-const selecttype = ref(null)
+const typeschedule = ref(['출장'])
+const selecttype = ref('출장')
 const selectSh = ref('08')
 const selectSm = ref('00')
 const selectEh = ref('22')
@@ -83,8 +83,8 @@ const props = defineProps({
 
 
 const create = async () => {
-  if (!summary.value) {
-    alert('일정 요약을 설정해주세요.')
+  if (!summary.value || !description.value) {
+    alert('일정 정보를 입력해주세요.')
     return false
   }
   if (selecttype.value === null) {
@@ -114,7 +114,18 @@ const create = async () => {
       router.back()
     },
     (error) => {
-      console.log(error)
+      const errorCode = error.response.data.dataHeader?.resultCode
+      const errorMessage = error.response.data.dataHeader?.resultMessage
+      if (errorCode === 'G-006') {
+        alert(errorMessage)
+        router.replace({ name: 'notFound' })
+      }
+      if (errorCode === 'S-002') {
+        alert('중복된 시간이 존재합니다. 시간을 확인해 주세요.')
+      }
+      else {
+        alert('잘못된 입력이 존재합니다.')
+      }
     }
   )
 }

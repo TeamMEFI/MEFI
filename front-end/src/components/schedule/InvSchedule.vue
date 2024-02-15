@@ -16,8 +16,7 @@
         </div>
         <div class="w-75 h-100 d-flex flex-column">
           <div v-for="hour in final" :key="hour" :style="{height : getheight(hour['duration'])}" :class="hour['type']">
-              <div v-if="hour['type'] != 'none'" @click="detailSchedule(hour['id'])" class="w-100 h-100 pa-3">
-                <p class="font-weight-bold">시간 {{ hour['startedTime'].slice(11,16) }} ~ {{ hour['endTime'].slice(11,16) }}</p>
+              <div v-if="hour['type'] != 'none'" @click="detailSchedule(hour['id'])" class="w-100 h-100 pa-3" style="cursor: pointer;">
                 <p class="font-weight-bold mt-3">{{ hour['summary'] }}</p>
               </div>
           </div>

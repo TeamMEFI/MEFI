@@ -5,7 +5,6 @@ import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.UserModifyAllResDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
-import com.mefi.backend.db.entity.Token;
 import com.mefi.backend.db.entity.User;
 import com.mefi.backend.db.repository.TokenRepository;
 import com.mefi.backend.db.repository.UserRepository;
@@ -61,16 +60,6 @@ public class UserServiceImpl implements UserService {
                 userWithdrawReqDto.getCurrentPassword(),user.getPassword())) {
             throw new Exceptions(ErrorCode.CORRECT_NOT_PASSWORD);
         }
-
-        // 유저 토큰 삭제
-        
-        // 유저 토큰 조회
-        if(!tokenRepository.findByUserId(user.getId()).isPresent()) {
-            throw new Exceptions(ErrorCode.TOKEN_NOT_EXIST);
-        }
-
-        Token token = tokenRepository.findByUserId(user.getId()).get();
-        tokenRepository.delete(token);
 
         // 유저 삭제
         userRepository.delete(user);

@@ -13,6 +13,7 @@ import com.mefi.backend.db.repository.TeamUserRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,9 +39,7 @@ public class ScheduleServiceImpl implements  ScheduleService{
         User user = userRepository.findById(userId).orElseThrow(()->new Exceptions(ErrorCode.MEMBER_NOT_EXIST));
 
         // 시간이 겹치는 일정이 존재하면 예외 처리
-        if(scheduleRepository.findDuplicationByUserAndTime(userId, scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime()) > 0){
-            throw new Exceptions(ErrorCode.SCHEDULE_DUPLICATED);
-        }
+        checkDuplicateSchedule(userId, -1L, scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime());
 
         // 일정 등록
         PrivateSchedule privateSchedule = PrivateSchedule.builder()
@@ -120,9 +119,7 @@ public class ScheduleServiceImpl implements  ScheduleService{
         }
 
         // 시간이 겹치는 일정이 존재하면 예외 처리
-        if(scheduleRepository.findDuplicationByUserAndTime(userId, scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime()) > 1){
-            throw new Exceptions(ErrorCode.SCHEDULE_DUPLICATED);
-        }
+        checkDuplicateSchedule(userId, schedule.getId(), scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime());
 
         // 만약 수정하려는 일정 타입이 회의라면 예외 발생
         if(schedule.getType() == ScheduleType.CONFERENCE){
@@ -146,5 +143,23 @@ public class ScheduleServiceImpl implements  ScheduleService{
 
         // 일정 상세 DTO 반환
         return new ScheduleDetailResDto(ps.getId(), ps.getSummary(), ps.getDescription(), ps.getStartedTime(), ps.getEndTime(), ps.getType());
+    }
+
+    // 해당 유저의 일정 중에서 중복되는 일정 체크
+    public boolean checkDuplicateSchedule(Long userId, Long scheduleId, LocalDateTime start, LocalDateTime end){
+        // 유저 스케줄 조회
+        List<PrivateSchedule> schedules = scheduleRepository.findDuplicationByUserAndTime(userId, start, end);
+
+        // 중복되는 일정이 있을 경우, 확인 후 예외 처리
+        int count = schedules.size();
+        if(count>1) {
+            throw new Exceptions(ErrorCode.SCHEDULE_DUPLICATED); // 2개 이상의 일정과 겹치는 경우
+        }
+        if(count==1) {
+            if(schedules.get(0).getId()!=scheduleId){
+                throw new Exceptions(ErrorCode.SCHEDULE_DUPLICATED); // 다른 일정과 겹치는 경우
+            }
+        }
+        return true;
     }
 }

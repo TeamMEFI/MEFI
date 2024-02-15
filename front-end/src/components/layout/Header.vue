@@ -1,5 +1,8 @@
 <template>
-  <v-toolbar color="#495464" class="w-100">
+  <v-toolbar color="#495464" class="w-100 d-flex align-center">
+    <v-toolbar-title class="text-center" @click="router.push({name:'main'})">
+      <p class="font-weight-bold text-center text-h4 w-10">MEFI</p>
+    </v-toolbar-title>
     <v-spacer></v-spacer>
 
     <!-- 알림 -->
@@ -55,8 +58,9 @@ import Setting from '../../components/settings/setting/Setting.vue'
 import UserInfoSettingVue from '../settings/userInfoSetting/UserInfoSetting.vue'
 import UserStateSetting from '../settings/userStateSetting/UserStateSetting.vue'
 import AlarmListVue from '../alarm/AlarmList.vue'
-
-const store = useUserStore()
+import { useRouter } from 'vue-router'
+const router = useRouter();
+const store = useUserStore();
 
 const emit = defineEmits(['removeAlarm', 'removeAlarms'])
 

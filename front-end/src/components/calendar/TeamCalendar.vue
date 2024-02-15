@@ -25,7 +25,8 @@
         <TeamModifyDialog @close-dialog="dialog = false" :team-id="props.teamId" />
       </v-dialog>
       <v-btn
-        @click="router.push({ name: 'insertconference', params: { teamid: props.teamId, date: choicedate } })"
+        @click="router.push({ name: 'insertconference', params: { teamid : props.teamId, date : choicedate } })"
+        :disabled="role === 'MEMBER'"
         color="#45566F"
         variant="outlined"
         rounded="xl"

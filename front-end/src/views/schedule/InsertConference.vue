@@ -134,13 +134,24 @@ const conferenceReservation = async () => {
       const conferenceId = response.data.dataBody
       documentState.value.state = 'done'
       documentState.value.conferenceId = conferenceId
+      router.push({ name: 'team', params: { id: route.params?.teamid } })
     },
     (error) => {
-      console.log(error)
+      const errorCode = error.response.data.dataHeader?.resultCode
+      const errorMessage = error.response.data.dataHeader?.resultMessage
+      if (errorCode === 'G-006') {
+        alert(errorMessage)
+        router.replace({ name: 'notFound' })
+      }
+      if (errorCode === 'S-002') {
+        alert('중복된 시간이 존재합니다. 시간을 확인해 주세요.')
+      }
+      else {
+        console.log(error)
+        alert('잘못된 입력이 존재합니다.')
+      }
     }
-  ).then(() => {
-    router.push({ name: 'team', params: { id: route.params?.teamid } })
-  })
+  )
 }
 </script>
 <style scoped></style>

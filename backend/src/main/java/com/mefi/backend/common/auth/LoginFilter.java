@@ -77,6 +77,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     // 로그인 성공시 실행하는 메소드
     @Override
+//    @Transactional
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
 
         log.info("\nlogin success");
@@ -103,21 +104,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         if(token.isPresent()) {
 
             // 유저가 토큰이 존재
-            token.get().updateRefreshToken(refreshToken);
+            token.get().updateRefreshToken(refreshToken); // 토큰테이블 리프레시토큰 갱신
+            user.updateToken(token.get()); // 유저의 토큰을 갱신
 
             // DB 저장
+            userRepository.save(user);
             tokenRepository.save(token.get());
         }
 
         else {
-
             // 유저가 토큰이 없는 경우
             Token newToken = Token.builder()
                     .userId(user.getId())
                     .refreshToken(refreshToken)
                     .build();
+            user.updateToken(newToken);
+
+            log.info("456 : {}", user.getToken().getId());
 
             // DB 저장
+            userRepository.save(user);
             tokenRepository.save(newToken);
         }
 
