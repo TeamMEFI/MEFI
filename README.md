@@ -1,22 +1,29 @@
-## 👋 MEFI 👋
-#### 팀 단위 화상회의와 다자간의 문서편집이 가능하도록 도와주는 협업툴 서비스
+# 👋 MEFI 👋
+### 팀 단위 화상회의와 다자간의 문서편집이 가능하도록 도와주는 협업툴 서비스
 
 <br>
 
-### MEFI 소개 및 시연 영상
+### 💚 MEFI 소개 및 시연 영상
 
 <br>
 
-### MEFI 서비스 화면
+### 💚 MEFI 서비스 화면
 
 <br>
 
-### 주요 기능
+### 💚 주요 기능
+- 서비스 설명 : 팀 단위 화상 통화와 다자간의 문서편집이 가능하도록 도와주는 협업툴 서비스입니다.
+- 주요 기능
+  - webRTC를 통해 실시간 화상 회의
+  - 화상 회의 도중, 다중간의 문서 작업과 채팅으로 업무 효율을 높일 수 있음
+  - 회의가 끝나면 자동으로, 작성한 문서가 저장됨. 관련 문서를 다운로드 할 수 있음.
+  - 회의 예약 시, 해당 회의와 관련된 문서를 회의 상세 페이지에 업로드 및 다운로드 가능
+  - 회의 예약은 팀장만 가능하며, 팀 생성 시, 팀을 생성한 사람이 팀장 권한을 가짐.
 
 <br>
 
-### 🖥️ 개발 환경 
-🖱 백앤드
+### 💚 개발 환경 
+🌱 백앤드
 - intellij
 - spring boot 3.2.1
 - spring-boot-jpa
@@ -24,30 +31,36 @@
 - java 17
 - MySQL 8.0.36
 
-🖱 프론트
+<br>
+
+🌱 프론트
 - Visual Studio Code
 - Vue3
 - Node.js 20.10.0
 - Vuetify
 - figma
 
-🖱 라이브러리
-- openvidu 2.29.0
-- Yjs
-- Quill
+<br>
 
-🖱 Infra
+🌱 라이브러리
+- openvidu 2.29.0
+- Yjs 13.6.10
+- Quill 1.3.7
+
+<br>
+
+🌱 Infra
 - Docker
 - Jenkins 2.426.2
 - AWS EC2
-- AWS S3
+- AWS S3 
 - Server 20.04.6 LTS (GNU/Linux 5.15.0-1051-aws x86_64)
 - Nginx 1.24.0
 
 <br>
 
 ### 💫서비스 아키텍처 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/9fd5842a-e364-4a3e-81f6-e575843e2010/510e91f4-29bd-442c-875b-31e5d63d088b/Untitled.png)
+![img](./readme/MEFI%20아키텍처.PNG.png)
 
 <br>
 
@@ -56,10 +69,19 @@
 <br>
 
 ### 💥기술 특이점
-- WebRTC(Openvidu)
-- Yjs & Quill
-- S3
-- 배포
+참고 자료 : https://github.com/yesfordev/homedong
+
+💥 WebRTC(Openvidu)
+(준수)
+
+💥 Yjs & Quill
+(준수)
+
+💥 S3
+(부광)
+
+💥 배포
+(현준)
 
 <br>
 
@@ -73,6 +95,7 @@
 <br>
 
 ### 📝 요구사항 정의서
+(병조)
 
 <br>
 
@@ -117,61 +140,62 @@ issue_key #done         // jira 해당 작업 완료
 
 <br>
 
+
 ### ⚡️ Git Flow
-⚡️ Git flow 사용한 브랜치
-- master : 배포
-- develop : 개발 및 테스트
-- feature : 기능
+- Git flow 사용한 브랜치
+  - master : 배포
+  - develop : 개발 및 테스트
+  - feature : 기능
 
 <br>
 
-⚡️ Git flow 사용한 브랜치
-- 개발 시, 맡은 기능 별로 develop 하위에 feature 브랜치 생성
-- 개발 완료 시, 해당 feature 브랜치를 develop에 merge한다.
-- 개발 테스트 시, develop에 파이프라인 연결하여 배포 및 테스트 작업 진행
-- 개발 완료 및 테스트 완료 시, master 브랜치로 배포 진행
+- Git flow 사용한 브랜치
+  - 개발 시, 맡은 기능 별로 develop 하위에 feature 브랜치 생성
+  - 개발 완료 시, 해당 feature 브랜치를 develop에 merge한다.
+  - 개발 테스트 시, develop에 파이프라인 연결하여 배포 및 테스트 작업 진행
+  - 개발 완료 및 테스트 완료 시, master 브랜치로 배포 진행
 
 <br>
 
-⚡️ Git 브랜치 이름 컨벤션
-```
-backend/domain/feature
-frontend/domain/feature
+- Git 브랜치 이름 컨벤션
+  ```
+  backend/domain/feature
+  frontend/domain/feature
 
-예시 : be/user/login
-```
+  예시 : be/user/login
+  ```
 
 <br>
 
 ### 🔥 Gerrit 활용
-🔥 Gerrit과 GitLab의 code review 비교
-- GitLab은 MR 요청 시, code review가 가능합니다
-- Gerrit은 commit 시점 마다 가능하며, 코드 작성자가 코드 리뷰를 원할 경우 코드 리뷰 요청을 보낼 수 있습니다.
+- Gerrit과 GitLab의 code review 비교
+  - GitLab은 MR 요청 시, code review가 가능합니다
+  - Gerrit은 commit 시점 마다 가능하며, 코드 작성자가 코드 리뷰를 원할 경우 코드 리뷰 요청을 보낼 수 있습니다.
 
 <br>
 
-🔥 Gerrit을 이용한 이유
-- GitLab은 merge를 할때만 코드 리뷰를 진행하므로, 리뷰해야할 코드 양이 많습니다
-  그에 비해 gerrit은 commit단위로 코드리뷰를 할 수 있어서, 리뷰해야할 코드 양이 적습니다.
-- Gerrit은 코드 리뷰 시점을 개발자가 정할 수 있습니다.
+- Gerrit을 이용한 이유
+  - GitLab은 merge를 할때만 코드 리뷰를 진행하므로, 리뷰해야할 코드 양이 많습니다
+    그에 비해 gerrit은 commit단위로 코드리뷰를 할 수 있어서, 리뷰해야할 코드 양이 적습니다.
+  - Gerrit은 코드 리뷰 시점을 개발자가 정할 수 있습니다.
 
 <br>
 
-🔥 Gerrit 사용 방법
-- jira를 GitLab과 연동
-- GitLab과 Gerrit 연동
-- Gerrit의 Repository를 clone하여 개발 작업 및 commit
-- commit한 내용은 GitLab에 자동 업로드
-- commit에 Jira issue key를 기재하면, jira에 자동 업로드
+- Gerrit 사용 방법
+  - jira를 GitLab과 연동
+  - GitLab과 Gerrit 연동
+  - Gerrit의 Repository를 clone하여 개발 작업 및 commit
+  - commit한 내용은 GitLab에 자동 업로드
+  - commit에 Jira issue key를 기재하면, jira에 자동 업로드
 
 <br>
 
-🔥 Gerrit을 이용한 코드 리뷰 과정
-- feature 브랜치에서 작업 진행
-- 해당 작업을 완료하여 commit을 하고, 코드리뷰 요청
-- 팀원들의 코드리뷰 평가
-- 피드백으로 코드를 수정 후 다시 코드 리뷰 요청
-- 팀원들의 평가로부터 통과를 받으면, 코드를 push할 수 있습니다.
+- Gerrit을 이용한 코드 리뷰 과정
+  - feature 브랜치에서 작업 진행
+  - 해당 작업을 완료하여 commit을 하고, 코드리뷰 요청
+  - 팀원들의 코드리뷰 평가
+  - 피드백으로 코드를 수정 후 다시 코드 리뷰 요청
+  - 팀원들의 평가로부터 통과를 받으면, 코드를 push할 수 있습니다.
 
 <br>
 
@@ -187,12 +211,6 @@ frontend/domain/feature
   - 수정 modify [domain] [content]
   - 삭제 delete [domain] [content]
   - 조회 get [target]
-- Swagger API  
-![img](./readme/swaggerAPI01.png)   
-![img](./readme/swaggerAPI02.png)   
-- Swagger 파라미터
-![img](./readme/swagger파라미터%2001.png)   
-![img](./readme/swagger파라미터%2002.png)   
 
 <br>
 
@@ -215,10 +233,11 @@ frontend/domain/feature
 <br>
 
 ### 🎨 ERD
+![img](./readme/ERD.png)
 
 <br>
 
-### 🎨 EC2 포트 정리
+### 🎨 EC2 포트 정리 (현준 부광)
 | 이름 | 내부 포트 | 외부 포트 |
 | :-----: | :-----: | :-----: |
 | Vue | 5173 | 5173 |
@@ -260,7 +279,10 @@ frontend/domain/feature
 - 비밀번호 변경
 - 회원 정보 조회 및 수정
 - 회원 탈퇴
-- 알림
+- 안읽은 알림 전체 조회
+- 단일 알림 조회
+- 알림 전체 읽음 처리
+- 실시간 알림 받기
 
 <br>
 
@@ -275,4 +297,5 @@ frontend/domain/feature
 
 😛김준수
 
-😀이지연
+😀이지연    
+저희 UCC 너무 재밌었습니다. 저희 팀원들의 새로운 재능을 발견한 것 같습니다. 그리고 저희 웹디자이너가 감각이 뛰어나서, css하는게 즐거웠습니다.
