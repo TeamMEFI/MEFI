@@ -41,7 +41,10 @@ public enum ErrorCode {
     CONFERENCE_NOT_MODIFY(HttpStatus.BAD_REQUEST, "S-003", "회의 일정은 수정 불가능 합니다."),
 
     // 회의
-    CONFERENCE_NOT_EXIST(HttpStatus.BAD_REQUEST, "C-001", "존재하지 않는 회의입니다.");
+    CONFERENCE_NOT_EXIST(HttpStatus.BAD_REQUEST, "C-001", "존재하지 않는 회의입니다."),
+
+    // Validation
+    NOT_VALID_REQUEST(HttpStatus.BAD_REQUEST, "I-001", "요청변수가 유효하지 않습니다.");
     
     // 상태, 에러 코드, 메시지
     private HttpStatus httpStatus;
