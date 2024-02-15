@@ -81,6 +81,10 @@ public class User {
         this.createdTime = LocalDateTime.now();
     }
 
+    public void updateToken(Token token) {
+        this.token = token;
+    }
+
     public void updatePassword(String password) {
         this.password = password;
     }
