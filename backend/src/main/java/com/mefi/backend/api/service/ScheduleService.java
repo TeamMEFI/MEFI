@@ -27,4 +27,7 @@ public interface ScheduleService {
 
     // 개인 일정 상세 조회
     ScheduleDetailResDto getPrivateScheduleDetail(Long userId, Long scheduleId);
+
+    // 해당 유저의 일정 중에서 중복되는 일정 체크
+    boolean checkDuplicateSchedule(Long id, Long id1, LocalDateTime callStart, LocalDateTime callEnd);
 }

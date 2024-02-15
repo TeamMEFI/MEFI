@@ -202,10 +202,10 @@ public class ConferenceServiceImpl implements ConferenceService {
             User user = userRepository.findById(member.getId()).get();
 
             // 해당 시간 개인 일정 조회
-            PrivateSchedule privateSchedules =
+            PrivateSchedule privateSchedule =
                     scheduleRepository.getSchedule(
                             user,conference.getCallStart(),conference.getCallEnd()).orElseThrow(() -> new Exceptions(ErrorCode.SCHEDULE_NOT_EXIST));
-            scheduleService.deleteSchedule(user.getId(),privateSchedules.getId());
+            scheduleService.deleteSchedule(user.getId(),privateSchedule.getId());
 
             log.info("\n 팀원 : {}, {}", user.getId(),user.getName());
             log.info("\n 개인 일정 삭제 완료 : OK");
@@ -318,14 +318,19 @@ public class ConferenceServiceImpl implements ConferenceService {
             User user = userRepository.findById(member.getId()).get();
 
             // 해당 시간 개인 일정 조회
-            List<PrivateSchedule> privateSchedules =
-                    scheduleRepository.findByUserAndStartedTimeBetweenOrderByStartedTime(
-                            user,conference.getCallStart(),conference.getCallEnd());
+            PrivateSchedule privateSchedule =
+                    scheduleRepository.getSchedule(
+                            user,conference.getCallStart(),conference.getCallEnd()).orElseThrow(() -> new Exceptions(ErrorCode.SCHEDULE_NOT_EXIST));
 
-            log.info("\n팀원 개인 일정 조회 : OK, {}개",privateSchedules.size());
+            log.info("\n팀원 개인 일정 조회 : OK");
 
-            // 일정 수정
-            privateSchedules.get(0).changeDetail(scheduleReqDto.getSummary(), scheduleReqDto.getDescription(), scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime());
+            log.info("\n팀원 일정 중복 여부 검사");
+
+            // 해당 유저의 일정 중에서 중복되는 일정이 존재하지 않은 경우
+            if(scheduleService.checkDuplicateSchedule(user.getId(), privateSchedule.getId(), conferenceModifyAllReqDto.getCallStart(), conferenceModifyAllReqDto.getCallEnd()))
+
+                // 일정 수정
+                privateSchedule.changeDetail(scheduleReqDto.getSummary(), scheduleReqDto.getDescription(), scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime());
 
             log.info("\n 팀원 : {}, {}", user.getId(),user.getName());
             log.info("\n 개인 일정 수정 완료 : OK");
