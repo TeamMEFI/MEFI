@@ -28,6 +28,6 @@ public class ConferenceCreateReqDto {
     private LocalDateTime callEnd;
     
     // 회의 진행 팀
-    @NotBlank
+    @NotNull
     private Long teamId;
 }

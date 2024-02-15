@@ -58,7 +58,7 @@ public class MailServiceImpl implements MailService {
         MimeMessage message = javaMailSender.createMimeMessage();
 
         // 메일 제목
-        message.setSubject("MEFI 회원가입 인증 코드 안내");
+        message.setSubject("MEFI 인증 코드 안내");
 
         // 받는 사람 지정
         message.addRecipients(MimeMessage.RecipientType.TO, receiver);
