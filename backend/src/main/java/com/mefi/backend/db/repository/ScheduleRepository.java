@@ -26,15 +26,14 @@ public interface ScheduleRepository extends JpaRepository<PrivateSchedule, Long>
             "ORDER BY s.startedTime")
     List<ScheduleTimeDto> findAllMemberSchedule(@Param("userIds") List<Long> members, @Param("date") LocalDateTime date);
 
-    @Query("SELECT COUNT(s) " + // 겹치는 일정이 하나라도 있는지 확인
-            "FROM PrivateSchedule s " +
-            "INNER JOIN s.user u " +
-            "ON u.id = :userId " + // 해당 사용자의 일정만 확인
-            "WHERE (s.startedTime < :endTime AND s.endTime > :startTime) " + // 새 일정의 시작 시간이 기존 일정의 종료 시간보다 이전이고, 새 일정의 종료 시간이 기존 일정의 시작 시간보다 이후인 경우
-            "OR (s.startedTime <= :startTime AND s.endTime >= :endTime) " + // 새 일정이 기존 일정 시간을 완전히 포함하는 경우
-            "OR (s.startedTime > :startTime AND s.startedTime < :endTime) " + // 새 일정이 기존 일정의 시작 시간과 종료 시간 사이에 있는 경우
-            "OR (s.endTime > :startTime AND s.endTime < :endTime)") // 새 일정이 기존 일정의 시작 시간과 종료 시간 사이에 있는 경우
-    int findDuplicationByUserAndTime(@Param("userId") Long userId, @Param("startTime") LocalDateTime start, @Param("endTime") LocalDateTime end);
+    @Query("SELECT s FROM PrivateSchedule s " +
+            "WHERE s.user.id = :userId " + // 해당 사용자의 일정만 확인
+            "AND ((s.startedTime < :endTime AND s.endTime > :startTime) " + // 새 일정이 기존 일정과 부분적으로 겹치는 경우
+            "OR (s.startedTime <= :startTime AND s.endTime >= :endTime) " + // 새 일정이 기존 일정을 완전히 포함하는 경우
+            "OR (s.startedTime >= :startTime AND s.startedTime < :endTime) " + // 새 일정이 기존 일정의 시작 시간과 종료 시간 사이에 있는 경우
+            "OR (s.endTime > :startTime AND s.endTime <= :endTime))") // 새 일정이 기존 일정의 시작 시간과 종료 시간 사이에 있는 경우
+
+    List<PrivateSchedule> findDuplicationByUserAndTime(@Param("userId") Long userId, @Param("startTime") LocalDateTime start, @Param("endTime") LocalDateTime end);
 
     @Query("SELECT p FROM PrivateSchedule p WHERE p.user = :user and p.startedTime = :start and p.endTime = :end")
     Optional<PrivateSchedule> getSchedule(@Param("user") User user, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
