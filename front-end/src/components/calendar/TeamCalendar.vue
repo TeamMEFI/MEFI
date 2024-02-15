@@ -4,33 +4,51 @@
       <v-col cols="4">
         <v-row>
           <v-col cols="3" class="d-flex justify-center align-center">
-            <v-btn icon="mdi-chevron-left" @click="clickprev"></v-btn>
+            <v-btn icon="mdi-chevron-left" @click="clickprev" variant="text"></v-btn>
           </v-col>
           <v-col cols="6" class="d-flex justify-center align-center">
-            <p class="text-h5 font-weight-bold"> {{ year }} {{ listofmonthword[month] }}</p>
+            <p>
+              <span class="text-h6 font-weight-bold">{{ year }}</span>
+              <span class="ms-3 text-h5">{{ listofmonthword[month] }}</span>
+            </p>
           </v-col>
           <v-col cols="3" class="d-flex justify-center align-center">
-            <v-btn icon="mdi-chevron-right" @click="clicknext"></v-btn>
+            <v-btn icon="mdi-chevron-right" @click="clicknext" variant="text"></v-btn>
           </v-col>
         </v-row>
       </v-col>
       <v-spacer></v-spacer>
-      <v-btn :disabled="role === 'MEMBER'" class="me-3" @click="dialog=true">
-        <p class="font-weight-black text-h6">팀 관리</p>
+      <v-btn 
+        :disabled="role === 'MEMBER'"
+        class="me-3"
+        @click="dialog=true" 
+        color="#45566F"
+        variant="outlined"
+        rounded="xl"
+      >
+        <p>팀 관리</p>
       </v-btn>
       <v-dialog v-model="dialog" persistent width="70%" height="70%">
         <TeamModifyDialog @close-dialog="dialog = false" :team-id="props.teamId"/>
       </v-dialog>  
-      <v-btn @click="router.push({ name: 'insertconference', params: { teamid : props.teamId, date : choicedate } })">
-        <p class="font-weight-black text-h6">회의 예약</p>
+      <v-btn
+        @click="router.push({ name: 'insertconference', params: { teamid : props.teamId, date : choicedate } })"
+        color="#45566F"
+        variant="outlined"
+        rounded="xl"
+        class="mr-10"
+      >
+        <p>회의 예약</p>
       </v-btn>
     </v-row>
   </v-container>
-  <v-sheet class="mt-5 elevation-3 w-100 ma-0 pa-0 h-80">
+  <div class="h-85 mt-n1">
     <v-row class="d-flex align-center justify-center ma-0">
       <v-col v-for="i in weekday" class="day-header ma-0" style="flex-grow: 1;">
         <div>
-          <p class="font-weight-bold">{{ dayofweek[i] }}</p>
+          <p class="font-weight-bold">
+            {{ dayofweek[i] }}
+          </p>
         </div>
       </v-col>
     </v-row>
@@ -39,7 +57,7 @@
         <TeamSchedule :schedule-date="String(day.year) +'-'+ String(day.month + 1).padStart(2,'0') +'-'+ String(day.date).padStart(2,'0')" :team-id="props.teamId" @click-day="(data) => choicedate=data"/>
       </v-col>
     </v-row>
-  </v-sheet>
+  </div>
 </template>
 
 <script setup>
@@ -170,8 +188,6 @@ onMounted(() => {
 .day-header {
   max-width: calc(100%/7);
   min-width: calc(100%/7);
-  background-color: #d2d2d2;
-  text-align: center;
 }
 
 .day {

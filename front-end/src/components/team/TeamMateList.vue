@@ -1,18 +1,20 @@
 <template>
   <div class="bg-white h-100 w-100 elevation-3 pa-0 rounded-lg">
-    <v-toolbar height="40" class="elevation-1 rounded-t-lg">
-      <v-toolbar-title class="font-weight-bold text-h5">팀원 목록</v-toolbar-title>
+    <v-toolbar height="40" class="elevation-1 rounded-t-lg" color="#ffffff">
+      <v-toolbar-title>
+        <p class="font-weight-bold text-start text-h7">팀원 목록</p>
+      </v-toolbar-title>
     </v-toolbar>
-    <div class="w-100 h-cal d-flex rouned-b-lg">
-      <v-list v-if="members" class="w-100 mt-1 rouned-b-lg">
+    <div class="mt-1">
+      <v-list v-if="members">
         <v-list-item
             v-for="member in members"
-            :key="member.id"
-            :title="member.name"
           >
+          <p class="font-weight">{{ member.name }}</p>
         </v-list-item>
       </v-list>
     </div>
+    <!-- <template v-slot:loading></template> -->
   </div>
 </template>
 

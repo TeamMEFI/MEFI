@@ -70,8 +70,4 @@ watchEffect(
   white-space: nowrap;
   text-align: left;
 }
-
-.CONFERENCE {
-  background-color: rgba(189, 255, 151, 0.5);
-}
 </style>

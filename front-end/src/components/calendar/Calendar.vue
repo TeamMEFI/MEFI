@@ -24,18 +24,20 @@
         rounded="xl"
         class="mr-10"
       >
-        + 일정 생성
+        <p>+ 일정 생성</p>
       </v-btn>
     </v-row>
 
     <!-- 달력 -->
-    <div style="border-radius: 10px; margin-top: -10px; border-radius: 10px;">
+    <div class="mt-n1">
 
       <!-- 요일 -->
       <v-row class="d-flex align-center justify-center ma-0">
         <v-col v-for="i in weekday" class="day-header ma-0" :key="i">
           <div>
-            {{ dayofweek[i] }}
+            <p class="font-weight-bold">
+              {{ dayofweek[i] }}
+            </p>
           </div>
         </v-col>
       </v-row>
@@ -238,6 +240,10 @@ const clickday = (data) => {
 </script>
 
 <style scoped>
+.day-header {
+  max-width: calc(100%/7);
+  min-width: calc(100%/7);
+}
 .day {
     max-width: calc(100%/7);
     min-width: calc(100%/7);
