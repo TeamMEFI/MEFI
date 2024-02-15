@@ -202,10 +202,10 @@ public class ConferenceServiceImpl implements ConferenceService {
             User user = userRepository.findById(member.getId()).get();
 
             // 해당 시간 개인 일정 조회
-            List<PrivateSchedule> privateSchedules =
-                    scheduleRepository.findByUserAndStartedTimeBetweenOrderByStartedTime(
-                            user,conference.getCallStart(),conference.getCallEnd());
-            scheduleService.deleteSchedule(user.getId(),privateSchedules.get(0).getId());
+            PrivateSchedule privateSchedules =
+                    scheduleRepository.getSchedule(
+                            user,conference.getCallStart(),conference.getCallEnd()).orElseThrow(() -> new Exceptions(ErrorCode.SCHEDULE_NOT_EXIST));
+            scheduleService.deleteSchedule(user.getId(),privateSchedules.getId());
 
             log.info("\n 팀원 : {}, {}", user.getId(),user.getName());
             log.info("\n 개인 일정 삭제 완료 : OK");
