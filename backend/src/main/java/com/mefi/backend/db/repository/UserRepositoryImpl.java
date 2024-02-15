@@ -20,14 +20,16 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public List<MemberResDto> findByKeyWord(String keyword) {
+    public List<MemberResDto> findByKeyWord(Long userId,String keyword) {
 
         // Querydsl 반환
         return queryFactory
                 .select(new QMemberResDto(user.id, user.email, user.name, user.position, user.dept))
                 .from(user)
-                .where(user.email.like("%"+keyword+"%")
-                        .or(user.name.like("%"+keyword+"%")))
+                .where(
+                        (user.email.like("%"+keyword+"%").or(user.name.like("%"+keyword+"%")))
+                        .and(user.id.ne(userId))
+                )
                 .fetch();
     }
 }

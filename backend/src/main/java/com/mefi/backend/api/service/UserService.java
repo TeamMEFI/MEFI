@@ -21,7 +21,7 @@ public interface UserService {
     User findById(Long id);
 
     // 검색어로 회원 조회
-    List<MemberResDto> getSearchUsers(String keyword);
+    List<MemberResDto> getSearchUsers(Long userId, String keyword);
 
     // 회원 정보 전체 수정
     UserModifyAllResDto modifyUserInfoAll(Long userId, UserModifyAllReqDto userModifyAllReqDto, MultipartFile profileImg) throws IOException;
