@@ -115,9 +115,7 @@ const toggleDisable = () => {
 const updateUserinfo = async () => {
   if (window.confirm('회원 정보를 수정하시겠습니까?')) {
     const formData = new FormData()
-
     const profileImage = photo.value.files[0]
-
     const userModifyAllReqDto = new Blob(
       [
         JSON.stringify({
@@ -129,10 +127,8 @@ const updateUserinfo = async () => {
       ],
       { type: 'application/json' }
     )
-
     formData.append('profileImg', profileImage)
     formData.append('userModifyAllReqDto', userModifyAllReqDto)
-
     await userModify(
       formData,
       (res) => {
