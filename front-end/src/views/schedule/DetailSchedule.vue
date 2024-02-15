@@ -3,8 +3,8 @@
     <v-card-title class="d-flex align-center pa-2">
       <p class="text-h5 font-weight-black">일정 상세</p>
       <v-spacer></v-spacer>
-      <v-btn class="mx-1" @click="modify">일정 수정하기</v-btn>
-      <v-btn v-if="selecttype === 'BUSINESSTRIP'" class="mx-1" @click="deletes">일정 삭제하기</v-btn>
+      <v-btn v-if="selecttype === '출장'" class="mx-1" @click="modify">일정 수정하기</v-btn>
+      <v-btn v-if="selecttype === '출장'" class="mx-1" @click="deletes">일정 삭제하기</v-btn>
     </v-card-title>
     <v-card-item class="pa-3">
       <v-row>
@@ -113,9 +113,10 @@ const detail = async () => {
   )
 }
 
+
 const modify = async () => {
-  if (!summary.value) {
-    alert('일정 요약을 설정해주세요.')
+  if (!summary.value || !description.value) {
+    alert('일정 정보를 입력해주세요.')
     return false
   }
   if (selecttype.value === null) {
@@ -147,18 +148,20 @@ const modify = async () => {
     param,
     (response) => {
       console.log(response)
-      router.back()
+      router.push({name:'main'})
     },
     (error) => {
       const errorCode = error.response.data.dataHeader?.resultCode
       const errorMessage = error.response.data.dataHeader?.resultMessage
-      errorCode === 'C-001' 
       if (errorCode === 'G-006') {
         alert(errorMessage)
         router.replace({ name: 'notFound' })
       }
-      if (errorCode === 'I-001') {
+      if (errorCode === 'S-002') {
         alert('중복된 시간이 존재합니다. 시간을 확인해 주세요.')
+      }
+      if (errorCode === 'S-003') {
+        alert('팀 회의 일정은 개인 수정이 불가능합니다.')
       }
     }
   )
@@ -169,7 +172,7 @@ const deletes = async () => {
     props.scheduleid,
     (response) => {
       console.log(response)
-      router.back()
+      router.push({name:'main'})
     },
     (error) => {
       console.log(error)
