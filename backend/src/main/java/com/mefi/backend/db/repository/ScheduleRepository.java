@@ -3,7 +3,6 @@ package com.mefi.backend.db.repository;
 import com.mefi.backend.api.response.ScheduleTimeDto;
 import com.mefi.backend.db.entity.PrivateSchedule;
 import com.mefi.backend.db.entity.User;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,4 +35,7 @@ public interface ScheduleRepository extends JpaRepository<PrivateSchedule, Long>
             "OR (s.startedTime > :startTime AND s.startedTime < :endTime) " + // 새 일정이 기존 일정의 시작 시간과 종료 시간 사이에 있는 경우
             "OR (s.endTime > :startTime AND s.endTime < :endTime)") // 새 일정이 기존 일정의 시작 시간과 종료 시간 사이에 있는 경우
     int findDuplicationByUserAndTime(@Param("userId") Long userId, @Param("startTime") LocalDateTime start, @Param("endTime") LocalDateTime end);
+
+    @Query("SELECT p FROM PrivateSchedule p WHERE p.user = :user and p.startedTime = :start and p.endTime = :end")
+    Optional<PrivateSchedule> getSchedule(@Param("user") User user, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
