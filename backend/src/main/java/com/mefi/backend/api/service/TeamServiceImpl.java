@@ -44,7 +44,7 @@ public class TeamServiceImpl implements TeamService{
                 .build();
 
         // 리더 추가
-        User leader = userRepository.findById(leaderId).orElseThrow(() -> new IllegalArgumentException("Leader not found"));
+        User leader = userRepository.findById(leaderId).orElseThrow(() -> new Exceptions(ErrorCode.USER_NOT_EXIST));
         UserTeam teamLeader = UserTeam.builder()
                 .user(leader)
                 .team(team)
@@ -55,7 +55,7 @@ public class TeamServiceImpl implements TeamService{
         // 멤버 추가
         List<Long> memberIds = teamReqDto.getMembers();
         for (Long memberId : memberIds) {
-            User member = userRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+            User member = userRepository.findById(memberId).orElseThrow(() -> new Exceptions(ErrorCode.USER_NOT_EXIST));
             UserTeam teamMember = UserTeam.builder()
                     .user(member)
                     .team(team)
