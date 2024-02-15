@@ -1,5 +1,6 @@
 package com.mefi.backend.api.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,12 +8,15 @@ import lombok.Setter;
 @Getter
 public class JoinReqDto {
 
+    @NotBlank
     // 아이디(회원 이메일)
     private String email;
 
+    @NotBlank
     // 비밀번호
     private String password;
 
+    @NotBlank
     // 이름
     private String name;
 
