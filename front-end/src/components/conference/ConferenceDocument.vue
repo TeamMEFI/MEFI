@@ -30,7 +30,7 @@ const props = defineProps({
 const userStore = useUserStore()
 
 const nowdate = ref(new Date())
-const year  = ref(nowdate.value.getFullYear())
+const year = ref(nowdate.value.getFullYear())
 const month = ref(nowdate.value.getMonth())
 const date = ref(nowdate.value.getDate())
 
@@ -140,7 +140,7 @@ const createPDF = () => {
   // editorContainer을 canvas객체로 변환
   html2canvas(editorContainer.value).then((canvas) => {
     const filename =
-      'Meeting_' + String(year.value) + '-' + String(month.value + 1).padStart(2, '0') + '-' + String(date.value).padStart(2, '0') + '.pdf'
+      String(year.value) + '년 ' + String(month.value + 1).padStart(2, '0') + '월 ' + String(date.value).padStart(2, '0') + '일_회의록.pdf'
     const doc = new jsPDF('p', 'mm', 'a4') // jsPDF 객체 생성
     const imgData = canvas.toDataURL('image/png') // canvas를 .png 이미지로 변환
     const imgWidth = 210
@@ -165,6 +165,15 @@ const createPDF = () => {
     // 로컬에 문서 pdf 파일 저장
     // 추후 사용을 위해 주석 처리함
     // doc.save(filename)
+
+    let target = editorContainer.value.firstChild
+    target.removeChild(target.firstChild)
+
+    if (target.firstChild === null) {
+      router.push({ name: 'team', params: { id: teamId.value } })
+      console.log('작성한 문서가 없습니다.')
+      return false
+    }
 
     // 회의 문서 내용 모두 삭제
     deleteContent()
@@ -222,6 +231,6 @@ const createPDF = () => {
 }
 
 .ql-container {
-  height: 75vh;
+  height: 83vh;
 }
 </style>

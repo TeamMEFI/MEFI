@@ -30,31 +30,31 @@
           @click="expandVideo(sub.stream.connection.connectionId)"
         />
       </div>
-      <v-overlay :model-value="chatOverlay" class="bg-transparent align-end justify-end" height="100vh">
+      <v-overlay :model-value="chatOverlay" class="bg-transparent align-end justify-end" height="100%">
         <v-btn size="large" elevation="0" @click="exitChatBox" style="position: absolute; right: 0;">
           <font-awesome-icon :icon="['fas', 'xmark']" style="color: #000000" />
         </v-btn>
-        <v-infinite-scroll load id="chatBox" ref="chatBox" class="bg-white px-4 rounded-lg" width="35vw" height="100%">
+        <v-infinite-scroll load id="chatBox" ref="chatBox" class="bg-white px-4 rounded-lg" width="35vw" height="50vh">
           <template v-for="chat in chats">
             <div>{{ chat }}</div>
           </template>
           <template v-slot:loading>
             
           </template>
-          <v-divider :thickness="1"></v-divider>
-          <div class="d-flex bg-white px-4 align-center rounded-lg">
-            <v-textarea
-              density="compact"
-              class="mt-4 mr-2"
-              auto-grow
-              rows="1"
-              row-height="1"
-              v-model="chatInput"
-              @keydown.enter="sendChat(chatInput)"
-            ></v-textarea>
-            <v-btn @click="sendChat(chatInput)" elevation="0" border rounded="lg">SEND</v-btn>
-          </div>
         </v-infinite-scroll>
+        <v-divider :thickness="1"></v-divider>
+        <div class="d-flex bg-white px-4 align-center rounded-lg">
+          <v-textarea
+            density="compact"
+            class="mt-4 mr-2"
+            auto-grow
+            rows="1"
+            row-height="1"
+            v-model="chatInput"
+            @keydown.enter="sendChat(chatInput)"
+          ></v-textarea>
+          <v-btn @click="sendChat(chatInput)" elevation="0" border rounded="lg">SEND</v-btn>
+        </div>
       </v-overlay>
     </div>
     <!-- 내 카메라 아직 켜지지 않았으면 로딩 스피너 출력 -->
