@@ -30,7 +30,7 @@ public interface ScheduleRepository extends JpaRepository<PrivateSchedule, Long>
     @Query("SELECT COUNT(s) " +
             "FROM PrivateSchedule s " +
             "INNER JOIN s.user u ON u.id = :userId " +
-            "WHERE (s.startedTime < :start AND s.endTime > :start )" +
-            "OR (s.startedTime < :end AND s.endTime > :end)")
+            "WHERE (s.startedTime <= :start AND s.endTime >= :start )" +
+            "OR (s.startedTime <= :end AND s.endTime >= :end)")
     int findDuplicationByUserAndTime(@Param("userId") Long userId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
