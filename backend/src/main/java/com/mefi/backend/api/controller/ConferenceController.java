@@ -78,7 +78,7 @@ public class ConferenceController {
     @ApiResponse(responseCode = "200", description = "성공 \n\n 회의 상세 조회 내용 반환")
     public ResponseEntity<? extends BaseResponseBody> detailMeeting(Authentication authentication,
                                                                     @Parameter(name = "conferenceId", description = "회의 번호")
-                                                                    @Valid @NotBlank @PathVariable("conferenceId") Long conferenceId) {
+                                                                    @PathVariable("conferenceId") Long conferenceId) {
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
@@ -95,7 +95,7 @@ public class ConferenceController {
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> cancelMeeting(Authentication authentication,
                                                                     @Parameter(name = "conferenceId", description = "회의 번호")
-                                                                    @Valid @NotBlank @PathVariable("conferenceId") Long conferenceId) {
+                                                                    @PathVariable("conferenceId") Long conferenceId) {
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
@@ -112,7 +112,7 @@ public class ConferenceController {
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> doneMeeting(Authentication authentication,
                                                                     @Parameter(name = "conferenceId", description = "회의 번호")
-                                                                    @Valid @NotBlank @PathVariable("conferenceId") Long conferenceId) {
+                                                                    @PathVariable("conferenceId") Long conferenceId) {
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
@@ -129,7 +129,7 @@ public class ConferenceController {
     @ApiResponse(responseCode = "200", description = "성공 \n\n Success 반환")
     public ResponseEntity<? extends BaseResponseBody> modifyAllMeeting(Authentication authentication,
                                                                   @Parameter(name = "conferenceId", description = "회의 번호")
-                                                                  @Valid @NotBlank @PathVariable("conferenceId") Long conferenceId,
+                                                                  @PathVariable("conferenceId") Long conferenceId,
                                                                     @Valid @RequestBody ConferenceModifyAllReqDto conferenceModifyAllReqDto) {
         // 로그인된 유저 정보 조회
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
