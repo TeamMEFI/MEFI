@@ -4,8 +4,7 @@ import com.mefi.backend.api.response.MemberResDto;
 import com.mefi.backend.api.response.NotiResponseDto;
 import com.mefi.backend.common.exception.ErrorCode;
 import com.mefi.backend.common.exception.Exceptions;
-import com.mefi.backend.db.entity.Noti;
-import com.mefi.backend.db.entity.User;
+import com.mefi.backend.db.entity.*;
 import com.mefi.backend.db.repository.NotiRepository;
 import com.mefi.backend.db.repository.TeamUserRepository;
 import com.mefi.backend.db.repository.UserRepository;
@@ -121,10 +120,12 @@ public class NotiServiceImpl implements NotiService{
     @Transactional
     public void sendNotiForTeam(Long teamId, String sender, String message) {
         // 팀원 목록 조회
-        List<MemberResDto> users = teamUserRepository.getMemberList(teamId);
+        List<UserTeam> users = teamUserRepository.findAllByTeamId(teamId);
 
         // 각 팀원에 대해 알림 전송
-        for(MemberResDto user : users){
+        for(UserTeam user : users){
+            // 리더는 제외
+            if(user.getRole().equals(UserRole.LEADER)) continue;
             sendNotiForUser(user.getId(), sender, message);
         }
     }

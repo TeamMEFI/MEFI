@@ -119,6 +119,11 @@ public class ScheduleServiceImpl implements  ScheduleService{
             throw new Exceptions(ErrorCode.SCHEDULE_ACCESS_DENIED);
         }
 
+        // 시간이 겹치는 일정이 존재하면 예외 처리
+        if(scheduleRepository.findDuplicationByUserAndTime(userId, scheduleReqDto.getStartedTime(), scheduleReqDto.getEndTime()) > 0){
+            throw new Exceptions(ErrorCode.SCHEDULE_DUPLICATED);
+        }
+
         // 만약 수정하려는 일정 타입이 회의라면 예외 발생
         if(schedule.getType() == ScheduleType.CONFERENCE){
             throw new Exceptions(ErrorCode.CONFERENCE_NOT_MODIFY);
