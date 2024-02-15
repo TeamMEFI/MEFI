@@ -11,6 +11,7 @@ import com.mefi.backend.common.model.BaseResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class TeamController {
     @PostMapping("")
     @Operation(summary = "팀생성", description = "팀 정보를 받아 팀 생성한다.")
     @ApiResponse(responseCode = "200", description = "성공 \n\n team 식별 아이디 반환")
-    public ResponseEntity<? extends BaseResponseBody> createTeam(Authentication authentication, @RequestBody TeamReqDto teamReqDto) throws Exception{
+    public ResponseEntity<? extends BaseResponseBody> createTeam(Authentication authentication, @RequestBody @Valid TeamReqDto teamReqDto) throws Exception{
 
         // 현재 사용자 식별 ID 불러옴
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();

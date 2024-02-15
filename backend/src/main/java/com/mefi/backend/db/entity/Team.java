@@ -1,6 +1,7 @@
 package com.mefi.backend.db.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class Team {
     private Long id;
     
     // 팀명
+    @NotBlank
     private String name;
 
     // 팀소개
