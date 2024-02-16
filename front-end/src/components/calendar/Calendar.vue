@@ -58,7 +58,7 @@
           <!-- 일정 -->
           <template v-for="(item, index) in week[i]['event']" >
             <div v-if="index < 2" class="text-start my-1 mx-2 px-2 rounded-lg" :class="item.type" :key="index">
-              <p class="text-algin-start">{{ item.summary }}</p>
+              <p class="text-algin-start schedule-name">{{ item.summary }}</p>
             </div>
           </template>
         </v-col>
@@ -263,5 +263,21 @@ const clickday = (data) => {
   /* 클릭 일자 */
   background-color: rgba(0, 110, 255, 0.5);
   color: #ffffff;
+}
+
+.schedule-name {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+::-webkit-scrollbar {
+  width: 0px; /* 스크롤바의 너비 설정 */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* 스크롤바의 색상 설정 */
+  border-radius: 10px; /* 스크롤바의 모서리 반경 설정 */
 }
 </style>
