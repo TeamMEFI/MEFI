@@ -71,7 +71,7 @@
                     </div>
                 </v-col>
                 <v-col cols="2" class="d-flex flex-column justify-start align-center h-100">
-                    <v-btn width="100" class="ma-3" @click="updateTeam">팀 정보 수정</v-btn>
+                    <v-btn width="100" class="ma-3" @click="updateTeam" variant="outlined" rounded="xl">팀정보 수정</v-btn>
                     <v-dialog
                         v-model="dialog"
                         persistent
@@ -80,6 +80,7 @@
                         <template v-slot:activator="{ props }">
                             <v-btn
                             color="primary"
+                            rounded="xl"
                             v-bind="props"
                             width="100" 
                             class="ma-3"
@@ -111,9 +112,9 @@
                         </v-card>
                         </v-dialog>
                     <!-- <v-btn width="100" class="ma-3" @click="change">팀장 위임</v-btn> -->
-                    <v-btn width="100" class="ma-3" @click="addMember">팀 초대</v-btn>
-                    <v-btn width="100" class="ma-3" @click="excludeMember">팀 추방</v-btn>
-                    <v-btn width="100" class="ma-3" color="red-darken-2" @click="removeTeam">팀 삭제</v-btn>
+                    <v-btn width="100" class="ma-3" @click="addMember" color="#45566F" variant="outlined" rounded="xl">팀원 추가</v-btn>
+                    <v-btn width="100" class="ma-3" @click="excludeMember" color="#45566F" variant="outlined" rounded="xl">팀원 삭제</v-btn>
+                    <v-btn width="100" class="ma-3" color="red-darken-2" @click="removeTeam" rounded="xl">팀 삭제</v-btn>
                 </v-col>
             </v-row>
         </v-card-text>

@@ -3,7 +3,7 @@
     <v-card-title class="d-flex align-center pa-2 my-2">
       <p class="text-h5 font-weight-black">회의 예약</p>
       <v-spacer></v-spacer>
-      <v-btn @click="conferenceReservation">회의 예약하기</v-btn>
+      <v-btn @click="conferenceReservation" color="#45566F" variant="outlined" rounded="xl" >회의 등록</v-btn>
     </v-card-title>
     <v-card-item class="px-2">
       <v-row>

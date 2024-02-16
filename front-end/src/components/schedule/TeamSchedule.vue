@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white h-100 w-100" @click="clickday">
     <div class="w-100 h-100 d-flex flex-column">
-      <p class="font-weight-bold ma-1 pa-3 rounded-lg" :class="{ clicked: props.scheduleDate === choiceDate }">{{ props.scheduleDate }}</p>
+      <p class="font-weight-bold ma-1 pa-3 rounded-lg" :class="{ clicked: props.scheduleDate === choiceDate }" style="cursor: pointer;">{{ props.scheduleDate }}</p>
 
       <template v-for="conf in data">
         <div
