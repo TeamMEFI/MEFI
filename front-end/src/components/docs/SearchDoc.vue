@@ -17,7 +17,7 @@
         <a class="file-name">{{ file.fileName }}</a>
         <div class="d-flex my-1">
           <v-btn class="px-2 py-1 mx-1 border" size="sm" @click="saveFile(file.fileName)">다운</v-btn>
-          <v-btn class="px-2 py-1 border" size="sm" @click="eraseFile(file.fileName)">삭제</v-btn>
+          <v-btn v-if="role === 'LEADER'" class="px-2 py-1 border" size="sm" @click="eraseFile(file.fileName)">삭제</v-btn>
         </div>
       </div>
       <!-- 업로드할 리스트 -->
@@ -40,6 +40,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getFiles, createFile, downloadFile, deleteFile } from '@/api/file.js'
+import { selectTeam } from '@/api/team';
 import router from '@/router';
 
 const route = useRoute()
@@ -54,6 +55,8 @@ const fileList = ref([])
 const addedFileList = ref([])
 
 const isDragged = ref(false)
+
+const role = ref(false)
 
 const fetchFiles = () => {
   getFiles(
@@ -179,11 +182,23 @@ watch(
   }
 )
 
+const checkRole = async () => {
+  await selectTeam(
+    (response) => {
+      role.value = response.data.dataBody.find((data) => data.teamId == teamId.value).role
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
 onMounted(() => {
   console.log(props.documentState.state)
   if (props.documentState.state !== 'create') {
     fetchFiles()
   }
+  checkRole()
 })
 
 // 드래그 앤 드롭을 사용하지 않고 수동으로 파일을 넣는 함수
