@@ -180,9 +180,6 @@ watch(
           to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
           type: 'conferenceDone' // The type of message (optional)
         })
-        .then(() => {
-          alert('회의가 종료되었습니다.')
-        })
         .catch((error) => {
           console.error(error)
         })
@@ -311,6 +308,7 @@ const joinSession = () => {
   })
 
   sessionCamera.value.on('signal:conferenceDone', (event) => {
+    alert('회의가 종료되었습니다.')
     leaveSession()
   })
 
