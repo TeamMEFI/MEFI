@@ -86,7 +86,7 @@
 - 프로젝트 클론 
   ```
   // 원격 저장소 로컬 저장
-  git clone https://lab.ssafy.com/s10-webmobile1-sub2/S10P12D204.git
+  git clone {Github 주소}
 
   // 폴더 이동
   cd S10P12D204
