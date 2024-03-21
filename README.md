@@ -294,6 +294,7 @@ issue_key #done         // jira 해당 작업 완료
 - Spring Security
 - JWT
 - Custom Exception
+- 이메일 전송, 인증
 - 백엔드 서버 개발 (회원, 회의, 토큰)
 
 😘최부광
