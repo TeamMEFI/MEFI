@@ -3,9 +3,9 @@ spring:
   # database
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ENC(e1dujsKzQqGovf+tg9WeUyg+O4iI5Fz1LRH812lqOZb9XtD7x4wg1XquFrjD4AbMkgt+Ex+1+v22leE+dj68jUDKu+/a6Qp5s4y/SCYUVPi9slbtMpGnr3YkN6kFtvFa8Gywo1rVCocg5YLJ85/qWA==)
-    username: ENC(STFAJLTBNjto5twxRhLYvg==)
-    password: ENC(WxXgJEw2DSZp2O2LvV3g0jsWmvKqhev9)
+    url: ENC(cS9am/N8sKtVQ2C9XicYsUTMJmwMakMzG9G62whQ7z6sGhXrMBh5wX3KFKPPk1e1XZBH31lC6SsFCJjdUk45EnIJllNtnpZbFo8Aqm3KRmCrD/xL2k3AtzPVThDK5le2IqjxyqMyLSQ=)
+    username: ENC(Atn6vWL71tju4Gj95TJVG32nqex7cDJu)
+    password: ENC(xBUgwgzRsuB4YND+6IigeBbNlfpZfszB)
 
   # jpa
   jpa:
