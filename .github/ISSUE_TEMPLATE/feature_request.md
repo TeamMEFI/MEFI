@@ -7,12 +7,12 @@ assignees: ''
 
 ---
 
-## 📎 Description
+## 📎 Description 
 > 추가하려는 기능에 대해 간결하게 설명해주세요
 
 ## ✅ Todo
-[ ] TODO_1(Jira_task)
-[ ] TODO_2
-[ ] TODO_3
+- [ ] TODO_1
+- [ ] TODO_2
+- [ ] TODO_3
 
 ## 📚 Reference
