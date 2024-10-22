@@ -8,6 +8,7 @@ import com.mefi.backend.db.repository.TokenRepository;
 import com.mefi.backend.db.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +29,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
+	@Value("${FRONTEND_URL}")
+	private String FRONTEND_URL;
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
@@ -99,7 +103,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         // 클라이언트에서 온 요청 중에서 허용할 도메인 설정
-                        configuration.setAllowedOrigins(Collections.singletonList("https://i10d204.p.ssafy.io"));
+                        configuration.setAllowedOrigins(Collections.singletonList(FRONTEND_URL));
 
                         // 모든 HTTP 메서드 허용 설정
                         configuration.setAllowedMethods(Collections.singletonList("*"));
