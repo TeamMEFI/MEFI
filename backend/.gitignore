@@ -43,3 +43,5 @@ out/
 
 # Spring Boot specific files
 #application.yml
+
+**/gradle.properties
