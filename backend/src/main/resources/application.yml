@@ -64,10 +64,10 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: ENC(ERGwjpE29QUvgdCKrtT7DhjeTHMmsCV7)
+      bucket: ENC(jkYcqollfboQOsfi8C/WQ3EcrQOkkl7iLl4HmCpH1KY=)
       credentials:
-        access-key: ENC(za+2tqUiVZwKNuBGyWME3FyLfzfRlAg9RuwhxN+Cku0=)
-        secret-key: ENC(EJfxTl5mm2MsvPfISoO2YubWYFjxao/25FGRjc7zeibt6JwvQZfD9O9+fQp4IqVvL6sda8px9S8=)
+        access-key: ENC(YbRn28I9zT2fnvsG1+lvjf52HFTHuWhqcWAdMgkFv+s=)
+        secret-key: ENC(GmMAL9Mkfie318B233hiTTrIjKFTtzHYTq5LhPYIVvE8dJLxqoEULsY0BIZ3U3xTWQxpC1VMp3M=)
     region:
       static: ap-northeast-2
     stack:
@@ -82,7 +82,7 @@ logging.level:
   org.hibernate.SQL: debug  
 
 # PROFILE IMAGE
-DEFAULT_PROFILE_URL : ENC(Dp06UzclQawgo6UvSMClII7TqN2vwL/wZ6bf5It4nNreW8qGT31HyyH44JumXFcCAs6ZyFZjDRsiV/9q1pOibNk/N4ueEHTK6eSLJPPzpaXA4lIBQDmY2A==)
+DEFAULT_PROFILE_URL : ENC(v4BnUBYmvtBMoOQfP+V1sUbudMGuuiz08dkVgLy+v/2hy5B7mMYM/E71QiuZPpxnuXdMJpyM3brwTQ5CQ/HAf1gb31T62uU14fNWostpiT5rtqj+WVDfpJio2bQU1VD9)
 
 # URL
 FRONTEND_URL: ENC(KSIC9cU/j+40hgaRPoH07SiiHYyT5d1bZwaD9LOr9Sw=)
